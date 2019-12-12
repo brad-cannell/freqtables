@@ -1,0 +1,20 @@
+Package: freqtables
+Type: Package
+Title: Make Quick Descriptive Tables For Categorical Variables
+Description: Quickly make tables of descriptive statistics (i.e., counts, 
+    percentages, confidence intervals) for categorical variables. This 
+    package is designed to work in a tidyverse pipeline, and consideration
+    has been given to get results from R to Microsoft Word ® with minimal pain.
+Version: 0.1.0
+Authors@R: person("Brad", "Cannell", email = "brad.cannell@gmail.com",
+  role = c("aut", "cre"))
+Maintainer: Brad Cannell <brad.cannell@gmail.com>
+URL: https://github.com/brad-cannell/freqtables
+BugReports: https://github.com/brad-cannell/freqtables/issues
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.0.2
+Imports: 
+    dplyr,
+    rlang
