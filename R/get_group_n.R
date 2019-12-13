@@ -9,7 +9,6 @@
 #'
 #' @return A character string
 #' @export
-#'
 #' @importFrom dplyr %>%
 #'
 #' @examples
