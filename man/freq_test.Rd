@@ -42,8 +42,7 @@ data(mtcars)
 # Test equality of proportions
 
 mtcars \%>\%
-  group_by(am) \%>\%
-  freq_table() \%>\%
+  freq_table(am) \%>\%
   freq_test() \%>\%
   select(var:percent, p_chi2_pearson)
 
@@ -56,8 +55,7 @@ mtcars \%>\%
 # Chi-square test of independence
 
 mtcars \%>\%
-  group_by(am, vs) \%>\%
-  freq_table() \%>\%
+  freq_table(am, vs) \%>\%
   freq_test() \%>\%
   select(row_var:n, percent_row, p_chi2_pearson)
 

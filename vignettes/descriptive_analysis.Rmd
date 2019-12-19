@@ -82,8 +82,7 @@ The default confidence intervals are logit transformed - matching the method use
 
 ```{r}
 mtcars %>% 
-  group_by(am) %>% 
-  freq_table(output = "all", digits = 5)
+  freq_table(am, output = "all", digits = 5)
 ```
 
 &nbsp;
@@ -104,8 +103,7 @@ https://support.sas.com/documentation/cdl/en/statug/63347/HTML/default/viewer.ht
 
 ```{r}
 mtcars %>% 
-  group_by(am) %>% 
-  freq_table(ci_type = "wald", output = "all", digits = 5)
+  freq_table(am, ci_type = "wald", output = "all", digits = 5)
 ```
 
 &nbsp;
@@ -129,8 +127,7 @@ Currently, all confidence intervals for (grouped) row percentages, and their acc
 
 ```{r}
 mtcars %>% 
-  group_by(am, cyl) %>% 
-  freq_table(output = "all", digits = 5)
+  freq_table(am, output = "all", digits = 5)
 ```
 
 ![](freq_am_by_cyl_stata.png){width=600}

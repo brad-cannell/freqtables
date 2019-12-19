@@ -9,8 +9,7 @@ context("test-freq_test.R")
 # Test one-way frequency tables
 # =============================================================================
 df <- mtcars %>%
-  group_by(am) %>%
-  freq_table() %>%
+  freq_table(am) %>%
   freq_test()
 
 test_that("Dimensions of the object returned by freq_test are as expected", {
@@ -61,8 +60,7 @@ test_that("The correct default statistics are returned by freq_test", {
 # Test two-way freq tables
 # =============================================================================
 df <- mtcars %>%
-  group_by(am, cyl) %>%
-  freq_table()%>%
+  freq_table(am, cyl)%>%
   freq_test()
 
 test_that("Dimensions of the object returned by freq_table are as expected", {
@@ -117,8 +115,7 @@ test_that("The correct default statistics are returned by freq_table", {
 # Checking Fisher's Exact Method
 # ------------------------------
 df <- mtcars %>%
-  group_by(am, cyl) %>%
-  freq_table()%>%
+  freq_table(am, cyl)%>%
   freq_test(method = "fisher")
 
 test_that("The expected p-value is returned from the fisher method", {

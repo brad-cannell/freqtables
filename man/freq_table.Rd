@@ -5,25 +5,28 @@
 \title{Estimate Percents and 95 Percent Confidence Intervals in dplyr Pipelines}
 \usage{
 freq_table(
-  x,
+  .data,
+  ...,
   t_prob = 0.975,
   ci_type = "logit",
   output = "default",
-  digits = 2,
-  ...
+  digits = 2
 )
 }
 \arguments{
-\item{x}{A grouped tibble, i.e., class == "grouped_df".
+\item{.data}{A data frame. If it is already grouped (i.e., class == "grouped_df")
+  then freq_table will ungroup it to prevent unexpected results.
 
   For two-way tables, the count for each level of the variable in the
-  first argument to group_by will be the denominator for row percentages
+  first argument to freq_table will be the denominator for row percentages
   and their 95% confidence intervals. Said another way, the goal of the
   analysis is to compare percentages of some characteristic across two or
   more groups of interest, then the variable in the first argument to
-  group_by should contain the groups of interest, and the variable in the
-  second argument to group_by should contain the characteristic of
+  freq_table should contain the groups of interest, and the variable in the
+  second argument to freq_table should contain the characteristic of
   interest.}
+
+\item{...}{Other parameters to be passed on.}
 
 \item{t_prob}{(1 - alpha / 2). Default value is 0.975, which corresponds to
 an alpha of 0.05. Used to calculate a critical value from Student's t
@@ -48,8 +51,6 @@ confidence intervals using the "wald" argument.}
 
 \item{digits}{Round percentages and confidence intervals to digits.
 Default is 2.}
-
-\item{...}{Other parameters to be passed on.}
 }
 \value{
 A tibble with class "freq_table_one_way" or "freq_table_two_way"
@@ -63,7 +64,7 @@ The freq_table function produces one-way and two-way frequency
   and 95 percent confidence intervals.
 
   freq_table is intended to be used in a dplyr pipeline. Specifically,
-  freq_table expects the x argument to be a grouped tibble created with
+  freq_table expects the .data argument to be a grouped tibble created with
   dplyr's group_by function.
 
   All standard errors are calculated as some version of:
@@ -86,8 +87,7 @@ data(mtcars)
 # One-way frequency table with defaults
 
 mtcars \%>\%
-  group_by(am) \%>\%
-  freq_table()
+  freq_table(am)
 
 #> # A tibble: 2 x 7
 #>     var   cat     n n_total percent   lcl   ucl
@@ -98,8 +98,7 @@ mtcars \%>\%
 # Two-way frequency table with defaults
 
 mtcars \%>\%
-  group_by(am, cyl) \%>\%
-  freq_table()
+  freq_table(am, cyl)
 
 #> # A tibble: 6 x 10
 #>   row_var row_cat col_var col_cat     n n_row n_total percent_row lcl_row ucl_row

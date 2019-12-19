@@ -42,8 +42,7 @@
 #' # One-way frequency tables with defaults
 #'
 #' mtcars %>%
-#' group_by(cyl) %>%
-#'   freq_table() %>%
+#'   freq_table(cyl) %>%
 #'   format_table()
 #' #> # A tibble: 2 x 3
 #' #>     var   cat            percent_95
@@ -54,8 +53,7 @@
 #' # Two-way frequency tables with defaults
 #'
 #' mtcars %>%
-#'   group_by(am, cyl) %>%
-#'   freq_table() %>%
+#'   freq_table(am, cyl) %>%
 #'   format_table()
 #'
 #' #> # A tibble: 6 x 5
@@ -71,8 +69,7 @@
 #' #' # Two-way frequency tables with with stats = "n and row percent"
 #'
 #' mtcars %>%
-#'   group_by(am, cyl) %>%
-#'   freq_table(output = all) %>% # Don't forget output = all
+#'   freq_table(am, cyl, output = all) %>% # Don't forget output = all
 #'   format_table(stats = "n and row percent")
 #'
 #' #> # A tibble: 6 x 5

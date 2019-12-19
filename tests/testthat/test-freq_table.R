@@ -5,12 +5,27 @@ data(mtcars)
 
 context("test-freq_table.R")
 
+
+# =============================================================================
+# Test that group_by no longer has an effect on results
+# =============================================================================
+df <- mtcars %>%
+  group_by(am) %>%
+  freq_table(cyl)
+
+test_that("freq_table is ungrouping grouped input df's", {
+  var <- unique(df$var)
+  expect_match(var, "cyl")
+})
+
+
 # =============================================================================
 # Test one-way frequency tables
 # =============================================================================
 df <- mtcars %>%
-  group_by(am) %>%
-  freq_table()
+  freqtables::freq_table(am)
+
+mtcars %>% group_by(am) %>% bfuncs::freq_table()
 
 test_that("Dimensions of the object returned by freq_table are as expected", {
   rows    <- nrow(df)
@@ -56,8 +71,7 @@ test_that("The correct default statistics are returned by freq_table", {
 # Testing Wald CI's
 # -----------------
 df <- mtcars %>%
-  group_by(am) %>%
-  freq_table(ci_type = "wald")
+  freq_table(am, ci_type = "wald")
 
 test_that("The correct Wald CI's are returned by freq_table", {
   lcl <- pull(df, lcl)
@@ -74,8 +88,7 @@ test_that("The correct Wald CI's are returned by freq_table", {
 # Test two-way freq tables
 # =============================================================================
 df <- mtcars %>%
-  group_by(am, cyl) %>%
-  freq_table()
+  freq_table(am, cyl)
 
 test_that("Dimensions of the object returned by freq_table are as expected", {
   rows    <- nrow(df)
@@ -124,8 +137,7 @@ test_that("The correct default statistics are returned by freq_table", {
 # Checking overall percents and CI's
 # ----------------------------------
 df <- mtcars %>%
-  group_by(am, cyl) %>%
-  freq_table(output = "all")
+  freq_table(am, cyl, output = "all")
 
 test_that("The correct overall percents and 95% CI's are returned", {
   percent_total <- pull(df, percent_total)
@@ -150,8 +162,7 @@ alpha <- 1 - .99
 t <- 1 - alpha / 2
 
 df <- mtcars %>%
-  group_by(am) %>%
-  freq_table(t_prob = t)
+  freq_table(am, t_prob = t)
 
 test_that("The 99% confidence intervals are correct", {
   lcl <- pull(df, lcl)
@@ -164,8 +175,7 @@ test_that("The 99% confidence intervals are correct", {
 # digits = 3
 # ----------
 df <- mtcars %>%
-  group_by(am) %>%
-  freq_table(digits = 3)
+  freq_table(am, digits = 3)
 
 test_that("The 'digits' parameter works as expected", {
   percent <- pull(df, percent)

@@ -9,8 +9,7 @@ context("test-format_table.R")
 # Test one-way frequency table, stats = percent and ci (default)
 # =============================================================================
 df <- mtcars %>%
-  group_by(am) %>%
-  freq_table() %>%
+  freq_table(am) %>%
   format_table()
 
 test_that("Dimensions of the object returned by format_table are as expected", {
@@ -40,8 +39,7 @@ test_that("The correct statistics are returned by format_table", {
 # Test one-way frequency table, stats = n and percent
 # =============================================================================
 df <- mtcars %>%
-  group_by(am) %>%
-  freq_table() %>%
+  freq_table(am) %>%
   format_table(stats = "n and percent")
 
 test_that("Dimensions of the object returned by format_table are as expected", {
@@ -71,8 +69,7 @@ test_that("The correct statistics are returned by format_table", {
 # Test two-way frequency table, stats = percent and ci (default)
 # =============================================================================
 df <- mtcars %>%
-  group_by(am, vs) %>%
-  freq_table() %>%
+  freq_table(am, vs) %>%
   format_table()
 
 test_that("Dimensions of the object returned by format_table are as expected", {
@@ -109,8 +106,7 @@ test_that("The correct statistics are returned by format_table", {
 # Test two-way frequency table, stats = n and percent
 # =============================================================================
 df <- mtcars %>%
-  group_by(am, vs) %>%
-  freq_table(output = all) %>%
+  freq_table(am, vs, output = all) %>%
   format_table(stats = "n and percent")
 
 test_that("Dimensions of the object returned by format_table are as expected", {
