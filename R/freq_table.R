@@ -8,7 +8,7 @@
 #'   and 95 percent confidence intervals.
 #'
 #'   freq_table is intended to be used in a dplyr pipeline. Specifically,
-#'   freq_table expects the x argument to be a grouped tibble created with
+#'   freq_table expects the .data argument to be a grouped tibble created with
 #'   dplyr's group_by function.
 #'
 #'   All standard errors are calculated as some version of:
@@ -22,15 +22,16 @@
 #'   For two-way tables, freq_table returns logit transformed confidence
 #'   intervals equivalent to those used by Stata.
 #'
-#' @param x A grouped tibble, i.e., class == "grouped_df".
+#' @param .data A data frame. If it is already grouped (i.e., class == "grouped_df")
+#'   then freq_table will ungroup it to prevent unexpected results.
 #'
 #'   For two-way tables, the count for each level of the variable in the
-#'   first argument to group_by will be the denominator for row percentages
+#'   first argument to freq_table will be the denominator for row percentages
 #'   and their 95% confidence intervals. Said another way, the goal of the
 #'   analysis is to compare percentages of some characteristic across two or
 #'   more groups of interest, then the variable in the first argument to
-#'   group_by should contain the groups of interest, and the variable in the
-#'   second argument to group_by should contain the characteristic of
+#'   freq_table should contain the groups of interest, and the variable in the
+#'   second argument to freq_table should contain the characteristic of
 #'   interest.
 #'
 #' @param t_prob (1 - alpha / 2). Default value is 0.975, which corresponds to
@@ -79,8 +80,7 @@
 #' # One-way frequency table with defaults
 #'
 #' mtcars %>%
-#'   group_by(am) %>%
-#'   freq_table()
+#'   freq_table(am)
 #'
 #' #> # A tibble: 2 x 7
 #' #>     var   cat     n n_total percent   lcl   ucl
@@ -91,8 +91,7 @@
 #' # Two-way frequency table with defaults
 #'
 #' mtcars %>%
-#'   group_by(am, cyl) %>%
-#'   freq_table()
+#'   freq_table(am, cyl)
 #'
 #' #> # A tibble: 6 x 10
 #' #>   row_var row_cat col_var col_cat     n n_row n_total percent_row lcl_row ucl_row
@@ -104,7 +103,7 @@
 #' #> 5      am       1     cyl       6     3    13      32       23.08    6.91   54.82
 #' #> 6      am       1     cyl       8     2    13      32       15.38    3.43   48.18
 
-freq_table <- function(x, t_prob = 0.975, ci_type = "logit", output = "default", digits = 2, ...) {
+freq_table <- function(.data, ..., t_prob = 0.975, ci_type = "logit", output = "default", digits = 2) {
 
   # ------------------------------------------------------------------
   # Prevents R CMD check: "no visible binding for global variable ‘.’"
@@ -119,14 +118,6 @@ freq_table <- function(x, t_prob = 0.975, ci_type = "logit", output = "default",
   col_var = col_cat = NULL
 
   # ===========================================================================
-  # Check for grouped tibble
-  # ===========================================================================
-  if (!("grouped_df" %in% class(x))) {
-    stop(paste("The x argument to freq_table must be a grouped tibble.
-               The class of the current x argument is", class(x)))
-  }
-
-  # ===========================================================================
   # Enquo arguments
   # enquo/quo_name/UQ the ci_type and output argument so that I don't have to
   # use quotation marks around the argument being passed.
@@ -135,9 +126,20 @@ freq_table <- function(x, t_prob = 0.975, ci_type = "logit", output = "default",
   output_arg  <- rlang::enquo(output) %>% rlang::quo_name()
 
   # ===========================================================================
+  # Check for grouped tibble
+  # Check to see if the tibble is already grouped.
+  # If yes, ungroup, so that you don't get unexpected results.
+  # Then, group here using the variables in ...
+  # ===========================================================================
+  if (("grouped_df" %in% class(.data))) {
+    .data <- dplyr::ungroup(.data)
+  }
+  .data <- dplyr::group_by(.data, ...)
+
+  # ===========================================================================
   # Check for number of group vars:
   # ===========================================================================
-  n_groups <- attributes(x)$groups %>% length() - 1
+  n_groups <- attributes(.data)$groups %>% length() - 1
 
   # ===========================================================================
   # One-way tables
@@ -146,8 +148,8 @@ freq_table <- function(x, t_prob = 0.975, ci_type = "logit", output = "default",
 
     # Create first three columns of summary table: grouped variable name,
     # grouped variable categories, and n of each category
-    out <- x %>%
-      dplyr::summarise(n = n()) %>%
+    out <- .data %>%
+      dplyr::summarise(n = dplyr::n()) %>%
       dplyr::mutate(var = !!names(.[1])) %>%
       dplyr::rename(cat = !!names(.[1])) %>%
       dplyr::select(var, cat, n)
@@ -244,8 +246,8 @@ freq_table <- function(x, t_prob = 0.975, ci_type = "logit", output = "default",
     # Create first three columns of summary table: row variable name,
     # row variable categories, column variable name, column variable categories
     # and n of each category row/col combination
-    out <- x %>%
-      dplyr::summarise(n = n()) %>%
+    out <- .data %>%
+      dplyr::summarise(n = dplyr::n()) %>%
       dplyr::mutate(
         row_var = !!names(.[1]),
         col_var = !!names(.[2])
@@ -323,8 +325,8 @@ freq_table <- function(x, t_prob = 0.975, ci_type = "logit", output = "default",
   } else { # Grouped by more than two variables, or not grouped.
     stop(
       paste(
-        "Expecting x to be a grouped data frame with 2 or 3 columns. Instead
-        x had", ncol(out)
+        "Expecting .data to be a grouped data frame with 2 or 3 columns. Instead
+        .data had", ncol(out)
       )
     )
   }
