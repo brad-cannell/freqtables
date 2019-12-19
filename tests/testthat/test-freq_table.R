@@ -20,6 +20,25 @@ testthat::test_that("freq_table is ungrouping grouped input df's", {
 
 
 # =============================================================================
+# Test for explicit n = 0 for unobserved factor levels
+# =============================================================================
+df <- data.frame(
+  cat_var = factor(
+    c(rep("Always", 2), rep("Sometimes", 3)),
+    levels = c("Always", "Sometimes", "Never")
+  )
+)
+
+df <- df %>%
+  freq_table(cat_var)
+
+testthat::test_that("Unobserved factor levels are in the results table", {
+  testthat::expect_true("Never" %in% df$cat)
+  testthat::expect_equal(df$n, c(2, 3, 0))
+})
+
+
+# =============================================================================
 # Test one-way frequency tables
 # =============================================================================
 df <- mtcars %>%

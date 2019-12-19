@@ -7,9 +7,7 @@
 #'   freq_table also displays row (subgroup) percentages, standard errors,
 #'   and 95 percent confidence intervals.
 #'
-#'   freq_table is intended to be used in a dplyr pipeline. Specifically,
-#'   freq_table expects the .data argument to be a grouped tibble created with
-#'   dplyr's group_by function.
+#'   freq_table is intended to be used in a dplyr pipeline.
 #'
 #'   All standard errors are calculated as some version of:
 #'   sqrt(proportion * (1 - proportion) / (n - 1))
@@ -34,6 +32,14 @@
 #'   second argument to freq_table should contain the characteristic of
 #'   interest.
 #'
+#' @param ... Categorical variables to be used in calculations. Currently,
+#'   freq_table accepts one or two variables -- not more.
+#'
+#'   If "..." includes a factor variable with a level (category) that is
+#'   unobserved in the data, that level will still appear in the results with
+#'   a count (n) equal to zero. Further, the confidence intervals will be
+#'   equal to NaN.
+#'
 #' @param t_prob (1 - alpha / 2). Default value is 0.975, which corresponds to
 #'   an alpha of 0.05. Used to calculate a critical value from Student's t
 #'   distribution with n - 1 degrees of freedom.
@@ -57,8 +63,6 @@
 #'
 #' @param digits Round percentages and confidence intervals to digits.
 #'   Default is 2.
-#'
-#' @param ... Other parameters to be passed on.
 #'
 #' @return A tibble with class "freq_table_one_way" or "freq_table_two_way"
 #' @export
@@ -102,7 +106,6 @@
 #' #> 4      am       1     cyl       4     8    13      32       61.54   32.30   84.29
 #' #> 5      am       1     cyl       6     3    13      32       23.08    6.91   54.82
 #' #> 6      am       1     cyl       8     2    13      32       15.38    3.43   48.18
-
 freq_table <- function(.data, ..., t_prob = 0.975, ci_type = "logit", output = "default", digits = 2) {
 
   # ------------------------------------------------------------------
@@ -134,12 +137,21 @@ freq_table <- function(.data, ..., t_prob = 0.975, ci_type = "logit", output = "
   if (("grouped_df" %in% class(.data))) {
     .data <- dplyr::ungroup(.data)
   }
-  .data <- dplyr::group_by(.data, ...)
+
+  # ===========================================================================
+  # Get within group counts
+  # .drop = FALSE creates an explicit n = 0 for unobserved factor levels
+  # ===========================================================================
+  .data <- dplyr::count(.data, ..., .drop = FALSE)
 
   # ===========================================================================
   # Check for number of group vars:
   # ===========================================================================
-  n_groups <- attributes(.data)$groups %>% length() - 1
+  n_groups <- .data %>% ncol() - 1
+  if (n_groups > 2) {
+    stop("Currently, freq_table accepts one or two variables -- not more. You entered ",
+         n_groups, " into the ... argument.")
+  }
 
   # ===========================================================================
   # One-way tables
@@ -149,7 +161,6 @@ freq_table <- function(.data, ..., t_prob = 0.975, ci_type = "logit", output = "
     # Create first three columns of summary table: grouped variable name,
     # grouped variable categories, and n of each category
     out <- .data %>%
-      dplyr::summarise(n = dplyr::n()) %>%
       dplyr::mutate(var = !!names(.[1])) %>%
       dplyr::rename(cat = !!names(.[1])) %>%
       dplyr::select(var, cat, n)
@@ -247,7 +258,6 @@ freq_table <- function(.data, ..., t_prob = 0.975, ci_type = "logit", output = "
     # row variable categories, column variable name, column variable categories
     # and n of each category row/col combination
     out <- .data %>%
-      dplyr::summarise(n = dplyr::n()) %>%
       dplyr::mutate(
         row_var = !!names(.[1]),
         col_var = !!names(.[2])
@@ -259,6 +269,7 @@ freq_table <- function(.data, ..., t_prob = 0.975, ci_type = "logit", output = "
       dplyr::select(row_var, row_cat, col_var, col_cat, n) %>%
 
       # Calculate within row n
+      dplyr::group_by(row_cat) %>%
       dplyr::mutate(n_row = sum(n)) %>%
       # Ungroup to get total_n
       dplyr::ungroup() %>%
