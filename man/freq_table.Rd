@@ -26,7 +26,13 @@ freq_table(
   second argument to freq_table should contain the characteristic of
   interest.}
 
-\item{...}{Other parameters to be passed on.}
+\item{...}{Categorical variables to be used in calculations. Currently,
+  freq_table accepts one or two variables -- not more.
+
+  If "..." includes a factor variable with a level (category) that is
+  unobserved in the data, that level will still appear in the results with
+  a count (n) equal to zero. Further, the confidence intervals will be
+  equal to NaN.}
 
 \item{t_prob}{(1 - alpha / 2). Default value is 0.975, which corresponds to
 an alpha of 0.05. Used to calculate a critical value from Student's t
@@ -63,9 +69,7 @@ The freq_table function produces one-way and two-way frequency
   freq_table also displays row (subgroup) percentages, standard errors,
   and 95 percent confidence intervals.
 
-  freq_table is intended to be used in a dplyr pipeline. Specifically,
-  freq_table expects the .data argument to be a grouped tibble created with
-  dplyr's group_by function.
+  freq_table is intended to be used in a dplyr pipeline.
 
   All standard errors are calculated as some version of:
   sqrt(proportion * (1 - proportion) / (n - 1))
