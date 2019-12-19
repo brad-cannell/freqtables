@@ -3,14 +3,14 @@ library(freqtables)
 
 data(mtcars)
 
-context("test-freq_test.R")
+testthat::context("test-freq_test.R")
 
 # =============================================================================
 # Get sample size for cars with 4 cylinders
 # =============================================================================
-test_that("Group n is returned as expected", {
+testthat::test_that("Group n is returned as expected", {
   n <- mtcars %>% get_group_n(cyl == 4)
-  expect_match(n, "N = 11")
+  testthat::expect_match(n, "N = 11")
 })
 
 
