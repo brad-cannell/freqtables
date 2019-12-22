@@ -280,10 +280,10 @@ There are a couple things worth mentioning here. First, 27% of the females in ou
 
 Additionally, because some expected cell counts were less than 5, we should estimate our p-value using Fisher’s exact method.
 
-```{r warning=FALSE}
+```{r}
 students %>% 
   freq_table(male, binge) %>% 
-  freq_test(method = "fisher")
+  freq_test()
 ```
 
 ### Interpretation 
@@ -349,7 +349,7 @@ mtcars %>%
 ```{r}
 mtcars %>% 
   freq_table(am, cyl) %>% 
-  freq_test(method = "fisher")
+  freq_test()
 ```
 
 > Interpret

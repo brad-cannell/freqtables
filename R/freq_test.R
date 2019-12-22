@@ -5,6 +5,10 @@
 #'   tables. Further, it is made to work in a dplyr pipeline with the
 #'   freq_table function.
 #'
+#'   For the freq_table_two_way class, the methods used are Pearson's
+#'   chi-square test of independence Fisher's exact test. When cell counts
+#'   are <= 5, Fisher's Exact Test is considered more reliable.
+#'
 #' @param x A tibble of class freq_table_one_way or freq_table_two_way.
 #'
 #' @param ... Other parameters to be passed on.
@@ -12,9 +16,7 @@
 #' @param method Options for this parameter control the method used to
 #'   calculate p-values.
 #'
-#'   For the freq_table_two_way class, the options are "pearson" (default) -
-#'   to use Pearson's chi-square test of independence, and "fisher" - to use
-#'   Fisher's exact test.
+
 #'
 #' @return A tibble.
 #' @export
@@ -98,7 +100,7 @@ freq_test.freq_table_one_way <- function(x, ...) {
 
   # Add class to out that describes the information it contains
   # -----------------------------------------------------------
-  class(out) <- c("pearson", "freq_table_one_way", class(out))
+  class(out) <- c("freq_table_one_way", class(out))
 
   # Return tibble of results
   out
@@ -115,7 +117,7 @@ freq_test.freq_table_one_way <- function(x, ...) {
 #' @export
 #' @rdname freq_test
 
-freq_test.freq_table_two_way <- function(x, method = "pearson", ...) {
+freq_test.freq_table_two_way <- function(x, ...) {
 
   # ------------------------------------------------------------------
   # Prevents R CMD check: "no visible binding for global variable ‘.’"
@@ -149,33 +151,26 @@ freq_test.freq_table_two_way <- function(x, method = "pearson", ...) {
   # Test for expected cell counts <= 5
   # ----------------------------------
   if ( min(out$n_expected) <= 5 ) {
-    warning(paste0("One or more expected cell counts are <= 5. Pearson's ",
-                   "Chi-square may not be a valid test."))
+    message(paste0("One or more expected cell counts are <= 5. Therefore, ",
+                   "Fisher's Exact Test was used."))
 
     # Add Fisher's Exact Test
-    # -------------------
-    if ("fisher" %in% method) {
+    # -----------------------
+    # Convert x to a matrix
+    n_s  <- dplyr::pull(x, n)
+    mx   <- matrix(n_s, nrow = 2, byrow = TRUE)
 
-      # Convert x to a matrix
-      n_s  <- dplyr::pull(x, n)
-      mx   <- matrix(n_s, nrow = 2, byrow = TRUE)
+    # Use R's built-in fisher.test
+    fisher <- stats::fisher.test(mx)
 
-      # Use R's built-in fisher.test
-      fisher <- stats::fisher.test(mx)
-
-      # Add Fisher's p_value to out
-      out <- out %>%
-        dplyr::mutate(p_fisher = fisher$p.value)
-    }
+    # Add Fisher's p_value to out
+    out <- out %>%
+      dplyr::mutate(p_fisher = fisher$p.value)
   }
 
   # Add class to out that describes the information it contains
   # -----------------------------------------------------------
-  if ("fisher" %in% names(out)) {
-    class(out) <- c("fisher", "freq_table_two_way", class(out))
-  } else {
-    class(out) <- c("pearson", "freq_table_two_way", class(out))
-  }
+  class(out) <- c("freq_table_two_way", class(out))
 
   # Return tibble of results
   out

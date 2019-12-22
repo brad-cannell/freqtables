@@ -10,7 +10,7 @@ freq_test(x, ...)
 
 \method{freq_test}{freq_table_one_way}(x, ...)
 
-\method{freq_test}{freq_table_two_way}(x, method = "pearson", ...)
+\method{freq_test}{freq_table_two_way}(x, ...)
 }
 \arguments{
 \item{x}{A tibble of class freq_table_one_way or freq_table_two_way.}
@@ -18,11 +18,7 @@ freq_test(x, ...)
 \item{...}{Other parameters to be passed on.}
 
 \item{method}{Options for this parameter control the method used to
-  calculate p-values.
-
-  For the freq_table_two_way class, the options are "pearson" (default) -
-  to use Pearson's chi-square test of independence, and "fisher" - to use
-  Fisher's exact test.}
+calculate p-values.}
 }
 \value{
 A tibble.
@@ -32,6 +28,10 @@ The freq_test function is an S3 generic. It currently has
   methods for conducting hypothesis tests on one-way and two-way frequency
   tables. Further, it is made to work in a dplyr pipeline with the
   freq_table function.
+
+  For the freq_table_two_way class, the methods used are Pearson's
+  chi-square test of independence Fisher's exact test. When cell counts
+  are <= 5, Fisher's Exact Test is considered more reliable.
 }
 \examples{
 library(dplyr)

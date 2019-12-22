@@ -3,7 +3,7 @@ library(freqtables)
 
 data(mtcars)
 
-context("test-freq_test.R")
+testthat::context("test-freq_test.R")
 
 # =============================================================================
 # Test one-way frequency tables
@@ -68,7 +68,7 @@ testthat::test_that("Dimensions of the object returned by freq_table are as expe
   columns <- ncol(df)
 
   testthat::expect_equal(rows, 6L)
-  testthat::expect_equal(columns, 25L)
+  testthat::expect_equal(columns, 26L)
 })
 
 testthat::test_that("Class of freq_table_two_way is freq_table_two_way", {
@@ -100,6 +100,7 @@ testthat::test_that("The correct default statistics are returned by freq_table",
   c_column       <- pull(df, c)
   deg_freedom    <- pull(df, df)
   p_chi2_pearson <- pull(df, p_chi2_pearson) %>% round(7)
+  fisher_p_value <- pull(df, p_fisher)
 
   testthat::expect_equal(n_col,          c(11, 7, 14, 11, 7, 14))
   testthat::expect_equal(n_expected,     c(6.53125, 4.15625, 8.31250, 4.46875, 2.84375, 5.68750))
@@ -110,21 +111,8 @@ testthat::test_that("The correct default statistics are returned by freq_table",
   testthat::expect_equal(c_column,       rep(3, 6))
   testthat::expect_equal(deg_freedom,    rep(2, 6))
   testthat::expect_equal(p_chi2_pearson, rep(0.01264661, 6))
-})
-
-# Checking Fisher's Exact Method
-# ------------------------------
-df <- mtcars %>%
-  freq_table(am, cyl)%>%
-  freq_test(method = "fisher")
-
-testthat::test_that("The expected p-value is returned from the fisher method", {
-  fisher_p_value <- pull(df, p_fisher)
   testthat::expect_equal(fisher_p_value, rep(0.009104702, 6))
 })
-
-
-
 
 # =============================================================================
 # Clean up
