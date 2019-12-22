@@ -42,16 +42,14 @@ testthat::test_that("Unobserved factor levels are in the results table", {
 # Test one-way frequency tables
 # =============================================================================
 df <- mtcars %>%
-  freqtables::freq_table(am)
-
-mtcars %>% group_by(am) %>% bfuncs::freq_table()
+  freq_table(am)
 
 testthat::test_that("Dimensions of the object returned by freq_table are as expected", {
   rows    <- nrow(df)
   columns <- ncol(df)
 
   testthat::expect_equal(rows, 2L)
-  testthat::expect_equal(columns, 7L)
+  testthat::expect_equal(columns, 9L)
 })
 
 testthat::test_that("Class of freq_table_one_way is freq_table_one_way", {
@@ -77,12 +75,16 @@ testthat::test_that("The correct default statistics are returned by freq_table",
   n        <- pull(df, n)
   n_total  <- pull(df, n_total)
   percent  <- pull(df, percent)
+  se       <- pull(df, se) %>% round(2)
+  t_crit   <- pull(df, t_crit) %>% round(2)
   lcl      <- pull(df, lcl)
   ucl      <- pull(df, ucl)
 
   testthat::expect_equal(n,       c(19, 13))
   testthat::expect_equal(n_total, c(32, 32))
   testthat::expect_equal(percent, c(59.38, 40.62))
+  testthat::expect_equal(se,      c(8.82, 8.82))
+  testthat::expect_equal(t_crit,  c(2.04, 2.04))
   testthat::expect_equal(lcl,     c(40.94, 24.50))
   testthat::expect_equal(ucl,     c(75.50, 59.06))
 })
@@ -114,7 +116,7 @@ testthat::test_that("Dimensions of the object returned by freq_table are as expe
   columns <- ncol(df)
 
   testthat::expect_equal(rows, 6L)
-  testthat::expect_equal(columns, 10L)
+  testthat::expect_equal(columns, 17L)
 })
 
 testthat::test_that("Class of freq_table_two_way is freq_table_two_way", {

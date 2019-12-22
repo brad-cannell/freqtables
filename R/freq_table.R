@@ -156,7 +156,7 @@ freq_table <- function(.data, ..., t_prob = 0.975, ci_type = "logit", output = "
   # ===========================================================================
   # One-way tables
   # ===========================================================================
-  if (n_groups == 1) { # "else" is in two-way tables.
+  if (n_groups == 1) {
 
     # Create first three columns of summary table: grouped variable name,
     # grouped variable categories, and n of each category
@@ -194,18 +194,6 @@ freq_table <- function(.data, ..., t_prob = 0.975, ci_type = "logit", output = "
           ucl      = round(ucl_wald, digits)
         )
 
-      # Control output
-      # Typically, I only want the frequency, percent and 95% CI
-      # Make that the default
-      if (output_arg == "default") {
-        out <- out %>%
-          dplyr::select(var, cat, n, n_total, percent, lcl, ucl)
-
-      } else if (output_arg == "all") {
-        out <- out %>%
-          dplyr::select(var, cat, n, n_total, percent, se, t_crit, lcl, ucl)
-      }
-
       # Calculate logit transformed CI's
       # ------------------------------
       # and put prop, se, and CI's on percent scale
@@ -228,31 +216,22 @@ freq_table <- function(.data, ..., t_prob = 0.975, ci_type = "logit", output = "
           lcl      = round(lcl_log, digits), # Round confidence intervals
           ucl      = round(ucl_log, digits)
         )
-
-      # Control output
-      # Typically, I only want the frequency, percent and 95% CI
-      # Make that the default
-      if (output_arg == "default") {
-        out <- out %>%
-          dplyr::select(var, cat, n, n_total, percent, lcl, ucl)
-
-      } else if (output_arg == "all") {
-        out <- out %>%
-          dplyr::select(var, cat, n, n_total, percent, se, t_crit, lcl, ucl)
-      }
-
     }
+
+    # Control output
+    out <- out %>%
+      dplyr::select(var, cat, n, n_total, percent, se, t_crit, lcl, ucl)
 
     # Add freq_table class to out
     class(out) <- c("freq_table_one_way", class(out))
+  }
 
-
-    # ===========================================================================
-    # Two-way tables
-    # Only logit transformed CI's
-    # Need percent and row percent
-    # ===========================================================================
-  } else if (n_groups == 2) { # "if" is one-way tables
+  # ===========================================================================
+  # Two-way tables
+  # Only logit transformed CI's
+  # Need percent and row percent
+  # ===========================================================================
+  if (n_groups == 2) {
 
     # Create first three columns of summary table: row variable name,
     # row variable categories, column variable name, column variable categories
@@ -317,29 +296,14 @@ freq_table <- function(.data, ..., t_prob = 0.975, ci_type = "logit", output = "
     # Control output
     # Typically, I only want the frequency, row percent and 95% CI for the row percent
     # Make that the default
-    if (output_arg == "default") {
-      out <- out %>%
-        dplyr::select(row_var, row_cat, col_var, col_cat, n, n_row, n_total,
-                      percent_row, lcl_row, ucl_row)
-
-    } else if (output_arg == "all") {
-      out <- out %>%
-        dplyr::select(row_var, row_cat, col_var, col_cat, n, n_row, n_total,
-                      percent_total, se_total, t_crit_total,
-                      lcl_total, ucl_total, percent_row, se_row, t_crit_row,
-                      lcl_row, ucl_row)
-    }
+    out <- out %>%
+      dplyr::select(row_var, row_cat, col_var, col_cat, n, n_row, n_total,
+                    percent_total, se_total, t_crit_total,
+                    lcl_total, ucl_total, percent_row, se_row, t_crit_row,
+                    lcl_row, ucl_row)
 
     # Add freq_table class to out
     class(out) <- c("freq_table_two_way", class(out))
-
-  } else { # Grouped by more than two variables, or not grouped.
-    stop(
-      paste(
-        "Expecting .data to be a grouped data frame with 2 or 3 columns. Instead
-        .data had", ncol(out)
-      )
-    )
   }
 
   # Return tibble of results

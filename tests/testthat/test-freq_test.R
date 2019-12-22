@@ -17,7 +17,7 @@ testthat::test_that("Dimensions of the object returned by freq_test are as expec
   columns <- ncol(df)
 
   testthat::expect_equal(rows, 2L)
-  testthat::expect_equal(columns, 12L)
+  testthat::expect_equal(columns, 14L)
 })
 
 testthat::test_that("Class of freq_table_one_way is freq_table_one_way", {
@@ -68,7 +68,7 @@ testthat::test_that("Dimensions of the object returned by freq_table are as expe
   columns <- ncol(df)
 
   testthat::expect_equal(rows, 6L)
-  testthat::expect_equal(columns, 18L)
+  testthat::expect_equal(columns, 25L)
 })
 
 testthat::test_that("Class of freq_table_two_way is freq_table_two_way", {
