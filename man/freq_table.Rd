@@ -4,14 +4,7 @@
 \alias{freq_table}
 \title{Estimate Percents and 95 Percent Confidence Intervals in dplyr Pipelines}
 \usage{
-freq_table(
-  .data,
-  ...,
-  t_prob = 0.975,
-  ci_type = "logit",
-  output = "default",
-  digits = 2
-)
+freq_table(.data, ..., t_prob = 0.975, ci_type = "logit")
 }
 \arguments{
 \item{.data}{A data frame. If it is already grouped (i.e., class == "grouped_df")
@@ -42,21 +35,6 @@ distribution with n - 1 degrees of freedom.}
 The default for one-way and two-way tables is logit transformed ("log"). For
 one-way tables only, ci_type can optionally calculate Wald ("linear")
 confidence intervals using the "wald" argument.}
-
-\item{output}{Options for this parameter are "default" and "all".
-
-  For one-way tables with default output, the count, overall n, percent
-  and 95 percent confidence interval are returned. Using output = "all" also
-  returns the standard error of the percent and the critical t-value.
-
-  For two-way tables with default output, the count, group n, overall n, row
-  percent, and 95 percent confidence interval for the row percent are
-  returned. Using output = "all" also returns the overall percent, standard
-  error of the percent, 95 percent confidence interval for the overall
-  percent, the standard error of the row percent, and the critical t-values.}
-
-\item{digits}{Round percentages and confidence intervals to digits.
-Default is 2.}
 }
 \value{
 A tibble with class "freq_table_one_way" or "freq_table_two_way"

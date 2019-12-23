@@ -49,21 +49,6 @@
 #'   one-way tables only, ci_type can optionally calculate Wald ("linear")
 #'   confidence intervals using the "wald" argument.
 #'
-#' @param output Options for this parameter are "default" and "all".
-#'
-#'   For one-way tables with default output, the count, overall n, percent
-#'   and 95 percent confidence interval are returned. Using output = "all" also
-#'   returns the standard error of the percent and the critical t-value.
-#'
-#'   For two-way tables with default output, the count, group n, overall n, row
-#'   percent, and 95 percent confidence interval for the row percent are
-#'   returned. Using output = "all" also returns the overall percent, standard
-#'   error of the percent, 95 percent confidence interval for the overall
-#'   percent, the standard error of the row percent, and the critical t-values.
-#'
-#' @param digits Round percentages and confidence intervals to digits.
-#'   Default is 2.
-#'
 #' @return A tibble with class "freq_table_one_way" or "freq_table_two_way"
 #' @export
 #' @importFrom dplyr %>%
@@ -106,7 +91,7 @@
 #' #> 4      am       1     cyl       4     8    13      32       61.54   32.30   84.29
 #' #> 5      am       1     cyl       6     3    13      32       23.08    6.91   54.82
 #' #> 6      am       1     cyl       8     2    13      32       15.38    3.43   48.18
-freq_table <- function(.data, ..., t_prob = 0.975, ci_type = "logit", output = "default", digits = 2) {
+freq_table <- function(.data, ..., t_prob = 0.975, ci_type = "logit") {
 
   # ------------------------------------------------------------------
   # Prevents R CMD check: "no visible binding for global variable ‘.’"
@@ -117,8 +102,8 @@ freq_table <- function(.data, ..., t_prob = 0.975, ci_type = "logit", output = "
   percent_total = n_row = prop_row = se_row = prop_log_row = t_crit_row = NULL
   se_log_row = lcl_row_log = ucl_row_log = percent_row = lcl_row = NULL
   ucl_row = lcl_total = ucl_total = ucl_total_log = n_groups = NULL
-  ci_type_arg = output_arg = `.` = var = row_var = row_cat = NULL
-  col_var = col_cat = NULL
+  ci_type_arg = var = row_var = row_cat = NULL
+  col_var = col_cat = `.` = NULL
 
   # ===========================================================================
   # Enquo arguments
@@ -126,7 +111,6 @@ freq_table <- function(.data, ..., t_prob = 0.975, ci_type = "logit", output = "
   # use quotation marks around the argument being passed.
   # ===========================================================================
   ci_type_arg <- rlang::enquo(ci_type) %>% rlang::quo_name()
-  output_arg  <- rlang::enquo(output) %>% rlang::quo_name()
 
   # ===========================================================================
   # Check for grouped tibble
@@ -187,11 +171,8 @@ freq_table <- function(.data, ..., t_prob = 0.975, ci_type = "logit", output = "
           ucl_wald = prop + t_crit * se,
           percent  = prop * 100,
           se       = se * 100,
-          lcl_wald = lcl_wald * 100,
-          ucl_wald = ucl_wald * 100,
-          percent  = round(percent, digits),  # Round percent
-          lcl      = round(lcl_wald, digits), # Round confidence intervals
-          ucl      = round(ucl_wald, digits)
+          lcl      = lcl_wald * 100,
+          ucl      = ucl_wald * 100
         )
 
       # Calculate logit transformed CI's
@@ -210,11 +191,8 @@ freq_table <- function(.data, ..., t_prob = 0.975, ci_type = "logit", output = "
           ucl_log  = exp(ucl_log) / (1 + exp(ucl_log)),
           percent  = prop * 100,
           se       = se * 100,
-          lcl_log  = lcl_log * 100,
-          ucl_log  = ucl_log * 100,
-          percent  = round(percent, digits), # Round percent
-          lcl      = round(lcl_log, digits), # Round confidence intervals
-          ucl      = round(ucl_log, digits)
+          lcl      = lcl_log * 100,
+          ucl      = ucl_log * 100
         )
     }
 
@@ -267,11 +245,8 @@ freq_table <- function(.data, ..., t_prob = 0.975, ci_type = "logit", output = "
         ucl_total_log  = exp(ucl_total_log) / (1 + exp(ucl_total_log)),
         percent_total  = prop_total * 100,
         se_total       = se_total * 100,
-        lcl_total_log  = lcl_total_log * 100,
-        ucl_total_log  = ucl_total_log * 100,
-        percent_total  = round(percent_total, digits), # Round percent
-        lcl_total      = round(lcl_total_log, digits), # Round confidence intervals
-        ucl_total      = round(ucl_total_log, digits),
+        lcl_total      = lcl_total_log * 100,
+        ucl_total      = ucl_total_log * 100,
 
 
         # Estimate row percent se and CI's
@@ -286,11 +261,8 @@ freq_table <- function(.data, ..., t_prob = 0.975, ci_type = "logit", output = "
         ucl_row_log  = exp(ucl_row_log) / (1 + exp(ucl_row_log)),
         percent_row  = prop_row * 100,
         se_row       = se_row * 100,
-        lcl_row_log  = lcl_row_log * 100,
-        ucl_row_log  = ucl_row_log * 100,
-        percent_row  = round(percent_row, digits), # Round percent
-        lcl_row      = round(lcl_row_log, digits), # Round confidence intervals
-        ucl_row      = round(ucl_row_log, digits)
+        lcl_row      = lcl_row_log * 100,
+        ucl_row      = ucl_row_log * 100
       )
 
     # Control output
