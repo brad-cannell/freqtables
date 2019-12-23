@@ -82,7 +82,7 @@ mtcars \%>\%
 #' # Two-way frequency tables with with stats = "n and row percent"
 
 mtcars \%>\%
-  freq_table(am, cyl, output = all) \%>\% # Don't forget output = all
+  freq_table(am, cyl) \%>\%
   format_table(stats = "n and row percent")
 
 #> # A tibble: 6 x 5
