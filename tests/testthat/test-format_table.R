@@ -24,7 +24,7 @@ testthat::test_that("The correct var name is returned by format_table", {
 
 testthat::test_that("The correct variables levels are returned by format_table", {
   cat <- pull(df, cat)
-  testthat::expect_equal(cat, c(0L, 1L))
+  testthat::expect_equal(cat, c("0", "1"))
 })
 
 # Uncomment after you add rounding to freq_format
@@ -55,7 +55,7 @@ testthat::test_that("The correct var name is returned by format_table", {
 
 testthat::test_that("The correct variables levels are returned by format_table", {
   cat <- pull(df, cat)
-  testthat::expect_equal(cat, c(0L, 1L))
+  testthat::expect_equal(cat, c("0", "1"))
 })
 
 # Uncomment after you add rounding to freq_format
@@ -91,8 +91,8 @@ testthat::test_that("The correct variables levels are returned by format_table",
   row_cat <- pull(df, row_cat)
   col_cat <- pull(df, col_cat)
 
-  testthat::expect_equal(row_cat, c(0L, 0L, 1L, 1L))
-  testthat::expect_equal(col_cat, c(0L, 1L, 0L, 1L))
+  testthat::expect_equal(row_cat, c("0", "0", "1", "1"))
+  testthat::expect_equal(col_cat, c("0", "1", "0", "1"))
 })
 
 # Uncomment after you add rounding to freq_format
@@ -129,8 +129,8 @@ testthat::test_that("The correct variables levels are returned by format_table",
   row_cat <- pull(df, row_cat)
   col_cat <- pull(df, col_cat)
 
-  testthat::expect_equal(row_cat, c(0L, 0L, 1L, 1L))
-  testthat::expect_equal(col_cat, c(0L, 1L, 0L, 1L))
+  testthat::expect_equal(row_cat, c("0", "0", "1", "1"))
+  testthat::expect_equal(col_cat, c("0", "1", "0", "1"))
 })
 
 # Uncomment after you add rounding to freq_format

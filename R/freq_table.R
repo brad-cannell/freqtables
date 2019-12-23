@@ -103,7 +103,7 @@ freq_table <- function(.data, ..., t_prob = 0.975, ci_type = "logit") {
   se_log_row = lcl_row_log = ucl_row_log = percent_row = lcl_row = NULL
   ucl_row = lcl_total = ucl_total = ucl_total_log = n_groups = NULL
   ci_type_arg = var = row_var = row_cat = NULL
-  col_var = col_cat = `.` = NULL
+  col_var = col_cat = `.` = vars = NULL
 
   # ===========================================================================
   # Enquo arguments
@@ -147,7 +147,9 @@ freq_table <- function(.data, ..., t_prob = 0.975, ci_type = "logit") {
     out <- .data %>%
       dplyr::mutate(var = !!names(.[1])) %>%
       dplyr::rename(cat = !!names(.[1])) %>%
-      dplyr::select(var, cat, n)
+      dplyr::select(var, cat, n) %>%
+      # Coerce all variable names and categories (i.e., 0 and 1) to character
+      dplyr::mutate_at(vars(-n), as.character)
 
     # Update out to include elements needed for Wald and Logit transformed CI's
     # One-way tables
@@ -224,6 +226,8 @@ freq_table <- function(.data, ..., t_prob = 0.975, ci_type = "logit") {
         col_cat = !!names(.[2])
       ) %>%
       dplyr::select(row_var, row_cat, col_var, col_cat, n) %>%
+      # Coerce all variable names and categories (i.e., 0 and 1) to character
+      dplyr::mutate_at(vars(-n), as.character) %>%
 
       # Calculate within row n
       dplyr::group_by(row_cat) %>%

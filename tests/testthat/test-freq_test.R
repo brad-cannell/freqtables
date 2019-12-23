@@ -36,7 +36,7 @@ testthat::test_that("The correct cat var name is returned by freq_table", {
 
 testthat::test_that("The correct variables levels are returned by freq_test", {
   levels <- pull(df, cat)
-  testthat::expect_equal(levels, c(0, 1))
+  testthat::expect_equal(levels, c("0", "1"))
 })
 
 testthat::test_that("The correct default statistics are returned by freq_test", {
@@ -87,8 +87,8 @@ testthat::test_that("The correct variables levels are returned by freq_table", {
   row_cat <- pull(df, row_cat)
   col_cat <- pull(df, col_cat)
 
-  testthat::expect_equal(row_cat, c(0, 0, 0, 1, 1, 1))
-  testthat::expect_equal(col_cat, c(4, 6, 8, 4, 6, 8))
+  testthat::expect_equal(row_cat, c("0", "0", "0", "1", "1", "1"))
+  testthat::expect_equal(col_cat, c("4", "6", "8", "4", "6", "8"))
 })
 
 testthat::test_that("The correct default statistics are returned by freq_table", {
