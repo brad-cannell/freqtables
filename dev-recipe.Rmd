@@ -1,0 +1,52 @@
+---
+title: "Develop recipe argument"
+---
+
+# Load packages and data
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(comment = NA)
+Sys.setenv(TZ = "US/Central")
+```
+
+```{r message=FALSE}
+library(dplyr)
+library(freqtables)
+```
+
+```{r}
+data(mtcars)
+```
+
+```{r}
+ft <- mtcars %>% 
+  freq_table(am) %>% 
+  print()
+```
+
+```{r}
+name <- "n_percent"
+recipe <- "n (percent)"
+recipe <- stringr::str_split("n (percent)", "\\b")
+recipe <- unlist(recipe)[-1]
+for(i in seq(nrow(ft))) {
+  ingredients <- c()
+  for(j in seq_along(recipe)) {
+    if(recipe[j] %in% names(ft)){
+      stat <- ft[[recipe[j]]][i]
+      ingredients <- c(ingredients, stat)
+      # print(ft[[recipe[j]]][i])
+    } else {
+      ingredients <- c(ingredients, recipe[j])
+    }
+  }
+  ft[i, name] <- paste(ingredients, collapse = "")
+}
+
+ft %>% 
+  select(var, cat, name)
+```
+
+
+
+
