@@ -1,4 +1,4 @@
-#' Format freq_table Output for Publication and Dissemination
+#' @title Format freq_table Output for Publication and Dissemination
 #'
 #' @description The freq_format function is intended to make it quick and easy to
 #'   format the output of the freq_table function for tables that may be used
