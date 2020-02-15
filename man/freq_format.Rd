@@ -4,22 +4,26 @@
 \alias{freq_format}
 \title{Format freq_table Output for Publication and Dissemination}
 \usage{
-freq_format(.data, ..., name = NA, decimals = 2)
+freq_format(.data, recipe, name = NA, digits = NA)
 }
 \arguments{
 \item{.data}{A data frame of class "freq_table_one_way" or "freq_table_two_way".}
 
-\item{...}{A recipe used to create a new column from existing freq_table columns.}
+\item{recipe}{A recipe used to create a new column from existing freq_table
+columns. The recipe must be in the form of a quoted string. It may contain
+any combination of column names, spaces, and characters. For example:
+"n (percent)" or "percent (lcl - ucl)".}
 
-\item{name}{A name to assign to the column created by the recipe in ....}
+\item{name}{An optional name to assign to the column created by the recipe.
+The default name is "formatted_stats"}
 
-\item{decimals}{The number of decimal places to display. Default value is 2.}
+\item{digits}{The number of decimal places to display.}
 }
 \value{
 A tibble
 }
 \description{
-The freq_format is intended make it quick and easy to
+The freq_format function is intended to make it quick and easy to
   format the output of the freq_table function for tables that may be used
   for publication. For example, a proportion and 95% confidence interval
   could be formatted as "24.00 (21.00 - 27.00)."
@@ -34,7 +38,12 @@ data(mtcars)
 
 mtcars \%>\%
   freq_table(am) \%>\%
-  freq_format(name = "percent_95", percent, " (", lcl, " - ", ucl, ")")
+  freq_format(
+    recipe = "percent (lcl - ucl)",
+    name = "percent_95",
+    digits = 2
+  ) \%>\%
+  select(var, cat, percent_95)
 #> # A tibble: 2 x 3
 #>   var   cat   percent_95
 #>   <chr> <chr> <chr>
@@ -45,8 +54,12 @@ mtcars \%>\%
 
 mtcars \%>\%
   freq_table(am, cyl) \%>\%
-  freq_format(name = "percent_95", percent_row, " (", lcl_row, " - ", ucl_row, ")")
-
+    freq_format(
+    recipe = "percent_row (lcl_row - ucl_row)",
+    name = "percent_95",
+    digits = 2
+  ) \%>\%
+  select(1:4, percent_95)
 #> # A tibble: 6 x 5
 #>   row_var row_cat col_var col_cat percent_95
 #>   <chr>   <chr>   <chr>   <chr>   <chr>
