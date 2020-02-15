@@ -6,14 +6,14 @@
 \alias{freq_test.freq_table_two_way}
 \title{Hypothesis Testing For Frequency Tables}
 \usage{
-freq_test(x, ...)
+freq_test(.data, ...)
 
-\method{freq_test}{freq_table_one_way}(x, ...)
+\method{freq_test}{freq_table_one_way}(.data, ...)
 
-\method{freq_test}{freq_table_two_way}(x, ...)
+\method{freq_test}{freq_table_two_way}(.data, ...)
 }
 \arguments{
-\item{x}{A tibble of class freq_table_one_way or freq_table_two_way.}
+\item{.data}{A tibble of class freq_table_one_way or freq_table_two_way.}
 
 \item{...}{Other parameters to be passed on.}
 

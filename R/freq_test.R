@@ -9,7 +9,7 @@
 #'   chi-square test of independence Fisher's exact test. When cell counts
 #'   are <= 5, Fisher's Exact Test is considered more reliable.
 #'
-#' @param x A tibble of class freq_table_one_way or freq_table_two_way.
+#' @param .data A tibble of class freq_table_one_way or freq_table_two_way.
 #'
 #' @param ... Other parameters to be passed on.
 #'
@@ -59,7 +59,7 @@
 # =============================================================================
 # S3 Generic function
 # =============================================================================
-freq_test <- function(x, ...) {
+freq_test <- function(.data, ...) {
   UseMethod("freq_test")
 }
 
@@ -73,28 +73,28 @@ freq_test <- function(x, ...) {
 #' @export
 #' @rdname freq_test
 
-freq_test.freq_table_one_way <- function(x, ...) {
+freq_test.freq_table_one_way <- function(.data, ...) {
 
   # ------------------------------------------------------------------
   # Prevents R CMD check: "no visible binding for global variable ‘.’"
   # ------------------------------------------------------------------
-  n = n_total = n_expected = chi2_contrib = pchisq = chi2_pearson = df = NULL
+  n = n_total = n_expected = chi2_contrib = pchisq = chi2_pearson = df = . = NULL
 
-  # Check to make sure x is a freq_table_one_way
+  # Check to make sure .data is a freq_table_one_way
   # --------------------------------------------
-  if (!("freq_table_one_way" %in% class(x))) {
-    stop("x must be of class freq_table_one_way. It is currently: ", class(x))
+  if (!("freq_table_one_way" %in% class(.data))) {
+    stop(".data must be of class freq_table_one_way. It is currently: ", class(.data))
   }
 
   # Calculate chi-square test of equality
-  # Test whether population is equally distributed across categories of x
+  # Test whether population is equally distributed across categories of .data
   # ---------------------------------------------------------------------
-  out <- x %>%
+  out <- .data %>%
     dplyr::mutate(
-      n_expected     = n_total / nrow(x),
+      n_expected     = n_total / nrow(.),
       chi2_contrib   = (n - n_expected)**2 / n_expected,
       chi2_pearson   = sum(chi2_contrib),
-      df             = nrow(x) - 1,
+      df             = nrow(.) - 1,
       p_chi2_pearson = pchisq(chi2_pearson, df, lower.tail = FALSE)
     )
 
@@ -117,7 +117,7 @@ freq_test.freq_table_one_way <- function(x, ...) {
 #' @export
 #' @rdname freq_test
 
-freq_test.freq_table_two_way <- function(x, ...) {
+freq_test.freq_table_two_way <- function(.data, ...) {
 
   # ------------------------------------------------------------------
   # Prevents R CMD check: "no visible binding for global variable ‘.’"
@@ -125,16 +125,16 @@ freq_test.freq_table_two_way <- function(x, ...) {
   n_row = n_col = n_total = n_expected = chi2_contrib = r = pchisq = NULL
   chi2_pearson = df = col_cat = n = row_cat = NULL
 
-  # Check to make sure x is a freq_table_two_way
+  # Check to make sure .data is a freq_table_two_way
   # --------------------------------------------
-  if (!("freq_table_two_way" %in% class(x))) {
-    stop("x must be of class freq_table_two_way. It is currently: ", class(x))
+  if (!("freq_table_two_way" %in% class(.data))) {
+    stop(".data must be of class freq_table_two_way. It is currently: ", class(.data))
   }
 
   # Calculate Pearson's Chi-square test
-  # Test whether population is equally distributed across categories of x
+  # Test whether population is equally distributed across categories of .data
   # ---------------------------------------------------------------------
-  out <- x %>%
+  out <- .data %>%
     dplyr::group_by(col_cat) %>%
     dplyr::mutate(n_col = sum(n)) %>%  # Find marginal totals for "columns"
     dplyr::ungroup() %>%
@@ -156,8 +156,8 @@ freq_test.freq_table_two_way <- function(x, ...) {
 
     # Add Fisher's Exact Test
     # -----------------------
-    # Convert x to a matrix
-    n_s  <- dplyr::pull(x, n)
+    # Convert .data to a matrix
+    n_s  <- dplyr::pull(.data, n)
     mx   <- matrix(n_s, nrow = 2, byrow = TRUE)
 
     # Use R's built-in fisher.test
