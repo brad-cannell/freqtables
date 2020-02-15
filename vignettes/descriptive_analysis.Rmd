@@ -2,34 +2,20 @@
 title: "Descriptive Analysis with freqtables"
 author: "Brad Cannell"
 date: "Created: 2017-11-10 <br> Updated: `r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    css: styles.css
 vignette: >
   %\VignetteIndexEntry{Descriptive Analysis in a dplyr Pipeline}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-<style>
-  hr 
-  {
-    background-color: #66b3ff;
-    height: 1px;
-  }
-  blockquote
-  {
-    font-size: 12pt;
-    font-style: italic;
-    border-left: 4px solid #66b3ff;
-  }
-</style>
-
 Table of contents:
 
+[Overview](#overview)   
+
 [About data](#about-data)
-
-[Univariate means and 95% confidence intervals](#univariate-means)
-
-[Bivariate means and 95% confidence intervals](#bivariate-means)
 
 [Univariate percentages and 95% log transformed confidence intervals](#one-way-log)
 
@@ -39,11 +25,19 @@ Table of contents:
 
 [Interpretation of confidence intervals](#interpretation)
 
--------------------------------------------------------------------------------
+# Overview
 
-I initially created this file to help develop the `freq_table` function in `bfuncs`. I've since adapted it to encompass general descriptive data analysis using R in a `dplyr` pipeline. Herein, descriptive analysis refers to basic univariate or bivariate statistics calculated for continuous and categorical variables (e.g., means and percentages). This vignette is not intended to be representative of every possible descriptive analysis that one may want to carry out on a given data set. Rather, it is intended to be representative of the descriptive analyses I most commonly need while conducting epidemiologic research.
+The `freqtables` package is designed to quickly make tables of descriptive statistics (i.e., counts, percentages, confidence intervals) for categorical variables. This package is designed to work in a tidyverse pipeline and consideration has been given to get results from R to Microsoft Word ® with minimal pain. 
 
-```{r}
+The package currently consistes of the following four functions:   
+1. **freq_table**: Estimate Percentages and 95 Percent Confidence Intervals in dplyr Pipelines.   
+2. **freq_test**: Hypothesis Testing For Frequency Tables.    
+3. **freq_format**: Format freq_table Output for Publication and Dissemination.   
+4. **freq_group_n**: Formatted Group Sample Size for Tables   
+
+This vignette is not intended to be representative of every possible descriptive analysis that one may want to carry out on a given data set. Rather, it is intended to be representative of descriptive analyses that are most commonly need while conducting epidemiologic research.
+
+```{r message=FALSE}
 library(dplyr)
 library(freqtables)
 ```
@@ -53,28 +47,9 @@ data(mtcars)
 ```
 
 
-
-
--------------------------------------------------------------------------------
-
-# About data {#about-data}
-
-This is a really simple function. Frequently when I am working on an analysis project, I want to do a quick check of the data, but can't allow any of the raw data values to be exposed for privacy reasons. In such cases `str()` doesn't work, because some data values are visible in the returned output. Conversely, the `dim()` function works, but it's return value may not be intuitive to people viewing my code who aren't familiar with R. Therefore, I created the `about_data` function. 
-
-I took this out in favor of using `dim()`. Keep it simple.
-
-```{r}
-dim(mtcars)
-```
-
-
-
-
--------------------------------------------------------------------------------
-
 # Univariate percentages and 95% Wald confidence intervals {#one-way-log}
 
-In this section I provide an example of calculating common univariate descriptive statistics for categorical variables. Again, we are assuming that we are working in a *dplyr* pipeline, and that we are passing a grouped data frame to the `freq_table` function.
+In this section we provide an example of calculating common univariate descriptive statistics for a single categorical variable. Again, we are assuming that we are working in a `dplyr` pipeline and that we are passing a grouped data frame to the `freq_table` function.
 
 ## Logit transformed confidence intervals
 
@@ -85,11 +60,18 @@ mtcars %>%
   freq_table(am)
 ```
 
-&nbsp;
+**Interpretation of results:**    
+1. `var` contains the name of the variable passed to the `freq_table` function.   
+2. `cat` contains the unique levels (values) of the variable in `var`.    
+3. `n` contains a count of the number of rows in the data frame that have the value `cat` for the variable `var`.   
+4. `n_total` contains the total number of non-missing values for the variable `var`.   
+5. `percent` = `n` / `n_total`.   
+6. `se` = $\sqrt{proportion * (1 - proportion) / (n - 1)}$   
+7. `t_crit` = The critical value from Student's t distribution with n - 1 degrees of freedom. The default probability value is 0.975, which corresponds to an alpha of 0.05.    
+8. `lcl` is the lower bound of the confidence interval. By default, it is a 95% confidence interval.   
+9. `ucl` is the upper bound of the confidence interval. By default, it is a 95% confidence interval.  
 
 ![](freq_am_stata.png){width=600px}
-
-&nbsp;
 
 ## Wald confidence intervals {#one-way-wald}
 
@@ -106,18 +88,23 @@ mtcars %>%
   freq_table(am, ci_type = "wald")
 ```
 
-&nbsp;
-
 ![](freq_am_sas.png){width=600}
 
 [top](#top)
 
-&nbsp;
 
+## Returning arbitrary confidence intervals
 
+The default behavior of `freq_table` is to return 95% confidence intervals (two-sided). However, this behavior can be adjusted to return any alpha level. For example, to return 99% confidence intervals instead, just calculate 1 - alpha/2 and enter that value into the `t_prob` argument of `freq_table`, where alpha equals percent confidence interval (as a proportion) minus 1 (i.e., 1 - 0.99 = 0.01). So, 1 - 0.01/2 = 0.995.
 
+Here is an example of calculating 99% confidence intervals with `freq_table`.
 
--------------------------------------------------------------------------------
+```{r}
+mtcars %>% 
+  freq_table(am, t_prob = 0.995)
+```
+
+Notice that the lower bounds of the 99% confidence limits (34.88730 and 20.05315) are _less than_ the lower bounds of the 95% confidence limits (40.94225 and 24.50235). Likewise, the upper bounds of the 99% confidence limits (79.94685 and 65.11270) are _greater than_ the upper bounds of the 95% confidence limits (75.49765 and 59.05775)
 
 # Bivariate percentages and 95% log transformed confidence intervals {#two-way-log}
 
