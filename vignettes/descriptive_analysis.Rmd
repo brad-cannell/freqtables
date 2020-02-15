@@ -95,13 +95,11 @@ mtcars %>%
 
 ## Returning arbitrary confidence intervals
 
-The default behavior of `freq_table` is to return 95% confidence intervals (two-sided). However, this behavior can be adjusted to return any alpha level. For example, to return 99% confidence intervals instead, just calculate 1 - alpha/2 and enter that value into the `t_prob` argument of `freq_table`, where alpha equals percent confidence interval (as a proportion) minus 1 (i.e., 1 - 0.99 = 0.01). So, 1 - 0.01/2 = 0.995.
-
-Here is an example of calculating 99% confidence intervals with `freq_table`.
+The default behavior of `freq_table` is to return 95% confidence intervals (two-sided). However, this behavior can be adjusted to return any alpha level. For example, to return 99% confidence intervals instead just pass 99 to the `percent_ci` parameter of `freq_table` as demonstrated below.
 
 ```{r}
 mtcars %>% 
-  freq_table(am, t_prob = 0.995)
+  freq_table(am, percent_ci = 99)
 ```
 
 Notice that the lower bounds of the 99% confidence limits (34.88730 and 20.05315) are _less than_ the lower bounds of the 95% confidence limits (40.94225 and 24.50235). Likewise, the upper bounds of the 99% confidence limits (79.94685 and 65.11270) are _greater than_ the upper bounds of the 95% confidence limits (75.49765 and 59.05775)

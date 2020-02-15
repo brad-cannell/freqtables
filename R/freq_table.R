@@ -40,9 +40,12 @@
 #'   a count (n) equal to zero. Further, the confidence intervals will be
 #'   equal to NaN.
 #'
-#' @param t_prob (1 - alpha / 2). Default value is 0.975, which corresponds to
-#'   an alpha of 0.05. Used to calculate a critical value from Student's t
-#'   distribution with n - 1 degrees of freedom.
+#' @param percent_ci sets the level, as a percentage, for confidence intervals.
+#'   The default is `percent_ci = 95` for 95% confidence intervals. The
+#'   percentage value entered (e.g., 95) is converted to an alpha level as
+#'   1 - (percent_ci / 100). It is then converted to a two-sided probability
+#'   as (1 - alpha / 2), which is used to calculate a critical value from
+#'   Student's t distribution with n - 1 degrees of freedom.
 #'
 #' @param ci_type Selects the method used to estimate 95 percent confidence intervals.
 #'   The default for one-way and two-way tables is logit transformed ("log"). For
@@ -98,7 +101,7 @@
 #' #> 4      am       1     cyl       4     8    13      32       61.54   32.30   84.29
 #' #> 5      am       1     cyl       6     3    13      32       23.08    6.91   54.82
 #' #> 6      am       1     cyl       8     2    13      32       15.38    3.43   48.18
-freq_table <- function(.data, ..., t_prob = 0.975, ci_type = "logit", drop = FALSE) {
+freq_table <- function(.data, ..., percent_ci = 95, ci_type = "logit", drop = FALSE) {
 
   # ------------------------------------------------------------------
   # Prevents R CMD check: "no visible binding for global variable ‘.’"
@@ -110,7 +113,7 @@ freq_table <- function(.data, ..., t_prob = 0.975, ci_type = "logit", drop = FAL
   se_log_row = lcl_row_log = ucl_row_log = percent_row = lcl_row = NULL
   ucl_row = lcl_total = ucl_total = ucl_total_log = n_groups = NULL
   ci_type_arg = var = row_var = row_cat = NULL
-  col_var = col_cat = `.` = vars = NULL
+  col_var = col_cat = `.` = vars = alpha = NULL
 
   # ===========================================================================
   # Enquo arguments
@@ -143,6 +146,17 @@ freq_table <- function(.data, ..., t_prob = 0.975, ci_type = "logit", drop = FAL
     stop("Currently, freq_table accepts one or two variables -- not more. You entered ",
          n_groups, " into the ... argument.")
   }
+
+  # ===========================================================================
+  # Convert percent_95 to t_prob
+  # 2020-02-14: Previously, t_prob was an argument to freq_table and was passed
+  # directly to stats::qt(). However, t_prob is not necessarily intuitive to
+  # many users. Therefore, they will not enter, for example, 95 as an argument
+  # to the percent_95 parameter and that will be converted to a t_prob of 0.975
+  # as t_prob = 1 - (percent_ci / 100)/2
+  # ===========================================================================
+  alpha <-  1 - (percent_ci / 100)
+  t_prob <- 1 - alpha / 2
 
   # ===========================================================================
   # One-way tables

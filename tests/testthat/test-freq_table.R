@@ -179,11 +179,8 @@ testthat::test_that("The correct overall percents and 95% CI's are returned", {
 
 # 99% confidence intervals instead of 95% confidence intervals
 # ------------------------------------------------------------
-alpha <- 1 - .99
-t <- 1 - alpha / 2
-
 df <- mtcars %>%
-  freq_table(am, t_prob = t)
+  freq_table(am, percent_ci = 99)
 
 testthat::test_that("The 99% confidence intervals are correct", {
   lcl <- pull(df, lcl) %>% round(2)
@@ -192,23 +189,6 @@ testthat::test_that("The 99% confidence intervals are correct", {
   testthat::expect_equal(lcl, c(34.89, 20.05))
   testthat::expect_equal(ucl, c(79.95, 65.11))
 })
-
-# digits = 3
-# ----------
-df <- mtcars %>%
-  freq_table(am)
-
-testthat::test_that("The 'digits' parameter works as expected", {
-  percent <- pull(df, percent) %>% round(3)
-  lcl     <- pull(df, lcl) %>% round(3)
-  ucl     <- pull(df, ucl) %>% round(3)
-
-  testthat::expect_equal(percent, c(59.375, 40.625))
-  testthat::expect_equal(lcl,     c(40.942, 24.502))
-  testthat::expect_equal(ucl,     c(75.498, 59.058))
-})
-
-
 
 
 # =============================================================================
