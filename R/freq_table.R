@@ -49,6 +49,13 @@
 #'   one-way tables only, ci_type can optionally calculate Wald ("linear")
 #'   confidence intervals using the "wald" argument.
 #'
+#' @param drop If false (default) unobserved factor levels will be included in
+#'   the returned frequency table with an n of 0. For example, if you have a
+#'   factor variable, gender, but no males in your data then frequency table
+#'   returned by freq_table(df, gender) would still contain a row for
+#'   males with the variable n = 0. If drop is set to TRUE, then the resulting
+#'   frequency table would not include a row for males at all.
+#'
 #' @return A tibble with class "freq_table_one_way" or "freq_table_two_way"
 #' @export
 #' @importFrom dplyr %>%
@@ -91,7 +98,7 @@
 #' #> 4      am       1     cyl       4     8    13      32       61.54   32.30   84.29
 #' #> 5      am       1     cyl       6     3    13      32       23.08    6.91   54.82
 #' #> 6      am       1     cyl       8     2    13      32       15.38    3.43   48.18
-freq_table <- function(.data, ..., t_prob = 0.975, ci_type = "logit") {
+freq_table <- function(.data, ..., t_prob = 0.975, ci_type = "logit", drop = FALSE) {
 
   # ------------------------------------------------------------------
   # Prevents R CMD check: "no visible binding for global variable ‘.’"
@@ -126,7 +133,7 @@ freq_table <- function(.data, ..., t_prob = 0.975, ci_type = "logit") {
   # Get within group counts
   # .drop = FALSE creates an explicit n = 0 for unobserved factor levels
   # ===========================================================================
-  .data <- dplyr::count(.data, ..., .drop = FALSE)
+  .data <- dplyr::count(.data, ..., .drop = drop)
 
   # ===========================================================================
   # Check for number of group vars:
