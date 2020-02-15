@@ -212,6 +212,56 @@ testthat::test_that("The 'digits' parameter works as expected", {
 
 
 # =============================================================================
+# Check optionally dropping factor levels
+# =============================================================================
+
+# Example: I want to retain factor levels with zero observations from the
+# freq_table results
+df <- data.frame(
+  id = c(1, 2, 3, 4),
+  gender = factor(c(1, 1, 1, 1), levels = c(1, 2), labels = c("female", "male"))
+)
+
+df <- df %>%
+  freq_table(gender)
+
+testthat::test_that("Unobserved factor level is returned by freq_table by default", {
+  cats <- df$cat
+  testthat::expect_equal(cats, c("female", "male"))
+})
+
+# Example: I want to drop factor levels with zero observations from the
+# freq_table results
+set.seed(123)
+df <- data.frame(
+  id = factor(rep(1:3, each = 4)),
+  period = factor(rep(1:4)),
+  x = factor(sample(c(0, 1), size = 12, replace = TRUE))
+)
+
+# Now, supppose we want to drop period 3 & 4 from my analysis.
+# By default, this will give us 0's for period 3 & 4, but we want to drop them.
+df <- df %>%
+  filter(period %in% c(1, 2))
+
+ft <- df %>%
+  freq_table(period)
+
+testthat::test_that("Unobserved factor level is returned by freq_table by default", {
+  cats <- ft$cat
+  testthat::expect_equal(cats, c("1", "2", "3", "4"))
+})
+
+ft <- df %>%
+  freq_table(period, drop = TRUE)
+
+testthat::test_that("Unobserved factor level is returned by freq_table when drop = FALSE", {
+  cats <- ft$cat
+  testthat::expect_equal(cats, c("1", "2"))
+})
+
+
+# =============================================================================
 # Clean up
 # =============================================================================
 rm(mtcars, df, alpha, t)

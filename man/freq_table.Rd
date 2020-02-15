@@ -4,7 +4,7 @@
 \alias{freq_table}
 \title{Estimate Percents and 95 Percent Confidence Intervals in dplyr Pipelines}
 \usage{
-freq_table(.data, ..., t_prob = 0.975, ci_type = "logit")
+freq_table(.data, ..., t_prob = 0.975, ci_type = "logit", drop = FALSE)
 }
 \arguments{
 \item{.data}{A data frame. If it is already grouped (i.e., class == "grouped_df")
@@ -35,6 +35,13 @@ distribution with n - 1 degrees of freedom.}
 The default for one-way and two-way tables is logit transformed ("log"). For
 one-way tables only, ci_type can optionally calculate Wald ("linear")
 confidence intervals using the "wald" argument.}
+
+\item{drop}{If false (default) unobserved factor levels will be included in
+the returned frequency table with an n of 0. For example, if you have a
+factor variable, gender, but no males in your data then frequency table
+returned by freq_table(df, gender) would still contain a row for
+males with the variable n = 0. If drop is set to TRUE, then the resulting
+frequency table would not include a row for males at all.}
 }
 \value{
 A tibble with class "freq_table_one_way" or "freq_table_two_way"
