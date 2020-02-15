@@ -4,7 +4,7 @@
 \alias{freq_table}
 \title{Estimate Percentages and 95 Percent Confidence Intervals in dplyr Pipelines}
 \usage{
-freq_table(.data, ..., t_prob = 0.975, ci_type = "logit", drop = FALSE)
+freq_table(.data, ..., percent_ci = 95, ci_type = "logit", drop = FALSE)
 }
 \arguments{
 \item{.data}{A data frame. If it is already grouped (i.e., class == "grouped_df")
@@ -27,9 +27,12 @@ freq_table(.data, ..., t_prob = 0.975, ci_type = "logit", drop = FALSE)
   a count (n) equal to zero. Further, the confidence intervals will be
   equal to NaN.}
 
-\item{t_prob}{(1 - alpha / 2). Default value is 0.975, which corresponds to
-an alpha of 0.05. Used to calculate a critical value from Student's t
-distribution with n - 1 degrees of freedom.}
+\item{percent_ci}{sets the level, as a percentage, for confidence intervals.
+The default is `percent_ci = 95` for 95% confidence intervals. The
+percentage value entered (e.g., 95) is converted to an alpha level as
+1 - (percent_ci / 100). It is then converted to a two-sided probability
+as (1 - alpha / 2), which is used to calculate a critical value from
+Student's t distribution with n - 1 degrees of freedom.}
 
 \item{ci_type}{Selects the method used to estimate 95 percent confidence intervals.
 The default for one-way and two-way tables is logit transformed ("log"). For
