@@ -5,7 +5,7 @@ Description: Quickly make tables of descriptive statistics (i.e., counts,
     percentages, confidence intervals) for categorical variables. This 
     package is designed to work in a tidyverse pipeline, and consideration
     has been given to get results from R to Microsoft Word ® with minimal pain.
-Version: 0.1.0.9003
+Version: 0.1.0.9004
 Authors@R: person("Brad", "Cannell", email = "brad.cannell@gmail.com",
   role = c("aut", "cre"))
 Maintainer: Brad Cannell <brad.cannell@gmail.com>
@@ -17,7 +17,8 @@ LazyData: true
 RoxygenNote: 7.0.2
 Imports: 
     dplyr,
-    rlang
+    rlang,
+    stringr
 Suggests: 
     testthat (>= 2.1.0),
     knitr,
