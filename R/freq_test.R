@@ -1,4 +1,4 @@
-#' @title Hypothesis Testing For Frequency Tables
+#' @title Hypothesis Testing for Frequency Tables
 #'
 #' @description The freq_test function is an S3 generic. It currently has
 #'   methods for conducting hypothesis tests on one-way and two-way frequency

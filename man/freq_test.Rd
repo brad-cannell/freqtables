@@ -4,7 +4,7 @@
 \alias{freq_test}
 \alias{freq_test.freq_table_one_way}
 \alias{freq_test.freq_table_two_way}
-\title{Hypothesis Testing For Frequency Tables}
+\title{Hypothesis Testing for Frequency Tables}
 \usage{
 freq_test(.data, ...)
 

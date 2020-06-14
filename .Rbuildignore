@@ -2,3 +2,6 @@
 ^\.Rproj\.user$
 ^NOTES.txt$
 ^.*\.pptx$
+^cran-comments\.md$
+^\.travis\.yml$
+^test\.Rmd$
