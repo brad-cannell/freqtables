@@ -270,7 +270,7 @@ freq_table <- function(.data, ..., percent_ci = 95, ci_type = "logit", drop = FA
       dplyr::rename(cat = !!names(.[1])) %>%
       dplyr::select(var, cat, n) %>%
       # Coerce all variable names and categories (i.e., 0 and 1) to character
-      dplyr::mutate_at(vars(-n), as.character)
+      dplyr::mutate_at(dplyr::vars(-n), as.character)
 
     # Update out to include elements needed for Wald and Logit transformed CI's
     # One-way tables
@@ -348,7 +348,7 @@ freq_table <- function(.data, ..., percent_ci = 95, ci_type = "logit", drop = FA
       ) %>%
       dplyr::select(row_var, row_cat, col_var, col_cat, n) %>%
       # Coerce all variable names and categories (i.e., 0 and 1) to character
-      dplyr::mutate_at(vars(-n), as.character) %>%
+      dplyr::mutate_at(dplyr::vars(-n), as.character) %>%
 
       # Calculate within row n
       dplyr::group_by(row_cat) %>%
