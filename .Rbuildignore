@@ -7,3 +7,4 @@
 ^test\.Rmd$
 ^doc$
 ^Meta$
+^README\.Rmd$

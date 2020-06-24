@@ -1,6 +1,6 @@
 Package: freqtables
 Type: Package
-Title: Make Quick Descriptive Tables For Categorical Variables
+Title: Make Quick Descriptive Tables for Categorical Variables
 Description: Quickly make tables of descriptive statistics (i.e., counts, 
     percentages, confidence intervals) for categorical variables. This 
     package is designed to work in a Tidyverse pipeline, and consideration

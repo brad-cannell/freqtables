@@ -1,14 +1,23 @@
-<!--
-Useful website: http://r-pkgs.had.co.nz/release.html
-Copy the sections below and paste them into the comments section when you 
-submit you package to cran.
+## Resubmission
+This is a resubmission. In this version I have:
 
-Use https://win-builder.r-project.org/ to check on CRAN’s servers
--->
+* Removed .9005 from version number.
+
+* Capitalized the word Tidyverse in the Description. This was in response to the following automatic check note: Possibly mis-spelled words in DESCRIPTION: tidyverse (6:38).
+
+* Added the vignettes back into the package. I thought removing them would make the submission process easier for now, but resulted in failing the automatic check with: Package has a VignetteBuilder field but no prebuilt vignette index.
+
+* Edited the title field. Previous version was: 'Make Quick Descriptive Tables For Categorical Variables'. Current version is: 'Make Quick Descriptive Tables for Categorical Variables'.
+
+* Added continuous integration with travis-ci.
+
+* Updated README to include additional examples of how to use freqtables.
+
+* Added news.md
 
 ## Test environments
-* local OS X install, R 3.1.2
-* ubuntu 12.04 (on travis-ci), R 3.1.2
+* local OS X install, R 4.0.0
+* ubuntu 16.04 (on travis-ci), R 4.0.0
 * win-builder (devel and release)
 
 ## R CMD check results

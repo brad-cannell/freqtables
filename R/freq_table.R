@@ -155,7 +155,7 @@
 #'   x = factor(c(0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1))
 #' )
 #'
-#' # Now, supppose we want to drop period 3 & 4 from my analysis.
+#' # Now, supppose we want to drop period 3 & 4 from our analysis.
 #' # By default, this will give us 0s for period 3 & 4, but we want to drop them.
 #'
 #' df <- df %>%
