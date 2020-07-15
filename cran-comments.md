@@ -15,6 +15,8 @@ This is a resubmission. In this version I have:
 
 * Added news.md
 
+* Updated the LICENSE file to conform to the CRAN template.
+
 ## Test environments
 * local OS X install, R 4.0.0
 * ubuntu 16.04 (on travis-ci), R 4.0.0
