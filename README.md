@@ -7,6 +7,8 @@
 
 [![Travis build
 status](https://travis-ci.com/brad-cannell/freqtables.svg?branch=master)](https://travis-ci.com/brad-cannell/freqtables)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/freqtables)](https://cran.r-project.org/package=freqtables)
 <!-- badges: end -->
 
 The goal of `freqtables` is to quickly make tables of descriptive
