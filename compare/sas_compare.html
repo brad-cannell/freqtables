@@ -1,0 +1,3921 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta name="Generator" content="SAS Software Version 9.4, see www.sas.com">
+<meta http-equiv="Content-type" content="text/html; charset=shift_jis">
+<title>SAS Output</title>
+<style type="text/css">
+<!--
+.aftercaption
+{
+  background-color: #FAFBFE;
+  border-spacing: 0px;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+  padding-top: 4pt;
+}
+.batch
+{
+  background-color: #FAFBFE;
+  border: 1px solid #C1C1C1;
+  border-collapse: separate;
+  border-spacing: 1px;
+  color: #000000;
+  font-family: 'SAS Monospace', 'MS Gothic', Courier, monospace;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  padding: 7px;
+}
+.beforecaption
+{
+  background-color: #FAFBFE;
+  border-spacing: 0px;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.body
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  margin-left: 8px;
+  margin-right: 8px;
+}
+.bodydate
+{
+  background-color: #FAFBFE;
+  border-spacing: 0px;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  text-align: right;
+  vertical-align: top;
+  width: 100%;
+}
+.bycontentfolder
+{
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: none;
+  margin-left: 6pt;
+}
+.byline
+{
+  background-color: #FAFBFE;
+  border-spacing: 0px;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.bylinecontainer
+{
+  background-color: #FAFBFE;
+  border: 0px solid #000000;
+  border-spacing: 1px;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  width: 100%;
+}
+.caption
+{
+  background-color: #FAFBFE;
+  border-spacing: 0px;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.cell
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.container
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.contentfolder
+{
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: none;
+  margin-left: 6pt;
+}
+.contentitem
+{
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: none;
+  margin-left: 6pt;
+}
+.contentproclabel
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.contentprocname
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.contents
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: decimal;
+  margin-left: 8px;
+  margin-right: 8px;
+}
+.contentsdate
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  width: 100%;
+}
+.contenttitle
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: italic;
+  font-weight: bold;
+}
+.continued
+{
+  background-color: #FAFBFE;
+  border-spacing: 0px;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+  width: 100%;
+}
+.data
+{
+  background-color: #FFFFFF;
+  border-bottom-width: 1px;
+  border-color: #C1C1C1;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.dataemphasis
+{
+  background-color: #FFFFFF;
+  border-bottom-width: 1px;
+  border-color: #C1C1C1;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.dataemphasisfixed
+{
+  background-color: #FFFFFF;
+  border-bottom-width: 1px;
+  border-color: #C1C1C1;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  font-family: 'MS Gothic', Courier, monospace;
+  font-size: x-small;
+  font-style: italic;
+  font-weight: normal;
+}
+.dataempty
+{
+  background-color: #FFFFFF;
+  border-bottom-width: 1px;
+  border-color: #C1C1C1;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.datafixed
+{
+  background-color: #FFFFFF;
+  border-bottom-width: 1px;
+  border-color: #C1C1C1;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  font-family: 'MS Gothic', Courier;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.datastrong
+{
+  background-color: #FFFFFF;
+  border-bottom-width: 1px;
+  border-color: #C1C1C1;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.datastrongfixed
+{
+  background-color: #FFFFFF;
+  border-bottom-width: 1px;
+  border-color: #C1C1C1;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  color: #000000;
+  font-family: 'MS Gothic', Courier, monospace;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.date
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  width: 100%;
+}
+.document
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+a:link {
+color:#0000FF
+}
+a:visited {
+color:#800080
+}
+a:active {
+color:#800080
+}
+.errorbanner
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.errorcontent
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.errorcontentfixed
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS Gothic', Courier;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.extendedpage
+{
+  background-color: #FAFBFE;
+  border: 1pt solid #000000;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: italic;
+  font-weight: normal;
+  text-align: center;
+}
+.fatalbanner
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.fatalcontent
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.fatalcontentfixed
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS Gothic', Courier;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.folderaction
+{
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: none;
+  margin-left: 6pt;
+}
+.footer
+{
+  background-color: #EDF2F9;
+  border-bottom-width: 1px;
+  border-color: #B0B7BB;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.footeremphasis
+{
+  background-color: #EDF2F9;
+  border-bottom-width: 1px;
+  border-color: #B0B7BB;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: italic;
+  font-weight: normal;
+}
+.footeremphasisfixed
+{
+  background-color: #EDF2F9;
+  border-bottom-width: 1px;
+  border-color: #B0B7BB;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  color: #112277;
+  font-family: 'MS Gothic', Courier, monospace;
+  font-size: x-small;
+  font-style: italic;
+  font-weight: normal;
+}
+.footerempty
+{
+  background-color: #EDF2F9;
+  border-bottom-width: 1px;
+  border-color: #B0B7BB;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.footerfixed
+{
+  background-color: #EDF2F9;
+  border-bottom-width: 1px;
+  border-color: #B0B7BB;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  color: #112277;
+  font-family: 'MS Gothic', Courier;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.footerstrong
+{
+  background-color: #EDF2F9;
+  border-bottom-width: 1px;
+  border-color: #B0B7BB;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.footerstrongfixed
+{
+  background-color: #EDF2F9;
+  border-bottom-width: 1px;
+  border-color: #B0B7BB;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  color: #112277;
+  font-family: 'MS Gothic', Courier, monospace;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.frame
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.graph
+{
+  background-color: #FAFBFE;
+  border: 1px solid #C1C1C1;
+  border-collapse: separate;
+  border-spacing: 1px;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.header
+{
+  background-color: #EDF2F9;
+  border-bottom-width: 1px;
+  border-color: #B0B7BB;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.headeremphasis
+{
+  background-color: #D8DBD3;
+  border-bottom-width: 1px;
+  border-color: #B0B7BB;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: italic;
+  font-weight: normal;
+}
+.headeremphasisfixed
+{
+  background-color: #D8DBD3;
+  border-bottom-width: 1px;
+  border-color: #B0B7BB;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  color: #000000;
+  font-family: 'MS Gothic', Courier, monospace;
+  font-size: x-small;
+  font-style: italic;
+  font-weight: normal;
+}
+.headerempty
+{
+  background-color: #EDF2F9;
+  border-bottom-width: 1px;
+  border-color: #B0B7BB;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.headerfixed
+{
+  background-color: #EDF2F9;
+  border-bottom-width: 1px;
+  border-color: #B0B7BB;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  color: #112277;
+  font-family: 'MS Gothic', Courier;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.headersandfooters
+{
+  background-color: #EDF2F9;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.headerstrong
+{
+  background-color: #D8DBD3;
+  border-bottom-width: 1px;
+  border-color: #B0B7BB;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.headerstrongfixed
+{
+  background-color: #D8DBD3;
+  border-bottom-width: 1px;
+  border-color: #B0B7BB;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  color: #000000;
+  font-family: 'MS Gothic', Courier, monospace;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.heading1
+{
+  font-family: 'MS PGothic', Helvetica, sans-serif;
+}
+.heading2
+{
+  font-family: 'MS PGothic', Helvetica, sans-serif;
+}
+.heading3
+{
+  font-family: 'MS PGothic', Helvetica, sans-serif;
+}
+.heading4
+{
+  font-family: 'MS PGothic', Helvetica, sans-serif;
+}
+.heading5
+{
+  font-family: 'MS PGothic', Helvetica, sans-serif;
+}
+.heading6
+{
+  font-family: 'MS PGothic', Helvetica, sans-serif;
+}
+.index
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.indexaction
+{
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: none;
+  margin-left: 6pt;
+}
+.indexitem
+{
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: none;
+  margin-left: 6pt;
+}
+.indexprocname
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.indextitle
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: italic;
+  font-weight: bold;
+}
+.layoutcontainer
+{
+  border: 0px solid #000000;
+  border-spacing: 30px;
+}
+.layoutregion
+{
+  border: 0px solid #000000;
+  border-spacing: 30px;
+}
+.linecontent
+{
+  background-color: #FAFBFE;
+  border-bottom-width: 1px;
+  border-color: #C1C1C1;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.list
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: disc;
+}
+.list10
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.list2
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: circle;
+}
+.list3
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.list4
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.list5
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.list6
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.list7
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.list8
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.list9
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.listitem
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: disc;
+}
+.listitem10
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.listitem2
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: circle;
+}
+.listitem3
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.listitem4
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.listitem5
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.listitem6
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.listitem7
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.listitem8
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.listitem9
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: square;
+}
+.note
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.notebanner
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.notecontent
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.notecontentfixed
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS Gothic', Courier;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.output
+{
+  background-color: #FAFBFE;
+  border: 1px solid #C1C1C1;
+  border-collapse: separate;
+  border-spacing: 1px;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.pageno
+{
+  background-color: #FAFBFE;
+  border-spacing: 0px;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+  text-align: right;
+  vertical-align: top;
+}
+.pages
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: decimal;
+  margin-left: 8px;
+  margin-right: 8px;
+}
+.pagesdate
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  width: 100%;
+}
+.pagesitem
+{
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  list-style-type: none;
+  margin-left: 6pt;
+}
+.pagesproclabel
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.pagesprocname
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.pagestitle
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: italic;
+  font-weight: bold;
+}
+.paragraph
+{
+  background-color: #FAFBFE;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.parskip
+{
+  border: 0px solid #000000;
+  border-spacing: 0px;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.prepage
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  text-align: left;
+}
+.proctitle
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.proctitlefixed
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS Gothic', Courier, monospace;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.rowfooter
+{
+  background-color: #EDF2F9;
+  border-bottom-width: 1px;
+  border-color: #B0B7BB;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.rowfooteremphasis
+{
+  background-color: #EDF2F9;
+  border-bottom-width: 1px;
+  border-color: #B0B7BB;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: italic;
+  font-weight: normal;
+}
+.rowfooteremphasisfixed
+{
+  background-color: #EDF2F9;
+  border-bottom-width: 1px;
+  border-color: #B0B7BB;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  color: #112277;
+  font-family: 'MS Gothic', Courier, monospace;
+  font-size: x-small;
+  font-style: italic;
+  font-weight: normal;
+}
+.rowfooterempty
+{
+  background-color: #EDF2F9;
+  border-bottom-width: 1px;
+  border-color: #B0B7BB;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.rowfooterfixed
+{
+  background-color: #EDF2F9;
+  border-bottom-width: 1px;
+  border-color: #B0B7BB;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  color: #112277;
+  font-family: 'MS Gothic', Courier;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.rowfooterstrong
+{
+  background-color: #EDF2F9;
+  border-bottom-width: 1px;
+  border-color: #B0B7BB;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.rowfooterstrongfixed
+{
+  background-color: #EDF2F9;
+  border-bottom-width: 1px;
+  border-color: #B0B7BB;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  color: #112277;
+  font-family: 'MS Gothic', Courier, monospace;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.rowheader
+{
+  background-color: #EDF2F9;
+  border-bottom-width: 1px;
+  border-color: #B0B7BB;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.rowheaderemphasis
+{
+  background-color: #EDF2F9;
+  border-bottom-width: 1px;
+  border-color: #B0B7BB;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: italic;
+  font-weight: normal;
+}
+.rowheaderemphasisfixed
+{
+  background-color: #EDF2F9;
+  border-bottom-width: 1px;
+  border-color: #B0B7BB;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  color: #112277;
+  font-family: 'MS Gothic', Courier, monospace;
+  font-size: x-small;
+  font-style: italic;
+  font-weight: normal;
+}
+.rowheaderempty
+{
+  background-color: #EDF2F9;
+  border-bottom-width: 1px;
+  border-color: #B0B7BB;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.rowheaderfixed
+{
+  background-color: #EDF2F9;
+  border-bottom-width: 1px;
+  border-color: #B0B7BB;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  color: #112277;
+  font-family: 'MS Gothic', Courier;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.rowheaderstrong
+{
+  background-color: #EDF2F9;
+  border-bottom-width: 1px;
+  border-color: #B0B7BB;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.rowheaderstrongfixed
+{
+  background-color: #EDF2F9;
+  border-bottom-width: 1px;
+  border-color: #B0B7BB;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 0px;
+  color: #112277;
+  font-family: 'MS Gothic', Courier, monospace;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.systemfooter
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.systemfooter10
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.systemfooter2
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.systemfooter3
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.systemfooter4
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.systemfooter5
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.systemfooter6
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.systemfooter7
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.systemfooter8
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.systemfooter9
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.systemtitle
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: small;
+  font-style: normal;
+  font-weight: bold;
+}
+.systemtitle10
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: small;
+  font-style: normal;
+  font-weight: bold;
+}
+.systemtitle2
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: small;
+  font-style: normal;
+  font-weight: bold;
+}
+.systemtitle3
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: small;
+  font-style: normal;
+  font-weight: bold;
+}
+.systemtitle4
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: small;
+  font-style: normal;
+  font-weight: bold;
+}
+.systemtitle5
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: small;
+  font-style: normal;
+  font-weight: bold;
+}
+.systemtitle6
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: small;
+  font-style: normal;
+  font-weight: bold;
+}
+.systemtitle7
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: small;
+  font-style: normal;
+  font-weight: bold;
+}
+.systemtitle8
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: small;
+  font-style: normal;
+  font-weight: bold;
+}
+.systemtitle9
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: small;
+  font-style: normal;
+  font-weight: bold;
+}
+.systitleandfootercontainer
+{
+  background-color: #FAFBFE;
+  border: 0px solid #000000;
+  border-spacing: 1px;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  width: 100%;
+}
+.table
+{
+  border-bottom-width: 0px;
+  border-collapse: collapse;
+  border-color: #C1C1C1;
+  border-left-width: 1px;
+  border-right-width: 0px;
+  border-spacing: 0px;
+  border-style: solid;
+  border-top-width: 1px;
+}
+.top_stacked_value
+{
+  padding-bottom: 1px;
+  border: 0;
+}
+.middle_stacked_value
+{
+  padding-top: 1px;
+  padding-bottom: 1px;
+  border: 0;
+}
+.bottom_stacked_value
+{
+  padding-top: 1px;
+  border: 0;
+}
+.titleandnotecontainer
+{
+  background-color: #FAFBFE;
+  border: 0px solid #000000;
+  border-spacing: 1px;
+  color: #000000;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+  width: 100%;
+}
+.titlesandfooters
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.usertext
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.warnbanner
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: bold;
+}
+.warncontent
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS PGothic', 'MS PGothic', Helvetica, Helv;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.warncontentfixed
+{
+  background-color: #FAFBFE;
+  color: #112277;
+  font-family: 'MS Gothic', Courier;
+  font-size: x-small;
+  font-style: normal;
+  font-weight: normal;
+}
+.l {text-align: left }
+.c {text-align: center }
+.r {text-align: right }
+.d {text-align: right }
+.j {text-align: justify }
+.t {vertical-align: top }
+.m {vertical-align: middle }
+.b {vertical-align: bottom }
+TD, TH {vertical-align: top }
+.stacked_cell{padding: 0 }
+-->
+</style>
+<script language="javascript" type="text/javascript">
+<!-- 
+function startup(){
+
+}
+function shutdown(){
+
+}
+
+//-->
+</script>
+
+</head>
+<body onload="startup()" onunload="shutdown()" class="body">
+
+<script language="javascript" type="text/javascript">
+<!-- 
+var _info = navigator.userAgent
+var _ie = (_info.indexOf("MSIE") > 0
+          && _info.indexOf("Win") > 0
+          && _info.indexOf("Windows 3.1") < 0);
+var _ie64 = _info.indexOf("x64") > 0
+
+//-->
+</script>
+
+<div class="branch">
+<a name="IDX"></a>
+<table class="systitleandfootercontainer" width="100%" cellspacing="1" cellpadding="1" rules="none" frame="void" border="0" summary="Page Layout">
+<tr>
+<td class="c systemtitle">One-way frequency table</td>
+</tr>
+<tr>
+<td class="c systemtitle2">Gender from 2017-2018 NHANES</td>
+</tr>
+</table><br>
+<div class="c proctitle">The FREQ Procedure</div>
+<p>
+<div>
+<div align="center">
+<table class="table" cellspacing="0" cellpadding="5" rules="all" frame="box" bordercolor="#C1C1C1" summary="Procedure Freq: One-Way Frequencies">
+<colgroup>
+<col>
+</colgroup>
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="l b header" scope="col">gender_f</th>
+<th class="r b header" scope="col">Frequency</th>
+<th class="r b header" scope="col"> Percent</th>
+<th class="r b header" scope="col">Cumulative<br/> Frequency</th>
+<th class="r b header" scope="col">Cumulative<br/>  Percent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="l rowheader" scope="row">Female</th>
+<td class="r data">4697</td>
+<td class="r data">50.76</td>
+<td class="r data">4697</td>
+<td class="r data">50.76</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Male</th>
+<td class="r data">4557</td>
+<td class="r data">49.24</td>
+<td class="r data">9254</td>
+<td class="r data">100.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<br>
+<a name="IDX1"></a>
+<div>
+<div align="center">
+<table class="table" cellspacing="0" cellpadding="5" rules="all" frame="box" bordercolor="#C1C1C1" summary="Procedure Freq: One-Way Chi-Square Test">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="c b header" colspan="2" scope="colgroup">Chi-Square Test<br/>for Equal Proportions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="l rowheader" scope="row">Chi-Square</th>
+<td class="r data">2.1180</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">DF</th>
+<td class="r data">1</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Pr &gt; ChiSq</th>
+<td class="r data">0.1456</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<br>
+<a name="IDX2"></a>
+<div>
+<div  class="c">
+<img alt="Bar Chart of Relative Deviations for gender_f" src="DeviationPlot2.png" style=" height: 480px; width: 640px;" border="0" class="c">
+</div>
+</div>
+<br>
+<br>
+<p>
+<div align="center"><table class="proctitle"><tr><td class="c proctitle">Sample Size = 9254</td></tr></table>
+</div><p>
+<table class="systitleandfootercontainer" width="100%" cellspacing="1" cellpadding="1" rules="none" frame="void" border="0" summary="Page Layout">
+<tr>
+<td class="c systemfooter">Proc Freq will not calculate confidence intervals</td>
+</tr>
+<tr>
+<td class="c systemfooter2">Hypothesis tests are not included by default. I requested them.</td>
+</tr>
+</table><br>
+</div>
+<div class="branch">
+<p style="page-break-after: always;"><br/></p><hr size="3"/>
+<a name="IDX3"></a>
+<table class="systitleandfootercontainer" width="100%" cellspacing="1" cellpadding="1" rules="none" frame="void" border="0" summary="Page Layout">
+<tr>
+<td class="c systemtitle">One-way frequency table</td>
+</tr>
+<tr>
+<td class="c systemtitle2">Gender from 2017-2018 NHANES</td>
+</tr>
+</table><br>
+<div class="c proctitle">The SURVEYFREQ Procedure</div>
+<p>
+<div>
+<div align="center">
+<table class="table" cellspacing="0" cellpadding="5" rules="all" frame="box" bordercolor="#C1C1C1" summary="Procedure Surveyfreq: Data Summary">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="c b header" colspan="2" scope="colgroup">Data Summary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="l rowheader" scope="row">Number of Observations</th>
+<td class="r data">9254</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<br>
+<a name="IDX4"></a>
+<div>
+<div align="center">
+<table class="table" cellspacing="0" cellpadding="5" rules="all" frame="box" bordercolor="#C1C1C1" summary="Procedure Surveyfreq: One-Way Distribution">
+<colgroup>
+<col>
+</colgroup>
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="c b header" colspan="6" scope="colgroup">Table of gender_f</th>
+</tr>
+<tr>
+<th class="l b header" scope="col">gender_f</th>
+<th class="r b header" scope="col">Frequency</th>
+<th class="r b header" scope="col">Percent</th>
+<th class="r b header" scope="col">Std Err of<br/>Percent</th>
+<th class="c b header" colspan="2" scope="colgroup">95% Confidence Limits<br/>for Percent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="l rowheader" scope="row">Female</th>
+<td class="r data">4697</td>
+<td class="r data">50.7564</td>
+<td class="r data">0.5197</td>
+<td class="r data">49.7376</td>
+<td class="r data">51.7752</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Male</th>
+<td class="r data">4557</td>
+<td class="r data">49.2436</td>
+<td class="r data">0.5197</td>
+<td class="r data">48.2248</td>
+<td class="r data">50.2624</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Total</th>
+<td class="r data">9254</td>
+<td class="r data">100.0000</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<br>
+<a name="IDX5"></a>
+<div>
+<div align="center">
+<table class="table" cellspacing="0" cellpadding="5" rules="all" frame="box" bordercolor="#C1C1C1" summary="Procedure Surveyfreq: Rao-Scott Chi-Square Test">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="c b header" colspan="2" scope="colgroup">Rao-Scott Chi-Square Test</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="l rowheader" scope="row">Pearson Chi-Square</th>
+<td class="r data">2.1180</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Design Correction</th>
+<td class="r data">1.0000</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<td class="r data">&nbsp;</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Rao-Scott Chi-Square</th>
+<td class="r data">2.1180</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">DF</th>
+<td class="r data">1</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Pr &gt; ChiSq</th>
+<td class="r data">0.1456</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<td class="r data">&nbsp;</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">F Value</th>
+<td class="r data">2.1180</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Num DF</th>
+<td class="r data">1</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Den DF</th>
+<td class="r data">9253</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Pr &gt; F</th>
+<td class="r data">0.1456</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<th class="c b footer" colspan="2">Sample Size = 9254</th>
+</tr>
+</tfoot>
+</table>
+</div>
+</div>
+<br>
+<table class="systitleandfootercontainer" width="100%" cellspacing="1" cellpadding="1" rules="none" frame="void" border="0" summary="Page Layout">
+<tr>
+<td class="c systemfooter">Proc Freq will not calculate confidence intervals</td>
+</tr>
+<tr>
+<td class="c systemfooter2">Hypothesis tests are not included by default. I requested them.</td>
+</tr>
+</table><br>
+</div>
+<div class="branch">
+<p style="page-break-after: always;"><br/></p><hr size="3"/>
+<a name="IDX6"></a>
+<table class="systitleandfootercontainer" width="100%" cellspacing="1" cellpadding="1" rules="none" frame="void" border="0" summary="Page Layout">
+<tr>
+<td class="c systemtitle">Two-way frequency table</td>
+</tr>
+<tr>
+<td class="c systemtitle2">Gender by education from 2017-2018 NHANES</td>
+</tr>
+</table><br>
+<div class="c proctitle">The FREQ Procedure</div>
+<p>
+<div>
+<div align="center">
+<table  summary="Page Layout"><tr>
+<td class="c t"><div align="center">
+<table class="table" cellspacing="0" cellpadding="5" rules="all" frame="box" bordercolor="#C1C1C1" summary="Procedure Freq: Cross-Tabular Freq Table">
+<colgroup>
+<col>
+</colgroup>
+<colgroup>
+</colgroup>
+<tbody>
+<tr>
+<th class="l t stacked_cell header" scope="col"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<th class="l t header top_stacked_value" scope="col">Frequency</th>
+</tr>
+<tr>
+<th class="l t header middle_stacked_value" scope="col">Expected</th>
+</tr>
+<tr>
+<th class="l t header middle_stacked_value" scope="col">Percent</th>
+</tr>
+<tr>
+<th class="l t header middle_stacked_value" scope="col">Row Pct</th>
+</tr>
+<tr>
+<th class="l t header bottom_stacked_value" scope="col">Col Pct</th>
+</tr>
+</table></th>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td><div align="center">
+<table class="table" cellspacing="0" cellpadding="5" rules="all" frame="box" bordercolor="#C1C1C1" summary="Procedure Freq: Cross-Tabular Freq Table">
+<colgroup>
+<col>
+</colgroup>
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="c header" colspan="5" scope="colgroup">Table&nbsp;of&nbsp;gender_f&nbsp;by&nbsp;edu_f</th>
+</tr>
+<tr>
+<th class="c b header" rowspan="2" scope="col">gender_f</th>
+<th class="c b header" colspan="4" scope="colgroup">edu_f</th>
+</tr>
+<tr>
+<th class="r header" scope="col">&lt;HS</th>
+<th class="r header" scope="col">College</th>
+<th class="r header" scope="col">HS</th>
+<th class="r header" scope="col">Total</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="l t rowheader" scope="row">Female</th>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">829</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">838.01</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">9.46</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">18.69</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">50.06</td>
+</tr>
+</table></td>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">1069</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">1063.2</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">12.20</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">24.10</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">50.88</td>
+</tr>
+</table></td>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">2537</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">2533.8</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">28.95</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">57.20</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">50.67</td>
+</tr>
+</table></td>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">4435</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">&nbsp;</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">50.60</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">&nbsp;</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">&nbsp;</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<th class="l t rowheader" scope="row">Male  </th>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">827</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">817.99</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">9.44</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">19.10</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">49.94</td>
+</tr>
+</table></td>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">1032</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">1037.8</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">11.78</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">23.84</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">49.12</td>
+</tr>
+</table></td>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">2470</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">2473.2</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">28.18</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">57.06</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">49.33</td>
+</tr>
+</table></td>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">4329</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">&nbsp;</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">49.40</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">&nbsp;</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">&nbsp;</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<th class="l t rowheader" scope="row">Total </th>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">1656</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">18.90</td>
+</tr>
+</table></td>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">2101</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">23.97</td>
+</tr>
+</table></td>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">5007</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">57.13</td>
+</tr>
+</table></td>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">8764</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">100.00</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<th class="c header" colspan="5" scope="colgroup">Frequency&nbsp;Missing&nbsp;=&nbsp;490</th>
+</tr>
+</tbody>
+</table>
+</div>
+</tr>
+</table>
+</div>
+</div>
+<br>
+<br>
+<p>
+<div align="center"><table class="proctitle"><tr><td class="c proctitle">Statistics for Table of gender_f by edu_f</td></tr></table>
+</div><p>
+<a name="IDX7"></a>
+<div>
+<div align="center">
+<table class="table" cellspacing="0" cellpadding="5" rules="all" frame="box" bordercolor="#C1C1C1" summary="Procedure Freq: Chi-Square Tests">
+<colgroup>
+<col>
+</colgroup>
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="l b header" scope="col">Statistic</th>
+<th class="r b header" scope="col">DF</th>
+<th class="r b header" scope="col">Value</th>
+<th class="r b header" scope="col">Prob</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="l rowheader" scope="row">Chi-Square</th>
+<td class="r data">2</td>
+<td class="r data">0.2685</td>
+<td class="r data">0.8744</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Likelihood Ratio Chi-Square</th>
+<td class="r data">2</td>
+<td class="r data">0.2685</td>
+<td class="r data">0.8744</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Mantel-Haenszel Chi-Square</th>
+<td class="r data">1</td>
+<td class="r data">0.1113</td>
+<td class="r data">0.7387</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Phi Coefficient</th>
+<td class="r data">&nbsp;</td>
+<td class="r data">0.0055</td>
+<td class="r data">&nbsp;</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Contingency Coefficient</th>
+<td class="r data">&nbsp;</td>
+<td class="r data">0.0055</td>
+<td class="r data">&nbsp;</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Cramer&#39;s V</th>
+<td class="r data">&nbsp;</td>
+<td class="r data">0.0055</td>
+<td class="r data">&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<br>
+<a name="IDX8"></a>
+<div>
+<div align="center">
+<table class="table" cellspacing="0" cellpadding="5" rules="all" frame="box" bordercolor="#C1C1C1" summary="Procedure Freq: Fisher&#39;s Exact Test">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="c b header" colspan="2" scope="colgroup">Fisher&#39;s Exact Test</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="l rowheader" scope="row">Table Probability (P)</th>
+<td class="r data">0.0004</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Pr &lt;= P</th>
+<td class="r data">0.8745</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<br>
+<br>
+<p>
+<div align="center"><table class="proctitle"><tr><td class="c proctitle">Effective Sample Size = 8764<br/>Frequency Missing = 490</td></tr></table>
+</div><p>
+</div>
+<div class="branch">
+<p style="page-break-after: always;"><br/></p><hr size="3"/>
+<a name="IDX9"></a>
+<table class="systitleandfootercontainer" width="100%" cellspacing="1" cellpadding="1" rules="none" frame="void" border="0" summary="Page Layout">
+<tr>
+<td class="c systemtitle">Two-way frequency table</td>
+</tr>
+<tr>
+<td class="c systemtitle2">Gender by education from 2017-2018 NHANES</td>
+</tr>
+</table><br>
+<div class="c proctitle">The SURVEYFREQ Procedure</div>
+<p>
+<div>
+<div align="center">
+<table class="table" cellspacing="0" cellpadding="5" rules="all" frame="box" bordercolor="#C1C1C1" summary="Procedure Surveyfreq: Data Summary">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="c b header" colspan="2" scope="colgroup">Data Summary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="l rowheader" scope="row">Number of Observations</th>
+<td class="r data">9254</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<br>
+<a name="IDX10"></a>
+<div>
+<div align="center">
+<table class="table" cellspacing="0" cellpadding="5" rules="all" frame="box" bordercolor="#C1C1C1" summary="Procedure Surveyfreq: CrossTabulation Table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="c b header" colspan="12" scope="colgroup">Table of gender_f by edu_f</th>
+</tr>
+<tr>
+<th class="l b header" scope="col">gender_f</th>
+<th class="l b header" scope="col">edu_f</th>
+<th class="r b header" scope="col">Frequency</th>
+<th class="r b header" scope="col">  Expected<br/> Frequency</th>
+<th class="r b header" scope="col">Percent</th>
+<th class="r b header" scope="col">Std Err of<br/>Percent</th>
+<th class="c b header" colspan="2" scope="colgroup">95% Confidence Limits<br/>for Percent</th>
+<th class="r b header" scope="col">Row<br/>Percent</th>
+<th class="r b header" scope="col">Std Err of<br/>Row Percent</th>
+<th class="c b header" colspan="2" scope="colgroup">95% Confidence Limits<br/>for Row Percent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="l rowheader" scope="row">Female</th>
+<th class="l rowheader" scope="row">&lt;HS</th>
+<td class="r data">829</td>
+<td class="r data">838.01461</td>
+<td class="r data">9.4592</td>
+<td class="r data">0.3126</td>
+<td class="r data">8.8463</td>
+<td class="r data">10.0720</td>
+<td class="r data">18.6922</td>
+<td class="r data">0.5854</td>
+<td class="r data">17.5446</td>
+<td class="r data">19.8398</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<th class="l rowheader" scope="row">College</th>
+<td class="r data">1069</td>
+<td class="r data">1063</td>
+<td class="r data">12.1976</td>
+<td class="r data">0.3496</td>
+<td class="r data">11.5123</td>
+<td class="r data">12.8829</td>
+<td class="r data">24.1037</td>
+<td class="r data">0.6423</td>
+<td class="r data">22.8447</td>
+<td class="r data">25.3628</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<th class="l rowheader" scope="row">HS</th>
+<td class="r data">2537</td>
+<td class="r data">2534</td>
+<td class="r data">28.9480</td>
+<td class="r data">0.4845</td>
+<td class="r data">27.9983</td>
+<td class="r data">29.8977</td>
+<td class="r data">57.2041</td>
+<td class="r data">0.7430</td>
+<td class="r data">55.7476</td>
+<td class="r data">58.6605</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<th class="l rowheader" scope="row">Total</th>
+<td class="r data">4435</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">50.6047</td>
+<td class="r data">0.5341</td>
+<td class="r data">49.5578</td>
+<td class="r data">51.6517</td>
+<td class="r data">100.0000</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Male</th>
+<th class="l rowheader" scope="row">&lt;HS</th>
+<td class="r data">827</td>
+<td class="r data">817.98539</td>
+<td class="r data">9.4363</td>
+<td class="r data">0.3123</td>
+<td class="r data">8.8242</td>
+<td class="r data">10.0485</td>
+<td class="r data">19.1037</td>
+<td class="r data">0.5975</td>
+<td class="r data">17.9324</td>
+<td class="r data">20.2750</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<th class="l rowheader" scope="row">College</th>
+<td class="r data">1032</td>
+<td class="r data">1038</td>
+<td class="r data">11.7754</td>
+<td class="r data">0.3443</td>
+<td class="r data">11.1005</td>
+<td class="r data">12.4504</td>
+<td class="r data">23.8392</td>
+<td class="r data">0.6477</td>
+<td class="r data">22.5697</td>
+<td class="r data">25.1088</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<th class="l rowheader" scope="row">HS</th>
+<td class="r data">2470</td>
+<td class="r data">2473</td>
+<td class="r data">28.1835</td>
+<td class="r data">0.4806</td>
+<td class="r data">27.2414</td>
+<td class="r data">29.1256</td>
+<td class="r data">57.0571</td>
+<td class="r data">0.7524</td>
+<td class="r data">55.5822</td>
+<td class="r data">58.5319</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<th class="l rowheader" scope="row">Total</th>
+<td class="r data">4329</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">49.3953</td>
+<td class="r data">0.5341</td>
+<td class="r data">48.3483</td>
+<td class="r data">50.4422</td>
+<td class="r data">100.0000</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Total</th>
+<th class="l rowheader" scope="row">&lt;HS</th>
+<td class="r data">1656</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">18.8955</td>
+<td class="r data">0.4182</td>
+<td class="r data">18.0757</td>
+<td class="r data">19.7152</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<th class="l rowheader" scope="row">College</th>
+<td class="r data">2101</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">23.9731</td>
+<td class="r data">0.4561</td>
+<td class="r data">23.0791</td>
+<td class="r data">24.8671</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<th class="l rowheader" scope="row">HS</th>
+<td class="r data">5007</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">57.1314</td>
+<td class="r data">0.5287</td>
+<td class="r data">56.0951</td>
+<td class="r data">58.1678</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<th class="l rowheader" scope="row">Total</th>
+<td class="r data">8764</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">100.0000</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<th class="c b footer" colspan="12">Frequency Missing = 490</th>
+</tr>
+</tfoot>
+</table>
+</div>
+</div>
+<br>
+<a name="IDX11"></a>
+<div>
+<div align="center">
+<table class="table" cellspacing="0" cellpadding="5" rules="all" frame="box" bordercolor="#C1C1C1" summary="Procedure Surveyfreq: Rao-Scott Chi-Square Test">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="c b header" colspan="2" scope="colgroup">Rao-Scott Chi-Square Test</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="l rowheader" scope="row">Pearson Chi-Square</th>
+<td class="r data">0.2685</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Design Correction</th>
+<td class="r data">1.0000</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<td class="r data">&nbsp;</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Rao-Scott Chi-Square</th>
+<td class="r data">0.2685</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">DF</th>
+<td class="r data">2</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Pr &gt; ChiSq</th>
+<td class="r data">0.8744</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<td class="r data">&nbsp;</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">F Value</th>
+<td class="r data">0.1343</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Num DF</th>
+<td class="r data">2</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Den DF</th>
+<td class="r data">17526</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Pr &gt; F</th>
+<td class="r data">0.8744</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<th class="c b footer" colspan="2">Sample Size = 8764</th>
+</tr>
+</tfoot>
+</table>
+</div>
+</div>
+<br>
+</div>
+<div class="branch">
+<p style="page-break-after: always;"><br/></p><hr size="3"/>
+<a name="IDX12"></a>
+<table class="systitleandfootercontainer" width="100%" cellspacing="1" cellpadding="1" rules="none" frame="void" border="0" summary="Page Layout">
+<tr>
+<td class="c systemtitle">Three-way frequency table</td>
+</tr>
+<tr>
+<td class="c systemtitle2">Gender by education by language from 2017-2018 NHANES</td>
+</tr>
+</table><br>
+<div class="c proctitle">The FREQ Procedure</div>
+<p>
+<div>
+<div align="center">
+<table  summary="Page Layout"><tr>
+<td class="c t"><div align="center">
+<table class="table" cellspacing="0" cellpadding="5" rules="all" frame="box" bordercolor="#C1C1C1" summary="Procedure Freq: Cross-Tabular Freq Table">
+<colgroup>
+<col>
+</colgroup>
+<colgroup>
+</colgroup>
+<tbody>
+<tr>
+<th class="l t stacked_cell header" scope="col"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<th class="l t header top_stacked_value" scope="col">Frequency</th>
+</tr>
+<tr>
+<th class="l t header middle_stacked_value" scope="col">Expected</th>
+</tr>
+<tr>
+<th class="l t header middle_stacked_value" scope="col">Percent</th>
+</tr>
+<tr>
+<th class="l t header middle_stacked_value" scope="col">Row Pct</th>
+</tr>
+<tr>
+<th class="l t header bottom_stacked_value" scope="col">Col Pct</th>
+</tr>
+</table></th>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td><div align="center">
+<table class="table" cellspacing="0" cellpadding="5" rules="all" frame="box" bordercolor="#C1C1C1" summary="Procedure Freq: Cross-Tabular Freq Table">
+<colgroup>
+<col>
+</colgroup>
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="c header" colspan="4" scope="colgroup">Table&nbsp;1&nbsp;of&nbsp;edu_f&nbsp;by&nbsp;language_f</th>
+</tr>
+<tr>
+<th class="c header" colspan="4" scope="colgroup">Controlling&nbsp;for&nbsp;gender_f=Female</th>
+</tr>
+<tr>
+<th class="c b header" rowspan="2" scope="col">edu_f</th>
+<th class="c b header" colspan="3" scope="colgroup">language_f</th>
+</tr>
+<tr>
+<th class="r header" scope="col">English</th>
+<th class="r header" scope="col">Spanish</th>
+<th class="r header" scope="col">Total</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="l t rowheader" scope="row">&lt;HS    </th>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">529</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">745.82</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">11.93</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">63.81</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">13.26</td>
+</tr>
+</table></td>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">300</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">83.18</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">6.76</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">36.19</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">67.42</td>
+</tr>
+</table></td>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">829</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">&nbsp;</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">18.69</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">&nbsp;</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">&nbsp;</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<th class="l t rowheader" scope="row">College</th>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">1053</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">961.74</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">23.74</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">98.50</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">26.39</td>
+</tr>
+</table></td>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">16</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">107.26</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">0.36</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">1.50</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">3.60</td>
+</tr>
+</table></td>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">1069</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">&nbsp;</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">24.10</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">&nbsp;</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">&nbsp;</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<th class="l t rowheader" scope="row">HS     </th>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">2408</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">2282.4</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">54.30</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">94.92</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">60.35</td>
+</tr>
+</table></td>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">129</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">254.56</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">2.91</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">5.08</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">28.99</td>
+</tr>
+</table></td>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">2537</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">&nbsp;</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">57.20</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">&nbsp;</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">&nbsp;</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<th class="l t rowheader" scope="row">Total  </th>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">3990</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">89.97</td>
+</tr>
+</table></td>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">445</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">10.03</td>
+</tr>
+</table></td>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">4435</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">100.00</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<th class="c header" colspan="4" scope="colgroup">Frequency&nbsp;Missing&nbsp;=&nbsp;262</th>
+</tr>
+</tbody>
+</table>
+</div>
+</tr>
+</table>
+</div>
+</div>
+<br>
+<br>
+<p>
+<div align="center"><table class="proctitle"><tr><td class="c proctitle">Statistics for Table 1 of edu_f by language_f<br/>Controlling for gender_f=Female</td></tr></table>
+</div><p>
+<a name="IDX13"></a>
+<div>
+<div align="center">
+<table class="table" cellspacing="0" cellpadding="5" rules="all" frame="box" bordercolor="#C1C1C1" summary="Procedure Freq: Chi-Square Tests">
+<colgroup>
+<col>
+</colgroup>
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="l b header" scope="col">Statistic</th>
+<th class="r b header" scope="col">DF</th>
+<th class="r b header" scope="col">Value</th>
+<th class="r b header" scope="col">Prob</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="l rowheader" scope="row">Chi-Square</th>
+<td class="r data">2</td>
+<td class="r data">783.3440</td>
+<td class="r data">&lt;.0001</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Likelihood Ratio Chi-Square</th>
+<td class="r data">2</td>
+<td class="r data">618.8132</td>
+<td class="r data">&lt;.0001</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Mantel-Haenszel Chi-Square</th>
+<td class="r data">1</td>
+<td class="r data">479.3842</td>
+<td class="r data">&lt;.0001</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Phi Coefficient</th>
+<td class="r data">&nbsp;</td>
+<td class="r data">0.4203</td>
+<td class="r data">&nbsp;</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Contingency Coefficient</th>
+<td class="r data">&nbsp;</td>
+<td class="r data">0.3874</td>
+<td class="r data">&nbsp;</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Cramer&#39;s V</th>
+<td class="r data">&nbsp;</td>
+<td class="r data">0.4203</td>
+<td class="r data">&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<br>
+<a name="IDX14"></a>
+<div>
+<div align="center">
+<table class="table" cellspacing="0" cellpadding="5" rules="all" frame="box" bordercolor="#C1C1C1" summary="Procedure Freq: Fisher&#39;s Exact Test">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="c b header" colspan="2" scope="colgroup">Fisher&#39;s Exact Test</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="l rowheader" scope="row">Table Probability (P)</th>
+<td class="r data">&lt;.0001</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Pr &lt;= P</th>
+<td class="r data">&lt;.0001</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<br>
+<br>
+<p>
+<div align="center"><table class="proctitle"><tr><td class="c proctitle">Effective Sample Size = 4435<br/>Frequency Missing = 262</td></tr></table>
+</div><p>
+<a name="IDX15"></a>
+<div>
+<div align="center">
+<table  summary="Page Layout"><tr>
+<td class="c t"><div align="center">
+<table class="table" cellspacing="0" cellpadding="5" rules="all" frame="box" bordercolor="#C1C1C1" summary="Procedure Freq: Cross-Tabular Freq Table">
+<colgroup>
+<col>
+</colgroup>
+<colgroup>
+</colgroup>
+<tbody>
+<tr>
+<th class="l t stacked_cell header" scope="col"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<th class="l t header top_stacked_value" scope="col">Frequency</th>
+</tr>
+<tr>
+<th class="l t header middle_stacked_value" scope="col">Expected</th>
+</tr>
+<tr>
+<th class="l t header middle_stacked_value" scope="col">Percent</th>
+</tr>
+<tr>
+<th class="l t header middle_stacked_value" scope="col">Row Pct</th>
+</tr>
+<tr>
+<th class="l t header bottom_stacked_value" scope="col">Col Pct</th>
+</tr>
+</table></th>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td><div align="center">
+<table class="table" cellspacing="0" cellpadding="5" rules="all" frame="box" bordercolor="#C1C1C1" summary="Procedure Freq: Cross-Tabular Freq Table">
+<colgroup>
+<col>
+</colgroup>
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="c header" colspan="4" scope="colgroup">Table&nbsp;2&nbsp;of&nbsp;edu_f&nbsp;by&nbsp;language_f</th>
+</tr>
+<tr>
+<th class="c header" colspan="4" scope="colgroup">Controlling&nbsp;for&nbsp;gender_f=Male</th>
+</tr>
+<tr>
+<th class="c b header" rowspan="2" scope="col">edu_f</th>
+<th class="c b header" colspan="3" scope="colgroup">language_f</th>
+</tr>
+<tr>
+<th class="r header" scope="col">English</th>
+<th class="r header" scope="col">Spanish</th>
+<th class="r header" scope="col">Total</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="l t rowheader" scope="row">&lt;HS    </th>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">528</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">743.9</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">12.20</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">63.85</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">13.56</td>
+</tr>
+</table></td>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">299</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">83.101</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">6.91</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">36.15</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">68.74</td>
+</tr>
+</table></td>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">827</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">&nbsp;</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">19.10</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">&nbsp;</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">&nbsp;</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<th class="l t rowheader" scope="row">College</th>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">1018</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">928.3</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">23.52</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">98.64</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">26.14</td>
+</tr>
+</table></td>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">14</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">103.7</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">0.32</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">1.36</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">3.22</td>
+</tr>
+</table></td>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">1032</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">&nbsp;</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">23.84</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">&nbsp;</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">&nbsp;</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<th class="l t rowheader" scope="row">HS     </th>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">2348</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">2221.8</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">54.24</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">95.06</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">60.30</td>
+</tr>
+</table></td>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">122</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">248.2</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">2.82</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">4.94</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">28.05</td>
+</tr>
+</table></td>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">2470</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">&nbsp;</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">57.06</td>
+</tr>
+<tr>
+<td class="r t data middle_stacked_value">&nbsp;</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">&nbsp;</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<th class="l t rowheader" scope="row">Total  </th>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">3894</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">89.95</td>
+</tr>
+</table></td>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">435</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">10.05</td>
+</tr>
+</table></td>
+<td class="r t stacked_cell data"><table width="100%" border="0" cellpadding="5" cellspacing="0">
+<tr>
+<td class="r t data top_stacked_value">4329</td>
+</tr>
+<tr>
+<td class="r t data bottom_stacked_value">100.00</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<th class="c header" colspan="4" scope="colgroup">Frequency&nbsp;Missing&nbsp;=&nbsp;228</th>
+</tr>
+</tbody>
+</table>
+</div>
+</tr>
+</table>
+</div>
+</div>
+<br>
+<br>
+<p>
+<div align="center"><table class="proctitle"><tr><td class="c proctitle">Statistics for Table 2 of edu_f by language_f<br/>Controlling for gender_f=Male</td></tr></table>
+</div><p>
+<a name="IDX16"></a>
+<div>
+<div align="center">
+<table class="table" cellspacing="0" cellpadding="5" rules="all" frame="box" bordercolor="#C1C1C1" summary="Procedure Freq: Chi-Square Tests">
+<colgroup>
+<col>
+</colgroup>
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="l b header" scope="col">Statistic</th>
+<th class="r b header" scope="col">DF</th>
+<th class="r b header" scope="col">Value</th>
+<th class="r b header" scope="col">Prob</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="l rowheader" scope="row">Chi-Square</th>
+<td class="r data">2</td>
+<td class="r data">781.1625</td>
+<td class="r data">&lt;.0001</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Likelihood Ratio Chi-Square</th>
+<td class="r data">2</td>
+<td class="r data">621.5399</td>
+<td class="r data">&lt;.0001</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Mantel-Haenszel Chi-Square</th>
+<td class="r data">1</td>
+<td class="r data">484.1946</td>
+<td class="r data">&lt;.0001</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Phi Coefficient</th>
+<td class="r data">&nbsp;</td>
+<td class="r data">0.4248</td>
+<td class="r data">&nbsp;</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Contingency Coefficient</th>
+<td class="r data">&nbsp;</td>
+<td class="r data">0.3910</td>
+<td class="r data">&nbsp;</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Cramer&#39;s V</th>
+<td class="r data">&nbsp;</td>
+<td class="r data">0.4248</td>
+<td class="r data">&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<br>
+<a name="IDX17"></a>
+<div>
+<div align="center">
+<table class="table" cellspacing="0" cellpadding="5" rules="all" frame="box" bordercolor="#C1C1C1" summary="Procedure Freq: Fisher&#39;s Exact Test">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="c b header" colspan="2" scope="colgroup">Fisher&#39;s Exact Test</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="l rowheader" scope="row">Table Probability (P)</th>
+<td class="r data">&lt;.0001</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Pr &lt;= P</th>
+<td class="r data">&lt;.0001</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<br>
+<br>
+<p>
+<div align="center"><table class="proctitle"><tr><td class="c proctitle">Effective Sample Size = 4329<br/>Frequency Missing = 228</td></tr></table>
+</div><p>
+</div>
+<div class="branch">
+<p style="page-break-after: always;"><br/></p><hr size="3"/>
+<a name="IDX18"></a>
+<table class="systitleandfootercontainer" width="100%" cellspacing="1" cellpadding="1" rules="none" frame="void" border="0" summary="Page Layout">
+<tr>
+<td class="c systemtitle">Three-way frequency table</td>
+</tr>
+<tr>
+<td class="c systemtitle2">Gender by education by language from 2017-2018 NHANES</td>
+</tr>
+</table><br>
+<div class="c proctitle">The SURVEYFREQ Procedure</div>
+<p>
+<div>
+<div align="center">
+<table class="table" cellspacing="0" cellpadding="5" rules="all" frame="box" bordercolor="#C1C1C1" summary="Procedure Surveyfreq: Data Summary">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="c b header" colspan="2" scope="colgroup">Data Summary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="l rowheader" scope="row">Number of Observations</th>
+<td class="r data">9254</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<br>
+<a name="IDX19"></a>
+<div>
+<div align="center">
+<table class="table" cellspacing="0" cellpadding="5" rules="all" frame="box" bordercolor="#C1C1C1" summary="Procedure Surveyfreq: CrossTabulation Table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="c b header" colspan="12" scope="colgroup">Table of edu_f by language_f</th>
+</tr>
+<tr>
+<th class="c b header" colspan="12" scope="colgroup">Controlling for gender_f=Female</th>
+</tr>
+<tr>
+<th class="l b header" scope="col">edu_f</th>
+<th class="l b header" scope="col">language_f</th>
+<th class="r b header" scope="col">Frequency</th>
+<th class="r b header" scope="col">  Expected<br/> Frequency</th>
+<th class="r b header" scope="col">Percent</th>
+<th class="r b header" scope="col">Std Err of<br/>Percent</th>
+<th class="c b header" colspan="2" scope="colgroup">95% Confidence Limits<br/>for Percent</th>
+<th class="r b header" scope="col">Row<br/>Percent</th>
+<th class="r b header" scope="col">Std Err of<br/>Row Percent</th>
+<th class="c b header" colspan="2" scope="colgroup">95% Confidence Limits<br/>for Row Percent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="l rowheader" scope="row">&lt;HS</th>
+<th class="l rowheader" scope="row">English</th>
+<td class="r data">529</td>
+<td class="r data">745.81962</td>
+<td class="r data">11.9278</td>
+<td class="r data">0.4867</td>
+<td class="r data">10.9738</td>
+<td class="r data">12.8819</td>
+<td class="r data">63.8118</td>
+<td class="r data">1.6691</td>
+<td class="r data">60.5400</td>
+<td class="r data">67.0836</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<th class="l rowheader" scope="row">Spanish</th>
+<td class="r data">300</td>
+<td class="r data">83.18038</td>
+<td class="r data">6.7644</td>
+<td class="r data">0.3771</td>
+<td class="r data">6.0251</td>
+<td class="r data">7.5036</td>
+<td class="r data">36.1882</td>
+<td class="r data">1.6691</td>
+<td class="r data">32.9164</td>
+<td class="r data">39.4600</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<th class="l rowheader" scope="row">Total</th>
+<td class="r data">829</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">18.6922</td>
+<td class="r data">0.5854</td>
+<td class="r data">17.5446</td>
+<td class="r data">19.8398</td>
+<td class="r data">100.0000</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">College</th>
+<th class="l rowheader" scope="row">English</th>
+<td class="r data">1053</td>
+<td class="r data">961.73844</td>
+<td class="r data">23.7430</td>
+<td class="r data">0.6390</td>
+<td class="r data">22.4904</td>
+<td class="r data">24.9955</td>
+<td class="r data">98.5033</td>
+<td class="r data">0.3714</td>
+<td class="r data">97.7753</td>
+<td class="r data">99.2313</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<th class="l rowheader" scope="row">Spanish</th>
+<td class="r data">16</td>
+<td class="r data">107.26156</td>
+<td class="r data">0.3608</td>
+<td class="r data">0.0900</td>
+<td class="r data">0.1843</td>
+<td class="r data">0.5373</td>
+<td class="r data">1.4967</td>
+<td class="r data">0.3714</td>
+<td class="r data">0.7687</td>
+<td class="r data">2.2247</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<th class="l rowheader" scope="row">Total</th>
+<td class="r data">1069</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">24.1037</td>
+<td class="r data">0.6423</td>
+<td class="r data">22.8447</td>
+<td class="r data">25.3628</td>
+<td class="r data">100.0000</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">HS</th>
+<th class="l rowheader" scope="row">English</th>
+<td class="r data">2408</td>
+<td class="r data">2282</td>
+<td class="r data">54.2954</td>
+<td class="r data">0.7481</td>
+<td class="r data">52.8290</td>
+<td class="r data">55.7618</td>
+<td class="r data">94.9153</td>
+<td class="r data">0.4362</td>
+<td class="r data">94.0602</td>
+<td class="r data">95.7703</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<th class="l rowheader" scope="row">Spanish</th>
+<td class="r data">129</td>
+<td class="r data">254.55806</td>
+<td class="r data">2.9087</td>
+<td class="r data">0.2524</td>
+<td class="r data">2.4140</td>
+<td class="r data">3.4034</td>
+<td class="r data">5.0847</td>
+<td class="r data">0.4362</td>
+<td class="r data">4.2297</td>
+<td class="r data">5.9398</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<th class="l rowheader" scope="row">Total</th>
+<td class="r data">2537</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">57.2041</td>
+<td class="r data">0.7430</td>
+<td class="r data">55.7476</td>
+<td class="r data">58.6605</td>
+<td class="r data">100.0000</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Total</th>
+<th class="l rowheader" scope="row">English</th>
+<td class="r data">3990</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">89.9662</td>
+<td class="r data">0.4512</td>
+<td class="r data">89.0818</td>
+<td class="r data">90.8506</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<th class="l rowheader" scope="row">Spanish</th>
+<td class="r data">445</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">10.0338</td>
+<td class="r data">0.4512</td>
+<td class="r data">9.1494</td>
+<td class="r data">10.9182</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<th class="l rowheader" scope="row">Total</th>
+<td class="r data">4435</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">100.0000</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<br>
+<a name="IDX20"></a>
+<div>
+<div align="center">
+<table class="table" cellspacing="0" cellpadding="5" rules="all" frame="box" bordercolor="#C1C1C1" summary="Procedure Surveyfreq: Rao-Scott Chi-Square Test">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="c b header" colspan="2" scope="colgroup">Rao-Scott Chi-Square Test</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="l rowheader" scope="row">Pearson Chi-Square</th>
+<td class="r data">783.3440</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Design Correction</th>
+<td class="r data">0.9999</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<td class="r data">&nbsp;</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Rao-Scott Chi-Square</th>
+<td class="r data">783.4313</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">DF</th>
+<td class="r data">2</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Pr &gt; ChiSq</th>
+<td class="r data">&lt;.0001</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<td class="r data">&nbsp;</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">F Value</th>
+<td class="r data">391.7156</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Num DF</th>
+<td class="r data">2</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Den DF</th>
+<td class="r data">17526</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Pr &gt; F</th>
+<td class="r data">&lt;.0001</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<th class="c b footer" colspan="2">Sample Size = 8764</th>
+</tr>
+</tfoot>
+</table>
+</div>
+</div>
+<br>
+<a name="IDX21"></a>
+<div>
+<div align="center">
+<table class="table" cellspacing="0" cellpadding="5" rules="all" frame="box" bordercolor="#C1C1C1" summary="Procedure Surveyfreq: CrossTabulation Table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="c b header" colspan="12" scope="colgroup">Table of edu_f by language_f</th>
+</tr>
+<tr>
+<th class="c b header" colspan="12" scope="colgroup">Controlling for gender_f=Male</th>
+</tr>
+<tr>
+<th class="l b header" scope="col">edu_f</th>
+<th class="l b header" scope="col">language_f</th>
+<th class="r b header" scope="col">Frequency</th>
+<th class="r b header" scope="col">  Expected<br/> Frequency</th>
+<th class="r b header" scope="col">Percent</th>
+<th class="r b header" scope="col">Std Err of<br/>Percent</th>
+<th class="c b header" colspan="2" scope="colgroup">95% Confidence Limits<br/>for Percent</th>
+<th class="r b header" scope="col">Row<br/>Percent</th>
+<th class="r b header" scope="col">Std Err of<br/>Row Percent</th>
+<th class="c b header" colspan="2" scope="colgroup">95% Confidence Limits<br/>for Row Percent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="l rowheader" scope="row">&lt;HS</th>
+<th class="l rowheader" scope="row">English</th>
+<td class="r data">528</td>
+<td class="r data">743.89882</td>
+<td class="r data">12.1968</td>
+<td class="r data">0.4974</td>
+<td class="r data">11.2218</td>
+<td class="r data">13.1718</td>
+<td class="r data">63.8452</td>
+<td class="r data">1.6708</td>
+<td class="r data">60.5701</td>
+<td class="r data">67.1203</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<th class="l rowheader" scope="row">Spanish</th>
+<td class="r data">299</td>
+<td class="r data">83.10118</td>
+<td class="r data">6.9069</td>
+<td class="r data">0.3854</td>
+<td class="r data">6.1514</td>
+<td class="r data">7.6624</td>
+<td class="r data">36.1548</td>
+<td class="r data">1.6708</td>
+<td class="r data">32.8797</td>
+<td class="r data">39.4299</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<th class="l rowheader" scope="row">Total</th>
+<td class="r data">827</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">19.1037</td>
+<td class="r data">0.5975</td>
+<td class="r data">17.9324</td>
+<td class="r data">20.2750</td>
+<td class="r data">100.0000</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">College</th>
+<th class="l rowheader" scope="row">English</th>
+<td class="r data">1018</td>
+<td class="r data">928.29938</td>
+<td class="r data">23.5158</td>
+<td class="r data">0.6446</td>
+<td class="r data">22.2522</td>
+<td class="r data">24.7794</td>
+<td class="r data">98.6434</td>
+<td class="r data">0.3601</td>
+<td class="r data">97.9375</td>
+<td class="r data">99.3493</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<th class="l rowheader" scope="row">Spanish</th>
+<td class="r data">14</td>
+<td class="r data">103.70062</td>
+<td class="r data">0.3234</td>
+<td class="r data">0.0863</td>
+<td class="r data">0.1542</td>
+<td class="r data">0.4926</td>
+<td class="r data">1.3566</td>
+<td class="r data">0.3601</td>
+<td class="r data">0.6507</td>
+<td class="r data">2.0625</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<th class="l rowheader" scope="row">Total</th>
+<td class="r data">1032</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">23.8392</td>
+<td class="r data">0.6477</td>
+<td class="r data">22.5697</td>
+<td class="r data">25.1088</td>
+<td class="r data">100.0000</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">HS</th>
+<th class="l rowheader" scope="row">English</th>
+<td class="r data">2348</td>
+<td class="r data">2222</td>
+<td class="r data">54.2389</td>
+<td class="r data">0.7572</td>
+<td class="r data">52.7545</td>
+<td class="r data">55.7232</td>
+<td class="r data">95.0607</td>
+<td class="r data">0.4360</td>
+<td class="r data">94.2060</td>
+<td class="r data">95.9154</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<th class="l rowheader" scope="row">Spanish</th>
+<td class="r data">122</td>
+<td class="r data">248.19820</td>
+<td class="r data">2.8182</td>
+<td class="r data">0.2515</td>
+<td class="r data">2.3251</td>
+<td class="r data">3.3113</td>
+<td class="r data">4.9393</td>
+<td class="r data">0.4360</td>
+<td class="r data">4.0846</td>
+<td class="r data">5.7940</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<th class="l rowheader" scope="row">Total</th>
+<td class="r data">2470</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">57.0571</td>
+<td class="r data">0.7524</td>
+<td class="r data">55.5822</td>
+<td class="r data">58.5319</td>
+<td class="r data">100.0000</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Total</th>
+<th class="l rowheader" scope="row">English</th>
+<td class="r data">3894</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">89.9515</td>
+<td class="r data">0.4570</td>
+<td class="r data">89.0557</td>
+<td class="r data">90.8473</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<th class="l rowheader" scope="row">Spanish</th>
+<td class="r data">435</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">10.0485</td>
+<td class="r data">0.4570</td>
+<td class="r data">9.1527</td>
+<td class="r data">10.9443</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<th class="l rowheader" scope="row">Total</th>
+<td class="r data">4329</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">100.0000</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+<td class="r data">&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<br>
+<a name="IDX22"></a>
+<div>
+<div align="center">
+<table class="table" cellspacing="0" cellpadding="5" rules="all" frame="box" bordercolor="#C1C1C1" summary="Procedure Surveyfreq: Rao-Scott Chi-Square Test">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="c b header" colspan="2" scope="colgroup">Rao-Scott Chi-Square Test</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="l rowheader" scope="row">Pearson Chi-Square</th>
+<td class="r data">781.1625</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Design Correction</th>
+<td class="r data">0.9999</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<td class="r data">&nbsp;</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Rao-Scott Chi-Square</th>
+<td class="r data">781.2538</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">DF</th>
+<td class="r data">2</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Pr &gt; ChiSq</th>
+<td class="r data">&lt;.0001</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">&nbsp;</th>
+<td class="r data">&nbsp;</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">F Value</th>
+<td class="r data">390.6269</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Num DF</th>
+<td class="r data">2</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Den DF</th>
+<td class="r data">17526</td>
+</tr>
+<tr>
+<th class="l rowheader" scope="row">Pr &gt; F</th>
+<td class="r data">&lt;.0001</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<th class="c b footer" colspan="2">Sample Size = 8764</th>
+</tr>
+</tfoot>
+</table>
+</div>
+</div>
+<br>
+</div>
+</body>
+</html>

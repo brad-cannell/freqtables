@@ -1,0 +1,43 @@
+<!--
+version 16
+cd "/Users/bradcannell/Dropbox/R/Packages/freqtables/compare"
+
+Comparing Stata N-way tables to Freqtables for R
+2020-11-23
+
+To output as html, type dyndoc stata_compare.txt, replace
+-->
+
+# Load the data
+
+The data in demo_j_2017_2018 was downloaded and cleaned in R and then saved to this folder.
+
+~~~~
+<<dd_do>>
+use demo_j_2017_2018, clear
+<</dd_do>>
+~~~~
+
+# One-way tables
+
+~~~~
+<<dd_do>>
+tabulate gender_f
+<</dd_do>>
+~~~~
+
+# two-way tables
+
+~~~~
+<<dd_do>>
+tabulate gender_f edu_f, chi2 exact expected
+<</dd_do>>
+~~~~
+
+# three-way tables
+
+~~~~
+<<dd_do>>
+by gender_f, sort : tabulate edu_f language_f, chi2 exact expected
+<</dd_do>>
+~~~~

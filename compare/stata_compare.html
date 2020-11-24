@@ -1,0 +1,127 @@
+<!--
+version 16
+cd "/Users/bradcannell/Dropbox/R/Packages/freqtables/compare"
+
+Comparing Stata N-way tables to Freqtables for R
+2020-11-23
+
+To output as html, type dyndoc stata_compare.txt, replace
+-->
+<h1><a href="#load-the-data" id="load-the-data">Load the data</a></h1>
+<p>The data in demo_j_2017_2018 was downloaded and cleaned in R and then saved to this folder.</p>
+<pre><code>. use demo_j_2017_2018, clear
+
+</code></pre>
+<h1><a href="#one-way-tables" id="one-way-tables">One-way tables</a></h1>
+<pre><code>. tabulate gender_f
+
+   gender_f |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       Male |      4,557       49.24       49.24
+     Female |      4,697       50.76      100.00
+------------+-----------------------------------
+      Total |      9,254      100.00
+
+</code></pre>
+<h1><a href="#two-way-tables" id="two-way-tables">two-way tables</a></h1>
+<pre><code>. tabulate gender_f edu_f, chi2 exact expected
+
++--------------------+
+| Key                |
+|--------------------|
+|     frequency      |
+| expected frequency |
++--------------------+
+
+Enumerating sample-space combinations:
+stage 3:  enumerations = 1
+stage 2:  enumerations = 19
+stage 1:  enumerations = 0
+
+           |              edu_f
+  gender_f |       &lt;HS         HS    College |     Total
+-----------+---------------------------------+----------
+      Male |       827      2,470      1,032 |     4,329 
+           |     818.0    2,473.2    1,037.8 |   4,329.0 
+-----------+---------------------------------+----------
+    Female |       829      2,537      1,069 |     4,435 
+           |     838.0    2,533.8    1,063.2 |   4,435.0 
+-----------+---------------------------------+----------
+     Total |     1,656      5,007      2,101 |     8,764 
+           |   1,656.0    5,007.0    2,101.0 |   8,764.0 
+
+          Pearson chi2(2) =   0.2685   Pr = 0.874
+           Fisher's exact =                 0.875
+
+</code></pre>
+<h1><a href="#three-way-tables" id="three-way-tables">three-way tables</a></h1>
+<pre><code>. by gender_f, sort : tabulate edu_f language_f, chi2 exact expected
+
+-------------------------------------------------------------------------------------------------------------------------------------
+-&gt; gender_f = Male
+
++--------------------+
+| Key                |
+|--------------------|
+|     frequency      |
+| expected frequency |
++--------------------+
+
+Enumerating sample-space combinations:
+stage 3:  enumerations = 1
+stage 2:  enumerations = 305
+stage 1:  enumerations = 0
+
+           |      language_f
+     edu_f |   English    Spanish |     Total
+-----------+----------------------+----------
+       &lt;HS |       528        299 |       827 
+           |     743.9       83.1 |     827.0 
+-----------+----------------------+----------
+        HS |     2,348        122 |     2,470 
+           |   2,221.8      248.2 |   2,470.0 
+-----------+----------------------+----------
+   College |     1,018         14 |     1,032 
+           |     928.3      103.7 |   1,032.0 
+-----------+----------------------+----------
+     Total |     3,894        435 |     4,329 
+           |   3,894.0      435.0 |   4,329.0 
+
+          Pearson chi2(2) = 781.1625   Pr = 0.000
+           Fisher's exact =                 0.000
+
+-------------------------------------------------------------------------------------------------------------------------------------
+-&gt; gender_f = Female
+
++--------------------+
+| Key                |
+|--------------------|
+|     frequency      |
+| expected frequency |
++--------------------+
+
+Enumerating sample-space combinations:
+stage 3:  enumerations = 1
+stage 2:  enumerations = 306
+stage 1:  enumerations = 0
+
+           |      language_f
+     edu_f |   English    Spanish |     Total
+-----------+----------------------+----------
+       &lt;HS |       529        300 |       829 
+           |     745.8       83.2 |     829.0 
+-----------+----------------------+----------
+        HS |     2,408        129 |     2,537 
+           |   2,282.4      254.6 |   2,537.0 
+-----------+----------------------+----------
+   College |     1,053         16 |     1,069 
+           |     961.7      107.3 |   1,069.0 
+-----------+----------------------+----------
+     Total |     3,990        445 |     4,435 
+           |   3,990.0      445.0 |   4,435.0 
+
+          Pearson chi2(2) = 783.3440   Pr = 0.000
+           Fisher's exact =                 0.000
+
+
+</code></pre>

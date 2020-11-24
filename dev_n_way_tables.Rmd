@@ -1,0 +1,225 @@
+---
+title: "Develop N-way tables"
+date: "2020-11-06"
+---
+
+```{r}
+library(dplyr)
+library(haven)
+library(readr)
+library(freqtables)
+```
+
+Issue #22
+
+So, I think we need to think through a couple of different scenarios:
+
+1. Using group_by()
+  * I originally took it out (issue #1) because the original syntax was:
+      mtcars %>% 
+        group_by(am) %>% 
+        freq_table()
+    I still don't think that is the syntax we want. But, I think that:
+      mtcars %>% 
+        group_by(cyl) %>% 
+        freq_table(am)
+    is better than:
+      mtcars %>% 
+        freq_table(cyl, am)
+    It is more clear that am is the response var and cyl is the grouping var.
+    
+  * Meantables uses group_by. Then, the output is labeled "response_var" and "group_var". 
+    I like the idea of adopting this terminology. I think it is clearer than
+    row and column var.
+    
+  * Mulitple one-way tables vs. grouped one-way tables
+      mtcars %>% 
+        freq_table(cyl, am)
+    should be two one-way tables and
+      mtcars %>% 
+        group_by(cyl) %>% 
+        freq_table(am)
+    should be one two-way table.
+    
+2. We need to be able to make n-way tables. I like this syntax right now:
+      mtcars %>% 
+        group_by(cyl, disp) %>% 
+        freq_table(am)
+        
+3. Should we use methods to break up the freq_table code?
+    
+4. We also need to be able to make contingency tables. That may be a separate Rmd file.
+
+Use [NHANES data](https://wwwn.cdc.gov/nchs/nhanes/search/datapage.aspx?Component=Demographics&CycleBeginYear=2017) for now.
+
+```{r}
+demo_j <- read_xpt("https://wwwn.cdc.gov/Nchs/Nhanes/2017-2018/DEMO_J.XPT")
+```
+
+# Data management
+
+Clean a couple of variables we can use as an example below. We will also analyze the variables in Stata and SAS for comparison.
+
+For now, we will create one, two, and three-way frequency tables using the variables representing gender, education, and language of the interview.
+
+```{r}
+demo_j <- demo_j %>% 
+  mutate(
+    gender_f   = factor(RIAGENDR, 1:2, c("Male", "Female")),
+    edu_f      = factor(DMDHREDZ, 1:3, c("<HS", "HS", "College")),
+    language_f = factor(SIALANG, 1:2, c("English", "Spanish"))
+  )
+```
+
+# Export data
+
+See what it looks like in Stata and SAS
+
+```{r}
+# Adding data and code for Stata/SAS for comparison.
+# Build ignore and git ignore.
+# Delete the folder before merging with master.
+write_dta(demo_j, "compare/demo_j_2017_2018.dta")
+write_csv(demo_j, "compare/demo_j_2017_2018.csv", na = ".")
+```
+
+# One-way tables
+
+What does a one-way table look like using freqtables?
+
+```{r}
+demo_j %>% 
+  freq_table(gender_f)
+```
+
+Changes:
+ * Instead of n_total, the final output should have n_cum and percent_cum
+ * Drop t_crit from default view.
+ 
+```{r}
+# Eventually, make this a method? Don't worry about it at the moment.
+
+freq_table_one_way <- function(.data, ..., percent_ci = 95, ci_type = "logit", drop = FALSE) {
+  # ===========================================================================
+  # Enquo arguments
+  # enquo/quo_name/UQ the ci_type and output argument so that I don't have to
+  # use quotation marks around the argument being passed.
+  # ===========================================================================
+  ci_type_arg <- rlang::enquo(ci_type) %>% rlang::quo_name()
+  
+  # ===========================================================================
+  # Convert percent_95 to t_prob
+  # 2020-02-14: Previously, t_prob was an argument to freq_table and was passed
+  # directly to stats::qt(). However, t_prob is not necessarily intuitive to
+  # many users. Therefore, they will not enter, for example, 95 as an argument
+  # to the percent_95 parameter and that will be converted to a t_prob of 0.975
+  # as t_prob = 1 - (percent_ci / 100)/2
+  # ===========================================================================
+  alpha <-  1 - (percent_ci / 100)
+  t_prob <- 1 - alpha / 2
+  
+  # ===========================================================================
+  # One-way tables
+  # ===========================================================================
+  # Create first three columns of summary table: grouped variable name,
+  # grouped variable categories, and n of each category
+  out <- .data %>%
+    dplyr::count()
+    dplyr::mutate(var = !!names(.[1])) %>%
+    dplyr::rename(cat = !!names(.[1])) %>%
+    dplyr::select(var, cat, n) %>%
+    # Coerce all variable names and categories (i.e., 0 and 1) to character
+    dplyr::mutate_at(dplyr::vars(-n), as.character)
+
+  # Update out to include elements needed for Wald and Logit transformed CI's
+  # One-way tables
+  out <- out %>%
+    dplyr::mutate(
+      n_total = sum(n),
+      prop    = n / n_total,
+      se      = sqrt(prop * (1 - prop) / (n_total - 1)),
+      t_crit  = stats::qt(t_prob, df = n_total - 1)
+    )
+
+  # Calculate Wald CI's
+  # -------------------
+  # and put prop, se, and CI's on percent scale
+  # One-way tables
+  if (ci_type_arg == "wald") {
+
+    out <- out %>%
+      dplyr::mutate(
+        lcl_wald = prop - t_crit * se,
+        ucl_wald = prop + t_crit * se,
+        percent  = prop * 100,
+        se       = se * 100,
+        lcl      = lcl_wald * 100,
+        ucl      = ucl_wald * 100
+      )
+
+    # Calculate logit transformed CI's
+    # ------------------------------
+    # and put prop, se, and CI's on percent scale
+    # One-way tables
+  } else if (ci_type_arg == "logit") {
+
+    out <- out %>%
+      dplyr::mutate(
+        prop_log = log(prop) - log(1 - prop),
+        se_log   = se / (prop * (1 - prop)),
+        lcl_log  = prop_log - t_crit * se_log,
+        ucl_log  = prop_log + t_crit * se_log,
+        lcl_log  = exp(lcl_log) / (1 + exp(lcl_log)),
+        ucl_log  = exp(ucl_log) / (1 + exp(ucl_log)),
+        percent  = prop * 100,
+        se       = se * 100,
+        lcl      = lcl_log * 100,
+        ucl      = ucl_log * 100
+      )
+  }
+
+  # Control output
+  out <- out %>%
+    dplyr::select(var, cat, n, n_total, percent, se, t_crit, lcl, ucl)
+
+  # Add freq_table class to out
+  class(out) <- c("freq_table_one_way", class(out))
+}
+
+# For testing
+demo_j %>% 
+  freq_table_one_way(gender_f)
+```
+
+
+# Two-way tables
+
+```{r}
+demo_j %>% 
+  freq_table(gender_f, edu_f)
+```
+
+# Three-way tables
+
+```{r}
+demo_j %>% 
+  freq_table(gender_f, edu_f, language_f)
+```
+
+```{r}
+make_table_section <- function(cat) {
+  demo_j %>% 
+    filter(language_f == cat) %>% 
+    freqtables::freq_table(gender_f, edu_f) 
+}
+
+purrr::map_dfc(
+  .x = c("English", "Spanish"),
+  .f = make_table_section
+)
+```
+
+
+
+
+

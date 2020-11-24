@@ -9,3 +9,4 @@
 ^Meta$
 ^README\.Rmd$
 ^CRAN-RELEASE$
+^compare/*$
