@@ -223,12 +223,27 @@ freq_table <- function(.data, ..., percent_ci = 95, ci_type = "logit", drop = FA
   ci_type_arg <- rlang::enquo(ci_type) %>% rlang::quo_name()
 
   # ===========================================================================
+  # Check to see what type of object is being passed to .data
+  #   - Should be a data frame.
+  #   - For example, some people use "attach". That won't work with freq_table()
+
   # Check for grouped tibble
   # Check to see if the tibble is already grouped.
   # If yes, ungroup, so that you don't get unexpected results.
   # Then, group here using the variables in ...
   # ===========================================================================
-  if (("grouped_df" %in% class(.data))) {
+  .data_class <- class(.data)
+  if (!("data.frame" %in% .data_class)) {
+    stop(
+      paste0(
+        "freq_table expects the object passed to the .data argument (the",
+        " first argument) to be a data frame. Currently, the object being",
+        " passed to .data has the class: ", .data_class, ". Are you using",
+        " form 'mtcars %>% freq_table(am)' or 'freq_table(mtcars, am)'?"
+      )
+    )
+  }
+  if (("grouped_df" %in% .data_class)) {
     .data <- dplyr::ungroup(.data)
   }
 
