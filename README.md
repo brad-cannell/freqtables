@@ -9,6 +9,7 @@
 status](https://travis-ci.com/brad-cannell/freqtables.svg?branch=master)](https://travis-ci.com/brad-cannell/freqtables)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/freqtables)](https://cran.r-project.org/package=freqtables)
+\[![Downloads](http://cranlogs.r-pkg.org/badges/grand-total/freqtables)\]((<https://www.r-pkg.org/pkg/freqtables>)
 <!-- badges: end -->
 
 The goal of `freqtables` is to quickly make tables of descriptive
@@ -109,7 +110,7 @@ function.
 
 For the `freq_table_two_way` class, the methods used are Pearson’s
 chi-square test of independence Fisher’s exact test. When cell counts
-are \<= 5, Fisher’s Exact Test is considered more reliable.
+are &lt;= 5, Fisher’s Exact Test is considered more reliable.
 
 Here is an example of using `freq_test()` to test the equality of
 proportions on a one-way frequency table with all function arguments
