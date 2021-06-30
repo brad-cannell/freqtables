@@ -1,0 +1,25 @@
+---
+title: "Testing issue-29"
+date: "2021-05-31"
+---
+
+Delete this file once the issue is fixed
+
+Link to issue on GitHub: https://github.com/brad-cannell/freqtables/issues/29
+
+```{r}
+library(dplyr)
+```
+
+```{r}
+source("R/freq_table.R")
+```
+
+```{r}
+data("mtcars")
+```
+
+```{r}
+freq_table(am)
+```
+
