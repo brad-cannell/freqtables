@@ -5,6 +5,13 @@ data(mtcars)
 
 testthat::context("test-freq_table.R")
 
+# =============================================================================
+# Test error checks
+# - Error when a data frame isn't passed to the .data argument.
+# - Error when more than 2 column names are passed to the ... argument.
+# - Error when no column names are passed to the ... argument.
+# =============================================================================
+
 
 # =============================================================================
 # Test that group_by no longer has an effect on results

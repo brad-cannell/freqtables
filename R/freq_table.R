@@ -239,7 +239,7 @@ freq_table <- function(.data, ..., percent_ci = 95, ci_type = "logit", drop = FA
         "freq_table expects the object passed to the .data argument (the",
         " first argument) to be a data frame. Currently, the object being",
         " passed to .data has the class: ", .data_class, ". Are you using",
-        " form 'mtcars %>% freq_table(am)' or 'freq_table(mtcars, am)'?"
+        " form `mtcars %>% freq_table(am)` or `freq_table(mtcars, am)`?"
       )
     )
   }
@@ -255,11 +255,22 @@ freq_table <- function(.data, ..., percent_ci = 95, ci_type = "logit", drop = FA
 
   # ===========================================================================
   # Check for number of group vars:
+  #
+  # Throw an error if the value of n_groups is greater than 2. Currently,
+  # freq_tables can only do 1 and 2-way analysis. I would like to change this
+  # in the future.
+  #
+  # Throw an error if the value of n_groups is 0. This happens when the user
+  # doesn't pass any column names to the `...` argument.
   # ===========================================================================
   n_groups <- .data %>% ncol() - 1
   if (n_groups > 2) {
     stop("Currently, freq_table accepts one or two variables -- not more. You entered ",
          n_groups, " into the ... argument.")
+  }
+  if (n_groups < 1) {
+    stop("Did you pass any column names to the `...` argument? For example ",
+         "`mtcars %>% freq_table(am)` or `freq_table(mtcars, am)`")
   }
 
   # ===========================================================================

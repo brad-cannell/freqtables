@@ -20,6 +20,19 @@ data("mtcars")
 ```
 
 ```{r}
-freq_table(am)
+freq_table(mtcars)
+```
+ 
+ Left off here... This works, but I need to check and see what happens when I pass a column that only has one value. 
+ 
+```{r}
+mtcars$test <- "Blue"
+```
+ 
+```{r}
+freq_table(mtcars, test)
 ```
 
+Awesome! It still works!
+
+Now, make some unit tests! 
