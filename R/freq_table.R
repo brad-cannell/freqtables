@@ -238,8 +238,8 @@ freq_table <- function(.data, ..., percent_ci = 95, ci_type = "logit", drop = FA
       paste0(
         "freq_table expects the object passed to the .data argument (the",
         " first argument) to be a data frame. Currently, the object being",
-        " passed to .data has the class: ", .data_class, ". Are you using",
-        " form `mtcars %>% freq_table(am)` or `freq_table(mtcars, am)`?"
+        " passed to .data has the class: ", .data_class, ". Please use the",
+        " form mtcars %>% freq_table(am) or freq_table(mtcars, am)."
       )
     )
   }
@@ -269,8 +269,8 @@ freq_table <- function(.data, ..., percent_ci = 95, ci_type = "logit", drop = FA
          n_groups, " into the ... argument.")
   }
   if (n_groups < 1) {
-    stop("Did you pass any column names to the `...` argument? For example ",
-         "`mtcars %>% freq_table(am)` or `freq_table(mtcars, am)`")
+    stop("Did you pass any column names to the ... argument? For example ",
+         "mtcars %>% freq_table(am) or freq_table(mtcars, am)")
   }
 
   # ===========================================================================

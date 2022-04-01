@@ -10,7 +10,31 @@ testthat::context("test-freq_table.R")
 # - Error when a data frame isn't passed to the .data argument.
 # - Error when more than 2 column names are passed to the ... argument.
 # - Error when no column names are passed to the ... argument.
+
+# testthat evaluates the error string with a regular expression remember to
+# escape special characters like ( with a double back slash.
 # =============================================================================
+testthat::test_that("Error when a data frame isn't passed to the .data argument.", {
+  vector <- 1:10
+  testthat::expect_error(
+    freq_table(1:10),
+    "freq_table expects the object passed to the \\.data argument \\(the first argument\\) to be a data frame\\. Currently, the object being passed to .data has the class: integer. Please use the form mtcars %>% freq_table\\(am\\) or freq_table\\(mtcars, am\\)."
+  )
+})
+
+testthat::test_that("Error when more than 2 column names are passed to the ... argument.", {
+  testthat::expect_error(
+    freq_table(mtcars, am, cyl, disp),
+    "Currently, freq_table accepts one or two variables -- not more. You entered 3 into the ... argument."
+  )
+})
+
+testthat::test_that("Error when no column names are passed to the ... argument.", {
+  testthat::expect_error(
+    freq_table(mtcars),
+    "Did you pass any column names to the \\.\\.\\. argument\\? For example mtcars %>% freq_table\\(am\\) or freq_table\\(mtcars, am\\)"
+  )
+})
 
 
 # =============================================================================
