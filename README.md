@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# freqtables
+# freqtables <img style="padding: 15px;" align="left" src="man/figures/freqtables_hex/freqtables.png" alt="freqtables hex logo" width="250" height="289">
 
 <!-- badges: start -->
 
@@ -84,7 +84,7 @@ table with all function arguments left at their default values:
 ``` r
 mtcars %>% 
   freq_table(am, cyl)
-#> # A tibble: 6 x 17
+#> # A tibble: 6 × 17
 #>   row_var row_cat col_var col_cat     n n_row n_total percent_total se_total
 #>   <chr>   <chr>   <chr>   <chr>   <int> <int>   <int>         <dbl>    <dbl>
 #> 1 am      0       cyl     4           3    19      32          9.38     5.24
@@ -135,7 +135,7 @@ mtcars %>%
   freq_table(am, vs) %>%
   freq_test() %>%
   select(row_var:n, percent_row, p_chi2_pearson)
-#> # A tibble: 4 x 7
+#> # A tibble: 4 × 7
 #>   row_var row_cat col_var col_cat     n percent_row p_chi2_pearson
 #>   <chr>   <chr>   <chr>   <chr>   <int>       <dbl>          <dbl>
 #> 1 am      0       vs      0          12        63.2          0.341
