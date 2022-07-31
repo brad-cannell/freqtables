@@ -70,7 +70,8 @@ Here is an example of using `freq_table()` to create a two-way frequency table w
 
 ```{r}
 mtcars %>% 
-  freq_table(am, cyl)
+  group_by(am) %>% 
+  freq_table(cyl)
 ```
 
 You can learn more about the `freq_table()` function and ways to adjust default behaviors in vignette("descriptive_analysis").

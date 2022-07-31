@@ -48,7 +48,7 @@ The examples below will use R’s built-in `mtcars` data set.
 data("mtcars")
 ```
 
-### freq\_table()
+### freq_table()
 
 The `freq_table()` function produces one-way and two-way frequency
 tables for categorical variables. In addition to frequencies, the
@@ -60,7 +60,7 @@ errors, and confidence intervals.
 For one-way tables, the default 95 percent confidence intervals
 displayed are logit transformed confidence intervals equivalent to those
 used by Stata. Additionally, `freq_table()` will return Wald (“linear”)
-confidence intervals if the argument to ci\_type = “wald”.
+confidence intervals if the argument to ci_type = “wald”.
 
 For two-way tables, `freq_table()` returns logit transformed confidence
 intervals equivalent to those used by Stata.
@@ -81,25 +81,20 @@ table with all function arguments left at their default values:
 
 ``` r
 mtcars %>% 
-  freq_table(am, cyl)
-#> # A tibble: 6 × 17
-#>   row_var row_cat col_var col_cat     n n_row n_total percent_total se_total
-#>   <chr>   <chr>   <chr>   <chr>   <int> <int>   <int>         <dbl>    <dbl>
-#> 1 am      0       cyl     4           3    19      32          9.38     5.24
-#> 2 am      0       cyl     6           4    19      32         12.5      5.94
-#> 3 am      0       cyl     8          12    19      32         37.5      8.70
-#> 4 am      1       cyl     4           8    13      32         25        7.78
-#> 5 am      1       cyl     6           3    13      32          9.38     5.24
-#> 6 am      1       cyl     8           2    13      32          6.25     4.35
-#> # … with 8 more variables: t_crit_total <dbl>, lcl_total <dbl>,
-#> #   ucl_total <dbl>, percent_row <dbl>, se_row <dbl>, t_crit_row <dbl>,
-#> #   lcl_row <dbl>, ucl_row <dbl>
+  group_by(am) %>% 
+  freq_table(cyl)
+#> # A tibble: 3 × 9
+#>   var   cat       n n_total percent    se t_crit   lcl   ucl
+#>   <chr> <chr> <int>   <int>   <dbl> <dbl>  <dbl> <dbl> <dbl>
+#> 1 cyl   4        11      32    34.4  8.53   2.04  19.5  53.1
+#> 2 cyl   6         7      32    21.9  7.42   2.04  10.3  40.4
+#> 3 cyl   8        14      32    43.8  8.91   2.04  27.1  61.9
 ```
 
 You can learn more about the `freq_table()` function and ways to adjust
-default behaviors in vignette(“descriptive\_analysis”).
+default behaviors in vignette(“descriptive_analysis”).
 
-### freq\_test()
+### freq_test()
 
 The `freq_test()` function is an S3 generic. It currently has methods
 for conducting hypothesis tests on one-way and two-way frequency tables.
@@ -108,7 +103,7 @@ function.
 
 For the `freq_table_two_way` class, the methods used are Pearson’s
 chi-square test of independence Fisher’s exact test. When cell counts
-are &lt;= 5, Fisher’s Exact Test is considered more reliable.
+are \<= 5, Fisher’s Exact Test is considered more reliable.
 
 Here is an example of using `freq_test()` to test the equality of
 proportions on a one-way frequency table with all function arguments
@@ -143,14 +138,14 @@ mtcars %>%
 ```
 
 You can learn more about the `freq_table()` function and ways to adjust
-default behaviors in vignette(“using\_freq\_test”).
+default behaviors in vignette(“using_freq_test”).
 
-### freq\_format()
+### freq_format()
 
-The freq\_format function is intended to make it quick and easy to
-format the output of the freq\_table function for tables that may be
-used for publication. For example, a proportion and 95% confidence
-interval could be formatted as “24.00 (21.00 - 27.00).”
+The freq_format function is intended to make it quick and easy to format
+the output of the freq_table function for tables that may be used for
+publication. For example, a proportion and 95% confidence interval could
+be formatted as “24.00 (21.00 - 27.00).”
 
 ``` r
 mtcars %>%

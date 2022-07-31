@@ -1,5 +1,7 @@
 #' @title Estimate Counts, Percentages, and Confidence Intervals in dplyr Pipelines
 #'
+#' This version is hard deprecating ... It doesn't work.
+#'
 #' @description The freq_table function produces one-way and two-way frequency
 #'   tables for categorical variables. In addition to frequencies, the
 #'   freq_table function displays percentages, and the standard errors and
@@ -20,17 +22,16 @@
 #'   For two-way tables, freq_table returns logit transformed confidence
 #'   intervals equivalent to those used by Stata.
 #'
-#' @param .data A data frame. If it is already grouped (i.e., class == "grouped_df")
-#'   then freq_table will ungroup it to prevent unexpected results.
+#' @param .data A data frame.
 #'
-#'   For two-way tables, the count for each level of the variable in the
-#'   first argument to freq_table will be the denominator for row percentages
-#'   and their confidence intervals. Said another way, the goal of the
+#'   For two-way tables, the data frame passed to .data should be a grouped
+#'   data frame (i.e., use dplyr::group_by()). The count for each level of
+#'   the group_by variable will be the denominator for row percentages
+#'   and their confidence intervals. Said another way, if the goal of the
 #'   analysis is to compare percentages of some characteristic across two or
-#'   more groups of interest, then the variable in the first argument to
-#'   freq_table should contain the groups of interest, and the variable in the
-#'   second argument to freq_table should contain the characteristic of
-#'   interest.
+#'   more groups of interest, then the group_by variable should contain the
+#'   groups of interest, and the variable passed to freq_table() should
+#'   contain the characteristic of interest.
 #'
 #' @param ... Categorical variables to be used in calculations. Currently,
 #'   freq_table accepts one or two variables -- not more.
@@ -190,7 +191,8 @@
 #' # Output truncated to fit the screen
 #' # --------------------------------------------------------------------------
 #' mtcars %>%
-#'   freq_table(am, cyl)
+#'   group_by(am) %>%
+#'   freq_table(cyl)
 #'
 #' #   A tibble: 6 x 17
 #' #   row_var row_cat col_var col_cat     n n_row n_total percent_total se_total
@@ -201,7 +203,7 @@
 #' # 4 am      1       cyl     4           8    13      32         25        7.78
 #' # 5 am      1       cyl     6           3    13      32          9.38     5.24
 #' # 6 am      1       cyl     8           2    13      32          6.25     4.35
-freq_table <- function(.data, ..., percent_ci = 95, ci_type = "logit", drop = FALSE) {
+freq_table_v3 <- function(.data, .x, percent_ci = 95, ci_type = "logit", drop = FALSE) {
 
   # ------------------------------------------------------------------
   # Prevents R CMD check: "no visible binding for global variable ‘.’"
@@ -226,11 +228,6 @@ freq_table <- function(.data, ..., percent_ci = 95, ci_type = "logit", drop = FA
   # Check to see what type of object is being passed to .data
   #   - Should be a data frame.
   #   - For example, some people use "attach". That won't work with freq_table()
-
-  # Check for grouped tibble
-  # Check to see if the tibble is already grouped.
-  # If yes, ungroup, so that you don't get unexpected results.
-  # Then, group here using the variables in ...
   # ===========================================================================
   .data_class <- class(.data)
   if (!("data.frame" %in% .data_class)) {
@@ -243,15 +240,33 @@ freq_table <- function(.data, ..., percent_ci = 95, ci_type = "logit", drop = FA
       )
     )
   }
-  if (("grouped_df" %in% .data_class)) {
-    .data <- dplyr::ungroup(.data)
+
+  # ===========================================================================
+  # Removing `...` in favor of `.x`
+  #   - See issue #40
+  #   - With ..., users could pass two vars - freq_table(mtcars, am, cyl). Now,
+  #     freq_table thinks cyl is being passed to the percent_ci argument. Let's
+  #     create an informative error.
+  # ===========================================================================
+  # Get the third argument. This will always return a character string.
+  third_arg <- deparse(substitute(percent_ci))
+  # Try to convert the character string to a number. "95" will convert to a
+  # a number, but "vs" will convert to NA.
+  third_arg_not_numbers <- grepl("\\D", third_arg)
+  if (third_arg_not_numbers) {
+    stop(
+      "freq_table expects a number between 0 and 100 to be passed to the percent_ci argument. Instead, ", third_arg, "was passed to the percent_ci argument. Where you were attempting to create an n-way table using the `...` argument? If so, the `...` argument to pass multiple column names to freq_table is ",
+      "depricated as of version 1.0.0. If you are trying to make an n-way ",
+      "table, please pass a grouped data frame (i.e., using dplyr::group_by() ",
+      "to the `.data` argument and pass the name of your response variable to ",
+      "the freq_table's `.x` argument."
+    )
   }
 
   # ===========================================================================
   # Get within group counts
-  # .drop = FALSE creates an explicit n = 0 for unobserved factor levels
   # ===========================================================================
-  .data <- dplyr::count(.data, ..., .drop = drop)
+  .data <- dplyr::count(.data, {{ .x }}, .drop = drop)
 
   # ===========================================================================
   # Check for number of group vars:
@@ -265,11 +280,12 @@ freq_table <- function(.data, ..., percent_ci = 95, ci_type = "logit", drop = FA
   # ===========================================================================
   n_groups <- .data %>% ncol() - 1
   if (n_groups > 2) {
-    stop("Currently, freq_table accepts one or two variables -- not more. You entered ",
-         n_groups, " into the ... argument.")
+    stop("Currently, freq_table only accepts data frames with one grouping ",
+         "varialble (two-way tables) -- not more. The data frame you passed ",
+         "to freq_table has ", n_groups, ".")
   }
   if (n_groups < 1) {
-    stop("Did you pass any column names to the ... argument? For example ",
+    stop("Did you pass any column names to the .x argument? For example ",
          "mtcars %>% freq_table(am) or freq_table(mtcars, am)")
   }
 
@@ -436,9 +452,10 @@ freq_table <- function(.data, ..., percent_ci = 95, ci_type = "logit", drop = FA
 # For testing
 # data(mtcars)
 # devtools::load_all()
-# mtcars %>% freq_table()
-# mtcars %>% freq_table(cyl)
-# mtcars %>% group_by(am) %>% freq_table(cyl)
-# mtcars %>% group_by(am) %>% freq_table(.x = cyl)
-# mtcars %>% group_by(am) %>% freq_table(cyl, vs)
-# mtcars %>% group_by(am) %>% freq_table(cyl, "wald")
+# mtcars %>% freq_table_v3()
+# mtcars %>% freq_table_v3(cyl)
+# mtcars %>% group_by(am) %>% freq_table_v3(cyl)
+# mtcars %>% group_by(am) %>% freq_table_v3(.x = cyl)
+# mtcars %>% group_by(am) %>% freq_table_v3(cyl, vs)
+# mtcars %>% group_by(am) %>% freq_table_v3(cyl, "wald")
+

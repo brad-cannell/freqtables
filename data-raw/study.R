@@ -92,7 +92,7 @@ freq_study <- study %>%
 
 
 # Add the simulated data to the data directory.
-usethis::use_data(study, overwrite = TRUE)
+usethis::use_data(freq_study, overwrite = TRUE)
 
 # Export a csv file that we can import into Stata.
 # We use the Stata data for one of the examples in README.

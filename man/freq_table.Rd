@@ -4,20 +4,19 @@
 \alias{freq_table}
 \title{Estimate Counts, Percentages, and Confidence Intervals in dplyr Pipelines}
 \usage{
-freq_table(.data, ..., percent_ci = 95, ci_type = "logit", drop = FALSE)
+freq_table(.data, ..., .x, percent_ci = 95, ci_type = "logit", drop = FALSE)
 }
 \arguments{
-\item{.data}{A data frame. If it is already grouped (i.e., class == "grouped_df")
-  then freq_table will ungroup it to prevent unexpected results.
+\item{.data}{A data frame.
 
-  For two-way tables, the count for each level of the variable in the
-  first argument to freq_table will be the denominator for row percentages
-  and their confidence intervals. Said another way, the goal of the
+  For two-way tables, the data frame passed to .data should be a grouped
+  data frame (i.e., use dplyr::group_by()). The count for each level of
+  the group_by variable will be the denominator for row percentages
+  and their confidence intervals. Said another way, if the goal of the
   analysis is to compare percentages of some characteristic across two or
-  more groups of interest, then the variable in the first argument to
-  freq_table should contain the groups of interest, and the variable in the
-  second argument to freq_table should contain the characteristic of
-  interest.}
+  more groups of interest, then the group_by variable should contain the
+  groups of interest, and the variable passed to freq_table() should
+  contain the characteristic of interest.}
 
 \item{...}{Categorical variables to be used in calculations. Currently,
   freq_table accepts one or two variables -- not more.
@@ -190,7 +189,8 @@ df \%>\%
 # Output truncated to fit the screen
 # --------------------------------------------------------------------------
 mtcars \%>\%
-  freq_table(am, cyl)
+  group_by(am) \%>\%
+  freq_table(cyl)
 
 #   A tibble: 6 x 17
 #   row_var row_cat col_var col_cat     n n_row n_total percent_total se_total

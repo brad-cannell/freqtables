@@ -3,8 +3,6 @@ library(freqtables)
 
 data(mtcars)
 
-testthat::context("test-freq_table.R")
-
 # =============================================================================
 # Test error checks
 # - Error when a data frame isn't passed to the .data argument.
@@ -38,7 +36,11 @@ testthat::test_that("Error when no column names are passed to the ... argument."
 
 
 # =============================================================================
-# Test that group_by no longer has an effect on results
+# Test that group_by works
+# Because ... is soft deprecated, we need to test that group information is
+# removed if columns are passed to ..., and that group information is not
+# removed if a column is passed to .x.
+# The first test can be removed or changed when ... is removed completely.
 # =============================================================================
 df <- mtcars %>%
   group_by(am) %>%
@@ -47,6 +49,18 @@ df <- mtcars %>%
 testthat::test_that("freq_table is ungrouping grouped input df's", {
   var <- unique(df$var)
   testthat::expect_match(var, "cyl")
+})
+
+df <- mtcars %>%
+  group_by(am) %>%
+  freq_table(.x = cyl)
+
+testthat::test_that("freq_table is NOT ungrouping grouped input df's", {
+  row_var <- unique(df$row_var)
+  testthat::expect_match(row_var, "am")
+
+  col_var <- unique(df$col_var)
+  testthat::expect_match(col_var, "cyl")
 })
 
 
