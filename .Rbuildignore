@@ -10,3 +10,6 @@
 ^README\.Rmd$
 ^CRAN-RELEASE$
 ^CRAN-SUBMISSION$
+^freqtables\.Rcheck$
+^freqtables.*\.tar\.gz$
+^freqtables.*\.tgz$

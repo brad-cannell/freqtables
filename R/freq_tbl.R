@@ -11,46 +11,50 @@
 # will be the default because that's probably how much people will want the
 # results displayed when using freq_tbl independent of freq_table().
 
-freq_tbl <- function(.data, .freq_var, .drop = FALSE, percent = TRUE) {
+freq_tbl <- function(.data, .freq_var, .drop = FALSE, percent = FALSE) {
 
-  # Get n overall
-  n_overall <- nrow(.data)
   # Get counts
   out <- .data %>%
     dplyr::count({{ .freq_var }}, .drop = .drop) %>%
     dplyr::mutate(
-      # Both of these values appear in one-way and n-way tables
-      n_overall    = n_overall,
-      prop_overall = n / n_overall
+      prop = n / sum(n)
     )
 
   # Convert overall proportion to percentage (optional)
   if (percent) {
     out <- out %>%
       dplyr::mutate(
-        percent_overall = prop_overall * 100,
-        prop_overall    = NULL
+        percent = prop * 100
       )
   }
 
-  # grouped add n_group and percent_group
+  # Change column names for grouped data
   if ("grouped_df" %in% class(.data)) {
     out <- out %>%
-      dplyr::mutate(
-        n_group    = sum(n),
-        prop_group = n / sum(n),
+      dplyr::rename(
+        n_group = n,
+        prop_group = prop
       )
-
-    # Convert group proportion to percentage (optional)
-    # Grouped tibbles only
-    if (percent) {
-      out <- out %>%
-        dplyr::mutate(
-          percent_group = prop_group * 100,
-          prop_group    = NULL
-        )
-    }
   }
+
+  # # grouped add n_group and percent_group
+  # if ("grouped_df" %in% class(.data)) {
+  #   out <- out %>%
+  #     dplyr::mutate(
+  #       n_group    = sum(n),
+  #       prop_group = n / sum(n),
+  #     )
+  #
+  #   # Convert group proportion to percentage (optional)
+  #   # Grouped tibbles only
+  #   if (percent) {
+  #     out <- out %>%
+  #       dplyr::mutate(
+  #         percent_group = prop_group * 100,
+  #         prop_group    = NULL
+  #       )
+  #   }
+  # }
 
   # Return tibble of results
   out

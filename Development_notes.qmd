@@ -1,0 +1,162 @@
+---
+title: "Development Notes"
+format: html
+---
+
+2023-11-23: Created this document in Mexico. I can't push it back to GitHub. Just using it for explorations. Also see the Wiki here: https://github.com/brad-cannell/freqtables/wiki/Development-Notes#examples-of-desired-output-for-freq_tbl
+
+
+# Load packages
+
+```{r}
+library(dplyr, warn.conflicts = FALSE)
+```
+
+
+# Load mtcars
+
+```{r}
+data("mtcars")
+```
+
+
+# Load functions
+
+```{r}
+source("R/freq_tbl.R")
+```
+
+
+# freq_tbl one way
+
+```{r}
+mtcars %>% 
+  freq_tbl(am)
+```
+
+# freq_tbl two way
+
+```{r}
+mtcars %>% 
+  group_by(am) %>% 
+  freq_tbl(cyl)
+```
+
+# freq_tbl n way
+
+```{r}
+mtcars %>% 
+  group_by(am, vs) %>% 
+  freq_tbl(cyl, .drop = FALSE) 
+```
+
+.drop = FALSE doesn't work because cyl isn't a factor. Do I want to convert all columns to factors? Just provide an informative message?
+
+
+# freq_xtab
+
+```{r}
+# Change am and cyl to factors
+mtcars <- mtcars %>% 
+  mutate(
+    am_f = factor(am, c(1, 0), c("Yes", "No")),
+    cyl_f = factor(cyl, c(4, 6, 8), c("L4", "L6", "L8"))
+  )
+```
+
+
+```{r}
+out <- matrix(c(8, 3, 2, 3, 4, 12), byrow = TRUE, nrow = 2)
+dimnames(out) <- list(
+  Exposure = c("Yes", "No"),
+  Outcome = c("L4", "L6", "L8")
+)
+out
+```
+
+
+```{r}
+freq_xtab <- function(.data, .exposure, .outcome) {
+  
+  # Get counts
+  counts <- table(
+    pull(.data, {{ .exposure }}), 
+    pull(.data, {{ .outcome }})
+  )
+  
+  # Add row and column headers
+  names(dimnames(counts)) <- c(
+    rlang::as_name(enquo(.exposure)), 
+    rlang::as_name(enquo(.outcome))
+  )
+  
+  # Return result
+  counts
+}
+
+# For testing
+mtcars %>% 
+  freq_xtab(am_f, cyl_f) %>% 
+  addmargins()
+```
+
+```{r}
+freq_xtab <- function(...) {
+  list <- list(...)
+  
+  mat <- matrix(
+    list[["n"]], 
+    byrow = TRUE,
+    nrow = length(list[[1]]),
+    ncol = length(list[[2]])
+  )
+  
+  # Add row and column headers
+  dimnames(mat) <- c(list[1], list[2])
+  
+  # Add margins
+  mat <- addmargins(mat)
+  
+  mat
+}
+
+# For testing
+freq_xtab(
+    am_f = c("Yes", "No"),
+    cyl_f = c("L4", "L6", "L8"),
+    n = c(8, 3, 2, 3, 4, 12)
+)
+```
+
+
+```{r}
+# This really needs to be a 2x2 table
+freq_ip <- function(.xtab) {
+  ip <- .xtab[, 1] / .xtab[, "Sum"]
+  .xtab <- cbind(.xtab, ip)
+  .xtab
+}
+
+freq_ipr <- function(.xtab) {
+  ipr <- .xtab[1, "ip"] / .xtab[2, "ip"]
+  ipr
+}
+
+freq_ipd <- function(.xtab) {
+  ipd <- .xtab[1, "ip"] - .xtab[2, "ip"]
+  ipd
+}
+
+# For testing
+freq_xtab(
+    exposure = c("Yes", "No"),
+    outcome = c("Yes", "No"),
+    n = c(8, 3, 2, 3)
+) %>% 
+  freq_ip() %>% 
+  # freq_ipr()
+  freq_ipd()
+```
+
+Add confidence intervals?
+Add interpretations?

@@ -12,3 +12,6 @@ Meta
 .DS_Store
 /doc/
 /Meta/
+freqtables.Rcheck/
+freqtables*.tar.gz
+freqtables*.tgz
