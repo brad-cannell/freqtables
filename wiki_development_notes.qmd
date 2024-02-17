@@ -1,0 +1,261 @@
+---
+title: "wiki_development_notes"
+---
+
+# Overview
+
+- Working my way through the Wiki development notes (https://github.com/brad-cannell/freqtables/wiki/Development-Notes). 
+
+- At this point, don't worry about great documentation. Just get things working. You can document them and add them to R scripts later.
+
+- Having said that, do try to write modularized code -- break the main function up into smaller functions that can individually be maintained and tested.
+
+- Delete this before submitting to CRAN.
+
+# Load packages
+
+Don't load packages. Use the double colon syntax like you would in an R script. 
+
+# Load data 
+
+For testing
+
+```{r}
+data(freq_study)
+```
+
+# freq_tbl
+
+Create the freq_tbl function.
+
+* We may want to come back and add a .col_headers = "col_names" argument that users can adjust if they want generic column headers instead.
+
+* We can add an overall = FALSE argument that users who want an overall percentage can adjust.
+
+```{r}
+freq_tbl <- function(.data, .freq_var, .drop = FALSE, .percent = FALSE) {
+  
+  # ===========================================================================
+  # Prevents R CMD check: "no visible binding for global variable ‘.’"
+  # ===========================================================================
+  # Fill this in later.
+  
+  # ===========================================================================
+  # Setup for tidy evaluation
+  # ===========================================================================
+  .freq_var <- rlang::enquo(.freq_var)
+  
+  # ===========================================================================
+  # Data Checks
+  # ===========================================================================
+  
+  # ---------------------------------------------------------------------------
+  # Check to see what type of object is being passed to .data
+  #   - Should be a data frame.
+  #   - For example, some people use "attach". That won't work with freq_tbl()
+  # ---------------------------------------------------------------------------
+  .data_class <- class(.data)
+  if (!("data.frame" %in% .data_class)) {
+    stop(
+      paste0(
+        "freq_tbl expects the object passed to the .data argument (the",
+        " first argument) to be a data frame. Currently, the object being",
+        " passed to .data has the class: ", .data_class, ". Please use the",
+        " form mtcars |> freq_table(am) or freq_table(mtcars, am)."
+      )
+    )
+  }
+  
+  # ---------------------------------------------------------------------------
+  # Check to make sure there was a value passed to the .freq_var argument.
+  #   - Not necessary. If it is missing then 'argument ".freq_var" is missing, 
+  #     with no default' is thrown automatically.
+  # ---------------------------------------------------------------------------
+  
+  # ---------------------------------------------------------------------------
+  # Check to make sure that .freq_var is a column that exists in .data.
+  # ---------------------------------------------------------------------------
+  .freq_var_chr <- rlang::as_name(.freq_var)
+  col_names <- names(.data)
+  if (!(.freq_var_chr %in% col_names)) {
+    stop(
+      paste0(
+        "freq_tbl expects the object passed to the .freq_var argument (the",
+        " second argument) to be a column of the data frame passed to .data.", 
+        " The object being passed to .freq_var is called '", .freq_var_chr, 
+        "' and is not a column in the data frame being passed to .data."
+      )
+    )
+  }
+  
+  # ===========================================================================
+  # One-way frequency table
+  # ===========================================================================
+  
+  # Get n overall
+  n_overall <- nrow(.data)
+  
+  # Get counts and proportions
+  out <- .data |>
+    dplyr::count({{ .freq_var }}, .drop = .drop) |>
+    # Add proportions
+    dplyr::mutate(prop = n / n_overall)
+
+  # Convert proportion to percentage (optional)
+  if (.percent) {
+    out <- dplyr::mutate(out, percent = prop * 100, prop = NULL)
+  }
+  
+  # ===========================================================================
+  # Two-way frequency table
+  # ===========================================================================
+
+  # Add n_group and percent_group
+  if ("grouped_df" %in% class(.data)) {
+    out <- out |>
+      dplyr::mutate(
+        n_group    = sum(n),
+        prop_group = n / sum(n),
+        
+      )
+
+    # Convert group proportion to percentage (optional)
+    # Grouped tibbles only
+    if (.percent) {
+      out <- out |>
+        dplyr::mutate(
+          percent_group = prop_group * 100,
+          prop_group    = NULL
+        )
+    }
+  }
+
+  # Return tibble of results
+  out
+}
+```
+
+## Test freq_tbl
+
+```{r}
+# Not a data frame
+# freq_study$sex |> freq_tbl() # Return informative error
+
+# Nothing passed to .freq_var
+# freq_study |> freq_tbl() # Return informative error
+
+# A column name that doesn't exist in .data is passed to .freq_var
+# freq_study |> freq_tbl(age) # Return informative error
+
+# One-way table
+# freq_study |> freq_tbl(sex)
+
+# One-way table with .drop = TRUE
+# freq_study |> freq_tbl(bmi_4cat, .drop = FALSE)
+# freq_study |> freq_tbl(bmi_4cat, .drop = TRUE)
+
+# One-way table with percentages instead of proportions
+# freq_study |> freq_tbl(sex, .percent = TRUE)
+
+# Two-way table
+freq_study |> dplyr::group_by(exposure) |> freq_tbl(sex)
+
+# Two-way table with .drop = TRUE
+# freq_study |> freq_tbl(bmi_4cat, .drop = FALSE)
+# freq_study |> freq_tbl(bmi_4cat, .drop = TRUE)
+
+# Return proportion instead of percent
+# freq_study |> group_by(exposure) |> freq_tbl(sex, percent = FALSE)
+
+# Return NA as a category
+# freq_study |> group_by(exposure, outcome) |> freq_tbl(sex, .drop = FALSE)
+
+# Passing more than one column
+# freq_table(freq_study, exposure, sex)
+```
+
+- When you get this working, try breaking the function up into smaller functions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Dumping ground
+
+Stuff I think I don't need anymore, but I'm not 100% sure.
+
+## freq_tbl_data_check
+
+Make this a separate function for easier maintenance and testing. 
+
+```{r}
+freq_tbl_data_check <- function(.data, .freq_var) {
+  # ===========================================================================
+  # Prevents R CMD check: "no visible binding for global variable ‘.’"
+  # ===========================================================================
+  # Fill this in later.
+  
+  # ===========================================================================
+  # Check to see what type of object is being passed to .data
+  #   - Should be a data frame.
+  #   - For example, some people use "attach". That won't work with freq_tbl()
+  # ===========================================================================
+  .data_class <- class(.data)
+  if (!("data.frame" %in% .data_class)) {
+    stop(
+      paste0(
+        "freq_tbl expects the object passed to the .data argument (the",
+        " first argument) to be a data frame. Currently, the object being",
+        " passed to .data has the class: ", .data_class, ". Please use the",
+        " form mtcars |> freq_table(am) or freq_table(mtcars, am)."
+      )
+    )
+  }
+  
+  # ===========================================================================
+  # Check to make sure there was a value passed to the .freq_var argument.
+  # And that the value is a column that exists in .data.
+  # ===========================================================================
+  if (is.null(.freq_var)) {
+    stop(
+      "It's empty."
+    )
+  }
+  # Defuse the user expression in .freq_var
+  .freq_var <- rlang::enquo(.freq_var)
+  # out <- dplyr::pull(.data, rlang::enquo(.freq_var))
+  return(.freq_var)
+  
+  # Pass .data along if it clears data checks
+  .data
+}
+```
+
+## Test freq_tbl_data_check
+
+```{r}
+# Not a data frame
+# freq_study$sex |> freq_tbl_data_check() # Return informative error
+
+# Nothing passed to .freq_var
+# freq_study |> freq_tbl_data_check() # Return informative error
+```
+
+
+Actually, I'm not sure I want to do it this way. Maybe I should put the data checks inside the main function. 
+- I want to check all of the arguments.
+- I don't want to have to enquo arguments multiple times.
+- Still break the stats functions into multiple functions when that makes sense.
