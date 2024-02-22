@@ -14,3 +14,4 @@
 ^docs$
 ^pkgdown$
 ^data-raw$
+^R/freq_tbl_test\.R$

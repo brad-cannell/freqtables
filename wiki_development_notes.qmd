@@ -12,6 +12,12 @@ title: "wiki_development_notes"
 
 - Delete this before submitting to CRAN.
 
+## Process
+
+- As the functions get longer, it's actually easier to to keep them in a separate R script and then source them than it is to scroll up and down running them and testing them.
+
+- Start by making the functions you write accomplish the main task they are supposed to accomplish. Then, come back and put in data checks.
+
 # Load packages
 
 Don't load packages. Use the double colon syntax like you would in an R script. 
@@ -28,153 +34,40 @@ data(freq_study)
 
 Create the freq_tbl function.
 
-* We may want to come back and add a .col_headers = "col_names" argument that users can adjust if they want generic column headers instead.
+- 🛑 When you get this working, try breaking the function up into smaller functions.
+  - I tried playing with this. I don't think there's enough code there for this to make sense.
 
-* We can add an overall = FALSE argument that users who want an overall percentage can adjust.
+- Need to create an informative error when more than one column name is passed to freq_tbl().
+  - Currently, it just says "object 'sex' not found".
+
+- Need to create an informative error when nothing is passed to freq_tbl()
+  - Currently, it just says "Error in as_string(x) : argument "x" is missing, with no default"
+
+- We may want to come back and add a .col_headers = "col_names" argument that users can adjust if they want generic column headers instead.
+
+- We can add an overall = FALSE argument that users who want an overall percentage can adjust (two-way and n-way tables).
+  - Maybe. Now, I think the default should be: n, prop, n_group, prop_group
+  - Annotate this in the wiki.
+  
+- Finish creating unit tests: tests/testthat/test-freq_tbl.R. You can use test-freq_table.R for inspiration.
 
 ```{r}
-freq_tbl <- function(.data, .freq_var, .drop = FALSE, .percent = FALSE) {
-  
-  # ===========================================================================
-  # Prevents R CMD check: "no visible binding for global variable ‘.’"
-  # ===========================================================================
-  # Fill this in later.
-  
-  # ===========================================================================
-  # Setup for tidy evaluation
-  # ===========================================================================
-  .freq_var <- rlang::enquo(.freq_var)
-  
-  # ===========================================================================
-  # Data Checks
-  # ===========================================================================
-  
-  # ---------------------------------------------------------------------------
-  # Check to see what type of object is being passed to .data
-  #   - Should be a data frame.
-  #   - For example, some people use "attach". That won't work with freq_tbl()
-  # ---------------------------------------------------------------------------
-  .data_class <- class(.data)
-  if (!("data.frame" %in% .data_class)) {
-    stop(
-      paste0(
-        "freq_tbl expects the object passed to the .data argument (the",
-        " first argument) to be a data frame. Currently, the object being",
-        " passed to .data has the class: ", .data_class, ". Please use the",
-        " form mtcars |> freq_table(am) or freq_table(mtcars, am)."
-      )
-    )
-  }
-  
-  # ---------------------------------------------------------------------------
-  # Check to make sure there was a value passed to the .freq_var argument.
-  #   - Not necessary. If it is missing then 'argument ".freq_var" is missing, 
-  #     with no default' is thrown automatically.
-  # ---------------------------------------------------------------------------
-  
-  # ---------------------------------------------------------------------------
-  # Check to make sure that .freq_var is a column that exists in .data.
-  # ---------------------------------------------------------------------------
-  .freq_var_chr <- rlang::as_name(.freq_var)
-  col_names <- names(.data)
-  if (!(.freq_var_chr %in% col_names)) {
-    stop(
-      paste0(
-        "freq_tbl expects the object passed to the .freq_var argument (the",
-        " second argument) to be a column of the data frame passed to .data.", 
-        " The object being passed to .freq_var is called '", .freq_var_chr, 
-        "' and is not a column in the data frame being passed to .data."
-      )
-    )
-  }
-  
-  # ===========================================================================
-  # One-way frequency table
-  # ===========================================================================
-  
-  # Get n overall
-  n_overall <- nrow(.data)
-  
-  # Get counts and proportions
-  out <- .data |>
-    dplyr::count({{ .freq_var }}, .drop = .drop) |>
-    # Add proportions
-    dplyr::mutate(prop = n / n_overall)
-
-  # Convert proportion to percentage (optional)
-  if (.percent) {
-    out <- dplyr::mutate(out, percent = prop * 100, prop = NULL)
-  }
-  
-  # ===========================================================================
-  # Two-way frequency table
-  # ===========================================================================
-
-  # Add n_group and percent_group
-  if ("grouped_df" %in% class(.data)) {
-    out <- out |>
-      dplyr::mutate(
-        n_group    = sum(n),
-        prop_group = n / sum(n),
-        
-      )
-
-    # Convert group proportion to percentage (optional)
-    # Grouped tibbles only
-    if (.percent) {
-      out <- out |>
-        dplyr::mutate(
-          percent_group = prop_group * 100,
-          prop_group    = NULL
-        )
-    }
-  }
-
-  # Return tibble of results
-  out
-}
+# Load functions
+devtools::load_all()
+test_results <- freq_tbl_test()
+test_results
 ```
-
-## Test freq_tbl
 
 ```{r}
-# Not a data frame
-# freq_study$sex |> freq_tbl() # Return informative error
-
-# Nothing passed to .freq_var
-# freq_study |> freq_tbl() # Return informative error
-
-# A column name that doesn't exist in .data is passed to .freq_var
-# freq_study |> freq_tbl(age) # Return informative error
-
-# One-way table
-# freq_study |> freq_tbl(sex)
-
-# One-way table with .drop = TRUE
-# freq_study |> freq_tbl(bmi_4cat, .drop = FALSE)
-# freq_study |> freq_tbl(bmi_4cat, .drop = TRUE)
-
-# One-way table with percentages instead of proportions
-# freq_study |> freq_tbl(sex, .percent = TRUE)
-
-# Two-way table
-freq_study |> dplyr::group_by(exposure) |> freq_tbl(sex)
-
-# Two-way table with .drop = TRUE
-# freq_study |> freq_tbl(bmi_4cat, .drop = FALSE)
-# freq_study |> freq_tbl(bmi_4cat, .drop = TRUE)
-
-# Return proportion instead of percent
-# freq_study |> group_by(exposure) |> freq_tbl(sex, percent = FALSE)
-
-# Return NA as a category
-# freq_study |> group_by(exposure, outcome) |> freq_tbl(sex, .drop = FALSE)
-
-# Passing more than one column
-# freq_table(freq_study, exposure, sex)
+# - Need to create an informative error when more than one column name is passed to freq_tbl().
+#   - Currently, it just says "object 'sex' not found".
+devtools::load_all()
+freq_study |> freq_tbl(sex)
 ```
 
-- When you get this working, try breaking the function up into smaller functions.
+
+
+
 
 
 
