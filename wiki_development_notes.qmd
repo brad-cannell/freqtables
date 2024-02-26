@@ -18,6 +18,11 @@ title: "wiki_development_notes"
 
 - Start by making the functions you write accomplish the main task they are supposed to accomplish. Then, come back and put in data checks.
 
+- While developing you will want to test the impact of changes you make to the function. 
+  - You can run mini tests right in this Quarto document. Meaning write a little code chunk to test a specific thing.
+  - You can also run saved tests directly in `test-freq_tbl.R`.
+  - You can run all the tests in `test-freq_tbl.R` by running `source("tests/testthat/test-freq_tbl.R")`.
+
 # Load packages
 
 Don't load packages. Use the double colon syntax like you would in an R script. 
@@ -32,16 +37,20 @@ data(freq_study)
 
 # freq_tbl
 
-Create the freq_tbl function.
+- (Done) Finish creating unit tests: tests/testthat/test-freq_tbl.R. You can use test-freq_table.R for inspiration.
 
-- 🛑 When you get this working, try breaking the function up into smaller functions.
-  - I tried playing with this. I don't think there's enough code there for this to make sense.
+- (Done) Make sure the basics of the function are working as expected.
+  
+- (Done) Create an informative error when the value passed to the .freq_var argument isn't a column of .data.
 
-- Need to create an informative error when more than one column name is passed to freq_tbl().
-  - Currently, it just says "object 'sex' not found".
-
-- Need to create an informative error when nothing is passed to freq_tbl()
+- (Done) Create an informative error when nothing is passed to freq_tbl()
   - Currently, it just says "Error in as_string(x) : argument "x" is missing, with no default"
+
+- Create an informative error for when more than one column name is passed to freq_tbl().
+  - Currently, it just says "object 'sex' not found".
+  
+- Move all the tests from freq_tbl_test.R to test-freq_tbl.R
+  - Maybe do this on the plane.
 
 - We may want to come back and add a .col_headers = "col_names" argument that users can adjust if they want generic column headers instead.
 
@@ -49,22 +58,41 @@ Create the freq_tbl function.
   - Maybe. Now, I think the default should be: n, prop, n_group, prop_group
   - Annotate this in the wiki.
   
-- Finish creating unit tests: tests/testthat/test-freq_tbl.R. You can use test-freq_table.R for inspiration.
+- We may want to add a special class to the resut of freq_tbl(), similar to what we did for freq_table().
+
+- (Don't do this) When you get this working, try breaking the function up into smaller functions.
+  - I tried playing with this. I don't think there's enough code there for this to make sense.
+  - Breaking code up into functions is primariy to reduce repitition. There isn't really any repitition in the freq_tbl code.
+  
+  
+
+Create an informative error when nothing is passed to freq_tbl()
 
 ```{r}
-# Load functions
-devtools::load_all()
-test_results <- freq_tbl_test()
-test_results
+test <- function(.data, .freq_var, .drop = FALSE, .percent = FALSE) {
+  drop_chr <- deparse(substitute(.drop))
+  
+  if (!(drop_chr %in% c(TRUE, FALSE))) {
+    stop(glue::glue(
+      "freq_tbl() expects the value passed to the '.freq_var' argument (the",
+      " second argument) to be a column of the data frame passed to the",
+      " '.data.' argument.",
+      " The value currently being passed to '.freq_var' is called '{freq_var_chr}'",
+      " and is not recognized as a column in the data frame being passed to",
+      " '.data.'"
+    ))
+  }
+}
+
+freq_study |> test(exposure, sex)
 ```
+
 
 ```{r}
-# - Need to create an informative error when more than one column name is passed to freq_tbl().
-#   - Currently, it just says "object 'sex' not found".
+# Run all tests
 devtools::load_all()
-freq_study |> freq_tbl(sex)
+source("tests/testthat/test-freq_tbl.R")
 ```
-
 
 
 

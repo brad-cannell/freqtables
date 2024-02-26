@@ -1,6 +1,10 @@
 # Testing the freq_tbl function across different scenarios
 # Add this to build ignore. It's just for use during development.
 
+# Don't do this. It becomes unmanageable. Use testthat instead.
+
+# Delete when you are sure you won't need this anymore.
+
 freq_tbl_test <- function() {
 
   # Error checks --------------------------------------------------------------
