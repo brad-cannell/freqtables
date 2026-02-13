@@ -75,20 +75,16 @@ freq_test <- function(.data, ...) {
 
 freq_test.freq_table_one_way <- function(.data, ...) {
 
-  # ------------------------------------------------------------------
-  # Prevents R CMD check: "no visible binding for global variable ‘.’"
-  # ------------------------------------------------------------------
   n = n_total = n_expected = chi2_contrib = pchisq = chi2_pearson = df = . = NULL
 
-  # Check to make sure .data is a freq_table_one_way
-  # --------------------------------------------
   if (!("freq_table_one_way" %in% class(.data))) {
     stop(".data must be of class freq_table_one_way. It is currently: ", class(.data))
   }
 
-  # Calculate chi-square test of equality
-  # Test whether population is equally distributed across categories of .data
-  # ---------------------------------------------------------------------
+  if (!("n_total" %in% names(.data))) {
+    stop("freq_test() for one-way tables requires an `n_total` column.")
+  }
+
   out <- .data %>%
     dplyr::mutate(
       n_expected     = n_total / nrow(.),
@@ -98,11 +94,7 @@ freq_test.freq_table_one_way <- function(.data, ...) {
       p_chi2_pearson = pchisq(chi2_pearson, df, lower.tail = FALSE)
     )
 
-  # Add class to out that describes the information it contains
-  # -----------------------------------------------------------
   class(out) <- c("freq_table_one_way", class(out))
-
-  # Return tibble of results
   out
 }
 
@@ -119,59 +111,45 @@ freq_test.freq_table_one_way <- function(.data, ...) {
 
 freq_test.freq_table_two_way <- function(.data, ...) {
 
-  # ------------------------------------------------------------------
-  # Prevents R CMD check: "no visible binding for global variable ‘.’"
-  # ------------------------------------------------------------------
-  n_row = n_col = n_total = n_expected = chi2_contrib = r = pchisq = NULL
-  chi2_pearson = df = col_cat = n = row_cat = NULL
+  n = n_col = n_group = n_expected = chi2_contrib = r = pchisq = NULL
+  chi2_pearson = df = col_cat = group_cat = NULL
 
-  # Check to make sure .data is a freq_table_two_way
-  # --------------------------------------------
   if (!("freq_table_two_way" %in% class(.data))) {
     stop(".data must be of class freq_table_two_way. It is currently: ", class(.data))
   }
 
-  # Calculate Pearson's Chi-square test
-  # Test whether population is equally distributed across categories of .data
-  # ---------------------------------------------------------------------
+  if (!("n_group" %in% names(.data))) {
+    stop("freq_test() for grouped tables requires an `n_group` column.")
+  }
+
+  group_col <- names(.data)[1]
+  outcome_col <- names(.data)[2]
+
   out <- .data %>%
+    dplyr::rename(group_cat = !!group_col, col_cat = !!outcome_col) %>%
+    dplyr::mutate(
+      group_cat = as.character(group_cat),
+      col_cat = as.character(col_cat)
+    ) %>%
     dplyr::group_by(col_cat) %>%
-    dplyr::mutate(n_col = sum(n)) %>%  # Find marginal totals for "columns"
+    dplyr::mutate(n_col = sum(n)) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(
-      n_expected     = (n_row * n_col) / n_total,
+      n_expected     = (n_group * n_col) / sum(n),
       chi2_contrib   = (n - n_expected)**2 / n_expected,
       chi2_pearson   = sum(chi2_contrib),
-      r              = unique(row_cat) %>% length(),
-      c              = unique(col_cat) %>% length(),
-      df             = (r -1) * (c - 1),
+      r              = dplyr::n_distinct(group_cat),
+      c              = dplyr::n_distinct(col_cat),
+      df             = (r - 1) * (c - 1),
       p_chi2_pearson = pchisq(chi2_pearson, df, lower.tail = FALSE)
     )
 
-  # Test for expected cell counts <= 5
-  # ----------------------------------
-  if ( min(out$n_expected) <= 5 ) {
-    message(paste0("One or more expected cell counts are <= 5. Therefore, ",
-                   "Fisher's Exact Test was used."))
-
-    # Add Fisher's Exact Test
-    # -----------------------
-    # Convert .data to a matrix
-    n_s  <- dplyr::pull(.data, n)
-    mx   <- matrix(n_s, nrow = 2, byrow = TRUE)
-
-    # Use R's built-in fisher.test
+  if (min(out$n_expected) <= 5) {
+    mx <- xtabs(n ~ group_cat + col_cat, data = out)
     fisher <- stats::fisher.test(mx)
-
-    # Add Fisher's p_value to out
-    out <- out %>%
-      dplyr::mutate(p_fisher = fisher$p.value)
+    out <- out %>% dplyr::mutate(p_fisher = fisher$p.value)
   }
 
-  # Add class to out that describes the information it contains
-  # -----------------------------------------------------------
   class(out) <- c("freq_table_two_way", class(out))
-
-  # Return tibble of results
   out
 }
