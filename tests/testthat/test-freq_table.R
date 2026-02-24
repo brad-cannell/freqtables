@@ -154,9 +154,18 @@ testthat::test_that("freq_table displays fixed decimals and keeps numeric column
 
   testthat::expect_true(is.numeric(out_prop$prop_group))
   testthat::expect_true(is.numeric(out_pct$percent_group))
+  testthat::expect_true(is.numeric(out_prop$lcl_group))
+  testthat::expect_true(is.numeric(out_prop$ucl_group))
   testthat::expect_equal(trimws(format(out_prop$prop_group)), c("0.50", "0.25", "0.25", "0.25", "0.50", "0.25"))
   testthat::expect_equal(trimws(format(out_pct$percent_group)), c("50.00", "25.00", "25.00", "25.00", "50.00", "25.00"))
   testthat::expect_equal(trimws(format(out_pct_1$percent_group)), c("50.0", "25.0", "25.0", "25.0", "50.0", "25.0"))
+
+  two_decimals <- "^-?[0-9]+\\.[0-9]{2}$"
+  one_decimal <- "^-?[0-9]+\\.[0-9]{1}$"
+  testthat::expect_true(all(grepl(two_decimals, trimws(format(out_prop$lcl_group)))))
+  testthat::expect_true(all(grepl(two_decimals, trimws(format(out_prop$ucl_group)))))
+  testthat::expect_true(all(grepl(one_decimal, trimws(format(out_pct_1$lcl_group)))))
+  testthat::expect_true(all(grepl(one_decimal, trimws(format(out_pct_1$ucl_group)))))
 })
 
 testthat::test_that("freq_table validates digits argument", {

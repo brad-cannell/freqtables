@@ -130,6 +130,13 @@ freq_study |>
   freq_tbl(outcome, overall = TRUE, percent = TRUE)
 ```
 
+### Change the number of decimal places displayed
+
+```{r}
+freq_study |> 
+  freq_tbl(outcome, digits = 4)
+```
+
 ### Add total count
 
 ```{r}
@@ -272,7 +279,17 @@ freq_study |>
 ```
 
 - Returning a proportion instead of a percent allows for short column headings and we won't have to convert it back to a proportion later to calculate confidence intervals.
-  - We can add a `percent = FALSE` argument that users who want a percentage can adjust.
+  - We can add a `percent = TRUE` argument that users who want a percentage can adjust.
+
+```{r}
+freq_study |> 
+  freq_table(outcome, percent = TRUE)
+```
+
+```{r}
+freq_study |> 
+  freq_table(outcome, percent = TRUE, digits = 4)
+```
 
 ## More compact results
 

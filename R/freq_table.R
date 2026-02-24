@@ -15,8 +15,8 @@
 #' @param generic_col_names If TRUE, return generic variable/category columns.
 #' @param se If TRUE, retain standard error columns in output.
 #' @param critical_value If TRUE, retain critical value columns in output.
-#' @param digits Number of decimal places displayed for `prop*`/`percent*`
-#'   columns. Must be a non-negative integer.
+#' @param digits Number of decimal places displayed for `prop*`/`percent*` and
+#'   `lcl*`/`ucl*` columns. Must be a non-negative integer.
 #' @return A tibble.
 #' @export
 freq_table <- function(.data,
@@ -90,7 +90,7 @@ freq_table <- function(.data,
     }
   }
 
-  display_cols <- names(out)[grepl("^prop|^percent", names(out))]
+  display_cols <- names(out)[grepl("^prop|^percent|^lcl|^ucl", names(out))]
   if (!is.null(digits) && length(display_cols) > 0) {
     out <- dplyr::mutate(
       out,
