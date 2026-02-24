@@ -8,6 +8,8 @@
 #' @param generic_col_names If TRUE, use generic columns (`group_01_col`,
 #'   `group_01_cat`, `col`, `cat`) instead of data column names.
 #' @param drop Passed to dplyr::count(.drop = ).
+#' @param digits Number of decimal places displayed for `prop*`/`percent*`
+#'   columns. Must be a non-negative integer.
 #' @return A tibble.
 #' @export
 freq_tbl <- function(.data,
@@ -15,7 +17,8 @@ freq_tbl <- function(.data,
                      percent = FALSE,
                      overall = FALSE,
                      generic_col_names = FALSE,
-                     drop = FALSE) {
+                     drop = FALSE,
+                     digits = 2) {
 
   outcome_quos <- rlang::enquos(...)
   if (length(outcome_quos) != 1) {
@@ -26,6 +29,11 @@ freq_tbl <- function(.data,
 
   if (!inherits(.data, "data.frame")) {
     stop("freq_tbl expects `.data` to be a data frame.")
+  }
+  if (!is.null(digits) &&
+      (!is.numeric(digits) || length(digits) != 1L || is.na(digits) ||
+       digits < 0 || digits != as.integer(digits))) {
+    stop("`digits` must be a single non-negative integer (or NULL).")
   }
 
   group_vars <- dplyr::group_vars(.data)
@@ -92,6 +100,14 @@ freq_tbl <- function(.data,
         dplyr::all_of(prop_cols)
       )
     }
+  }
+
+  display_cols <- names(out)[grepl("^prop|^percent", names(out))]
+  if (!is.null(digits) && length(display_cols) > 0) {
+    out <- dplyr::mutate(
+      out,
+      dplyr::across(dplyr::all_of(display_cols), ~ pillar::num(.x, digits = digits))
+    )
   }
 
   out

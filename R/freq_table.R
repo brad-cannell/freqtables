@@ -15,6 +15,8 @@
 #' @param generic_col_names If TRUE, return generic variable/category columns.
 #' @param se If TRUE, retain standard error columns in output.
 #' @param critical_value If TRUE, retain critical value columns in output.
+#' @param digits Number of decimal places displayed for `prop*`/`percent*`
+#'   columns. Must be a non-negative integer.
 #' @return A tibble.
 #' @export
 freq_table <- function(.data,
@@ -26,7 +28,8 @@ freq_table <- function(.data,
                        overall = FALSE,
                        generic_col_names = FALSE,
                        se = FALSE,
-                       critical_value = FALSE) {
+                       critical_value = FALSE,
+                       digits = 2) {
 
   outcome_quos <- rlang::enquos(...)
   if (length(outcome_quos) > 1) {
@@ -37,6 +40,11 @@ freq_table <- function(.data,
   if (length(outcome_quos) < 1) {
     stop("Did you pass a column name to `...`? Example: mtcars |> freq_table(am).")
   }
+  if (!is.null(digits) &&
+      (!is.numeric(digits) || length(digits) != 1L || is.na(digits) ||
+       digits < 0 || digits != as.integer(digits))) {
+    stop("`digits` must be a single non-negative integer (or NULL).")
+  }
 
   out <- freq_tbl(
     .data = .data,
@@ -44,7 +52,8 @@ freq_table <- function(.data,
     percent = FALSE,
     overall = overall,
     generic_col_names = generic_col_names,
-    drop = drop
+    drop = drop,
+    digits = NULL
   )
 
   if (identical(ci_type, "wald")) {
@@ -79,6 +88,14 @@ freq_table <- function(.data,
         dplyr::all_of(prop_cols)
       )
     }
+  }
+
+  display_cols <- names(out)[grepl("^prop|^percent", names(out))]
+  if (!is.null(digits) && length(display_cols) > 0) {
+    out <- dplyr::mutate(
+      out,
+      dplyr::across(dplyr::all_of(display_cols), ~ pillar::num(.x, digits = digits))
+    )
   }
 
   group_n <- length(dplyr::group_vars(.data))

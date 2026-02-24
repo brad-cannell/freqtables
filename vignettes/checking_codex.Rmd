@@ -141,7 +141,7 @@ freq_study |>
 
 ```{r}
 freq_study <- freq_study |> 
-  mutate(outcome_3_cat = forcats::fct_expand(sex, "Other"))
+  mutate(outcome_3_cat = forcats::fct_expand(outcome, "Other"))
 ```
 
 ```{r}
