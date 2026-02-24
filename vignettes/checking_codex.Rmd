@@ -286,7 +286,7 @@ So, we will make the _default_ output much more compact and add parameters that 
 
 Currently, 
 
-```{r}
+```{r, error=TRUE}
 mtcars |> 
   freq_table(cyl, am)
 ```
@@ -332,7 +332,7 @@ Additionally, notice that:
 
 Currently, 
 
-```{r}
+```{r, error=TRUE}
 mtcars |> 
   freq_table(cyl, am)
 ```
@@ -418,7 +418,7 @@ As described above with `freq_tbl()`, `freq_table()` will now work with `group_b
 
 This also means that `freq_table()` will start throwing an error if users pass more than one column name. For example:
 
-```{r}
+```{r, error=TRUE}
 mtcars |> 
   freq_table(cyl, am)
 ```
@@ -465,6 +465,13 @@ Where each nested data frame would look like this by default:
 
 Then, we can access the tables with `purrr` or by unnesting them.
 
+```{r}
+freq_study |> 
+  freq_tables(exposure, outcome) |> 
+  tidyr::unnest()
+```
+
+🔴 The output needs some work.
 
 # Create functions for creating and working with contingency tables
 

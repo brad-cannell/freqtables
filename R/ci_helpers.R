@@ -1,7 +1,8 @@
 #' Add Wald confidence intervals to freq_tbl/freq_table output
 #'
 #' @param .data A tibble containing `n` and either (`n_group`, `prop_group`) or
-#'   (`n_total`, `prop`) columns.
+#'   (`n_total`, `prop`) columns. One-way input with only (`n`, `prop`) is also
+#'   supported and will use `sum(n)` as the denominator.
 #' @param percent_ci Confidence level as a percent (e.g., 95).
 #' @return A tibble with lower/upper confidence limits.
 #' @export
@@ -18,6 +19,15 @@ wald_ci <- function(.data, percent_ci = 95) {
         ucl_group = prop_group + t_crit_group * se_group
       )
   } else if (all(c("n_total", "prop") %in% names(.data))) {
+    .data |>
+      dplyr::mutate(
+        se = sqrt(prop * (1 - prop) / (n_total - 1)),
+        t_crit = stats::qt(t_prob, df = n_total - 1),
+        lcl = prop - t_crit * se,
+        ucl = prop + t_crit * se
+      )
+  } else if (all(c("n", "prop") %in% names(.data))) {
+    n_total <- sum(.data$n)
     .data |>
       dplyr::mutate(
         se = sqrt(prop * (1 - prop) / (n_total - 1)),
@@ -53,6 +63,20 @@ logit_ci <- function(.data, percent_ci = 95) {
       ) |>
       dplyr::select(-dplyr::any_of(c("prop_group_log", "se_group_log", "lcl_group_log", "ucl_group_log")))
   } else if (all(c("n_total", "prop") %in% names(.data))) {
+    .data |>
+      dplyr::mutate(
+        se = sqrt(prop * (1 - prop) / (n_total - 1)),
+        t_crit = stats::qt(t_prob, df = n_total - 1),
+        prop_log = log(prop) - log(1 - prop),
+        se_log = se / (prop * (1 - prop)),
+        lcl_log = prop_log - t_crit * se_log,
+        ucl_log = prop_log + t_crit * se_log,
+        lcl = exp(lcl_log) / (1 + exp(lcl_log)),
+        ucl = exp(ucl_log) / (1 + exp(ucl_log))
+      ) |>
+      dplyr::select(-dplyr::any_of(c("prop_log", "se_log", "lcl_log", "ucl_log")))
+  } else if (all(c("n", "prop") %in% names(.data))) {
+    n_total <- sum(.data$n)
     .data |>
       dplyr::mutate(
         se = sqrt(prop * (1 - prop) / (n_total - 1)),

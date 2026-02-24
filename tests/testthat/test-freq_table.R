@@ -86,6 +86,15 @@ testthat::test_that("freq_table rejects more than one analysis variable", {
   )
 })
 
+testthat::test_that("one-way freq_table works without overall n_total columns", {
+  df <- mtcars %>%
+    freq_table(am)
+
+  testthat::expect_s3_class(df, "freq_table_one_way")
+  testthat::expect_true(all(c("am", "n", "prop", "lcl", "ucl") %in% names(df)))
+  testthat::expect_false("n_total" %in% names(df))
+})
+
 testthat::test_that("freq_table defaults to grouped CI output", {
   df <- mtcars %>%
     group_by(cyl) %>%
