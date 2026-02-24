@@ -9,7 +9,8 @@
 #' @param percent_ci Confidence level as a percent (default 95).
 #' @param ci_type Either "logit" (default) or "wald".
 #' @param drop Passed to dplyr::count(.drop = ).
-#' @param percent If TRUE, express proportion-related columns as percentages.
+#' @param percent If TRUE, express proportion-related columns as percentages and
+#'   rename `prop*` columns to `percent*`.
 #' @param overall If TRUE, include overall totals/proportions.
 #' @param generic_col_names If TRUE, return generic variable/category columns.
 #' @param se If TRUE, retain standard error columns in output.
@@ -65,8 +66,19 @@ freq_table <- function(.data,
   out <- dplyr::select(out, -dplyr::any_of(unique(drop_cols)))
 
   if (percent) {
-    prop_cols <- names(out)[grepl("^prop|^lcl|^ucl", names(out))]
-    out <- dplyr::mutate(out, dplyr::across(dplyr::all_of(prop_cols), ~ .x * 100))
+    pct_cols <- names(out)[grepl("^prop|^lcl|^ucl", names(out))]
+    if (length(pct_cols) > 0) {
+      out <- dplyr::mutate(out, dplyr::across(dplyr::all_of(pct_cols), ~ .x * 100))
+    }
+
+    prop_cols <- names(out)[grepl("^prop", names(out))]
+    if (length(prop_cols) > 0) {
+      out <- dplyr::rename_with(
+        out,
+        ~ sub("^prop", "percent", .x),
+        dplyr::all_of(prop_cols)
+      )
+    }
   }
 
   group_n <- length(dplyr::group_vars(.data))

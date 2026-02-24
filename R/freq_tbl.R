@@ -2,7 +2,8 @@
 #'
 #' @param .data A data frame (optionally grouped with dplyr::group_by()).
 #' @param ... A single categorical outcome variable.
-#' @param percent If TRUE, return proportions on the percent scale.
+#' @param percent If TRUE, return proportions on the percent scale and rename
+#'   `prop*` columns to `percent*`.
 #' @param overall If TRUE, add overall n and proportion columns.
 #' @param generic_col_names If TRUE, use generic columns (`group_01_col`,
 #'   `group_01_cat`, `col`, `cat`) instead of data column names.
@@ -83,7 +84,14 @@ freq_tbl <- function(.data,
 
   if (percent) {
     prop_cols <- names(out)[grepl("^prop", names(out))]
-    out <- dplyr::mutate(out, dplyr::across(dplyr::all_of(prop_cols), ~ .x * 100))
+    if (length(prop_cols) > 0) {
+      out <- dplyr::mutate(out, dplyr::across(dplyr::all_of(prop_cols), ~ .x * 100))
+      out <- dplyr::rename_with(
+        out,
+        ~ sub("^prop", "percent", .x),
+        dplyr::all_of(prop_cols)
+      )
+    }
   }
 
   out

@@ -82,6 +82,14 @@ freq_study |>
   freq_tbl(outcome)
 ```
 
+Should return:
+
+|   | outcome | n  | prop |
+|---|---------|----|------|
+| 1 | No      | 50 | 0.50 |
+| 2 | Yes     | 49 | 0.49 |
+| 3 | NA      | 1  | 0.01 |
+
 **Notice**:
 - This is `freq_tbl()`, not `freq_table()`.
 - The variable name in the column header. 
@@ -107,6 +115,19 @@ Additionally, `freq_tbl()` returns a proportion by default instead of a percent.
 ```{r}
 freq_study |> 
   freq_tbl(outcome, percent = TRUE)
+```
+
+Returns:
+
+|   | outcome | n  | percent |
+|---|---------|----|---------|
+| 1 | No      | 50 | 50.00   |
+| 2 | Yes     | 49 | 49.00   |
+| 3 | NA      | 1  | 1.00    |
+
+```{r}
+freq_study |> 
+  freq_tbl(outcome, overall = TRUE, percent = TRUE)
 ```
 
 ### Add total count
@@ -175,6 +196,12 @@ freq_study |>
 freq_study |> 
   group_by(sex) |>
   freq_tbl(outcome, percent = TRUE)
+```
+
+```{r}
+freq_study |> 
+  group_by(sex) |>
+  freq_tbl(outcome, overall = TRUE, percent = TRUE)
 ```
 
 ### Dropping factor levels that don't appear in the data
