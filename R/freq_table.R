@@ -1,75 +1,55 @@
-#' @title Estimate Counts, Percentages, and Confidence Intervals in dplyr Pipelines
+#' @title Estimate Counts, Proportions, and Confidence Intervals in dplyr
+#'   Pipelines
 #'
-#' @description The freq_table function produces one-way and two-way frequency
-#'   tables for categorical variables. In addition to frequencies, the
-#'   freq_table function displays percentages, and the standard errors and
-#'   confidence intervals of the percentages. For two-way tables only,
-#'   freq_table also displays row (subgroup) percentages, standard errors,
-#'   and confidence intervals.
+#' @description The freq_table function produces frequency tables for a single
+#'   categorical variable with counts, proportions, and confidence intervals.
+#'   It is designed to work with \code{dplyr::group_by()} for grouped analyses.
 #'
-#'   freq_table is intended to be used in a dplyr pipeline.
+#'   By default, freq_table returns logit-transformed confidence intervals
+#'   equivalent to those used by Stata. Wald ("linear") confidence intervals
+#'   can be requested via the \code{ci_type} parameter.
 #'
-#'   All standard errors are calculated as some version of:
-#'   sqrt(proportion * (1 - proportion) / (n - 1))
+#'   All standard errors are calculated as:
+#'   \code{sqrt(proportion * (1 - proportion) / (n - 1))}
 #'
-#'   For one-way tables, the default 95 percent confidence intervals displayed are
-#'   logit transformed confidence intervals equivalent to those used by Stata.
-#'   Additionally, freq_table will return Wald ("linear") confidence intervals
-#'   if the argument to ci_type = "wald".
+#' @param .data A data frame or grouped data frame. Use
+#'   \code{dplyr::group_by()} for grouped analyses.
 #'
-#'   For two-way tables, freq_table returns logit transformed confidence
-#'   intervals equivalent to those used by Stata.
+#' @param ... A single categorical variable to tabulate. Passing more than one
+#'   variable is deprecated; use \code{dplyr::group_by()} instead.
 #'
-#' @param .data A data frame. If it is already grouped (i.e., class == "grouped_df")
-#'   then freq_table will ungroup it to prevent unexpected results.
+#' @param percent_ci The confidence level as a percentage. Default is 95 for
+#'   95\% confidence intervals.
 #'
-#'   For two-way tables, the count for each level of the variable in the
-#'   first argument to freq_table will be the denominator for row percentages
-#'   and their confidence intervals. Said another way, the goal of the
-#'   analysis is to compare percentages of some characteristic across two or
-#'   more groups of interest, then the variable in the first argument to
-#'   freq_table should contain the groups of interest, and the variable in the
-#'   second argument to freq_table should contain the characteristic of
-#'   interest.
+#' @param ci_type Method for confidence interval estimation. Either "logit"
+#'   (default, matches Stata) or "wald" (matches SAS).
 #'
-#' @param ... Categorical variables to be used in calculations. Currently,
-#'   freq_table accepts one or two variables -- not more.
+#' @param drop If FALSE (default), unobserved factor levels will appear in the
+#'   results with n = 0.
 #'
-#'   By default, if ... includes a factor variable with a level (category)
-#'   that is unobserved in the data, that level will still appear in the
-#'   results with a count (n) equal to zero. This behavior can be changed using
-#'   the drop parameter (see below). When n = 0, the confidence intervals
-#'   will be NaN.
+#' @param generic_col_names If FALSE (default), variable names are used as
+#'   column headers. If TRUE, generic column headers are used (e.g.,
+#'   group_01_col, group_01_cat, col, cat) for easier programming.
 #'
-#' @param percent_ci sets the level, as a percentage, for confidence intervals.
-#'   The default is percent_ci = 95 for 95% confidence intervals. The
-#'   percentage value entered (e.g., 95) is converted to an alpha level as
-#'   1 - (percent_ci / 100). It is then converted to a two-sided probability
-#'   as (1 - alpha / 2), which is used to calculate a critical value from
-#'   Student's t distribution with n - 1 degrees of freedom.
+#' @param overall If FALSE (default), overall proportions and confidence
+#'   intervals are not included. If TRUE, they are added.
 #'
-#' @param ci_type Selects the method used to estimate 95 percent confidence intervals.
-#'   The default for one-way and two-way tables is logit transformed ("log"). For
-#'   one-way tables only, ci_type can optionally calculate Wald ("linear")
-#'   confidence intervals using the "wald" argument.
+#' @param se If FALSE (default), standard errors are not included in the
+#'   output. If TRUE, they are added.
 #'
-#' @param drop If false (default) unobserved factor levels will be included in
-#'   the returned frequency table with an n of 0. For example, if you have a
-#'   factor variable, gender, but no males in your data then frequency table
-#'   returned by freq_table(df, gender) would still contain a row for
-#'   males with the variable n = 0. If drop is set to TRUE, then the resulting
-#'   frequency table would not include a row for males at all.
+#' @param critical_value If FALSE (default), critical values are not included
+#'   in the output. If TRUE, they are added.
 #'
-#' @return A tibble with class "freq_table_one_way" or "freq_table_two_way"
+#' @param percent If FALSE (default), results are returned as proportions. If
+#'   TRUE, results are returned as percentages.
+#'
+#' @return A tibble with class "freq_table_one_way" or "freq_table_two_way".
 #' @export
 #' @importFrom dplyr %>%
 #'
 #' @references
-#'  Agresti, A. (2012). Categorical Data Analysis (3rd ed.). Hoboken, NJ: Wiley.
-#'
-#'  \href{https://support.sas.com/documentation/cdl/en/statug/63347/HTML/default/viewer.htm#statug_surveyfreq_a0000000221.htm}{SAS confidence limits for proportions documentation}
-#'
-#'  \href{https://www.stata.com/manuals13/rproportion.pdf}{Stata confidence limits for proportions documentation}
+#'  Agresti, A. (2012). Categorical Data Analysis (3rd ed.). Hoboken, NJ:
+#'  Wiley.
 #'
 #' @examples
 #' library(dplyr)
@@ -77,358 +57,360 @@
 #'
 #' data(mtcars)
 #'
-#' # --------------------------------------------------------------------------
-#' # One-way frequency table with defaults
-#' #   - The default confidence intervals are logit transformed - matching the
-#' #     method used by Stata
-#' # --------------------------------------------------------------------------
+#' # One-way frequency table
 #' mtcars %>%
 #'   freq_table(am)
 #'
-#' #   A tibble: 2 x 9
-#' #   var   cat       n n_total percent    se t_crit   lcl   ucl
-#' #   <chr> <chr> <int>   <int>   <dbl> <dbl>  <dbl> <dbl> <dbl>
-#' # 1 am    0        19      32    59.4  8.82   2.04  40.9  75.5
-#' # 2 am    1        13      32    40.6  8.82   2.04  24.5  59.1
-#'
-#'
-#' # --------------------------------------------------------------------------
-#' # One-way frequency table with arbitrary cconfidence intervals
-#' #   - The default behavior of freq_table is to return 95% confidence
-#' #     intervals (two-sided). However, this behavior can be adjusted to return
-#' #     any alpha level. For example, to return 99% confidence intervals just
-#' #     pass 99 to the percent_ci parameter of freq_table as demonstrated below.
-#' # --------------------------------------------------------------------------
+#' # Grouped frequency table using group_by
 #' mtcars %>%
-#'   freq_table(am, percent_ci = 99)
+#'   group_by(cyl) %>%
+#'   freq_table(am)
 #'
-#' #   A tibble: 2 x 9
-#' #   var   cat       n n_total percent    se t_crit   lcl   ucl
-#' #   <chr> <chr> <int>   <int>   <dbl> <dbl>  <dbl> <dbl> <dbl>
-#' # 1 am    0        19      32    59.4  8.82   2.74  34.9  79.9
-#' # 2 am    1        13      32    40.6  8.82   2.74  20.1  65.1
-#'
-#'
-#' # --------------------------------------------------------------------------
-#' # One-way frequency table with Wald confidence intervals
-#' # Optionally, the ci_type = "wald" argument can be used to calculate Wald
-#' # confidence intervals that match those returned by SAS.
-#' # --------------------------------------------------------------------------
+#' # With Wald confidence intervals
 #' mtcars %>%
 #'   freq_table(am, ci_type = "wald")
 #'
-#' #   A tibble: 2 x 9
-#' #   var   cat       n n_total percent    se t_crit   lcl   ucl
-#' #   <chr> <chr> <int>   <int>   <dbl> <dbl>  <dbl> <dbl> <dbl>
-#' # 1 am    0        19      32    59.4  8.82   2.04  41.4  77.4
-#' # 2 am    1        13      32    40.6  8.82   2.04  22.6  58.6
-#'
-#'
-#' # --------------------------------------------------------------------------
-#' # One-way frequency table with drop = FALSE (default)
-#' # --------------------------------------------------------------------------
-#' df <- data.frame(
-#'   id = c(1, 2, 3, 4),
-#'   gender = factor(
-#'     # All females
-#'     c(1, 1, 1, 1),
-#'     levels = c(1, 2),
-#'     labels = c("female", "male"))
-#' )
-#'
-#' df %>%
-#'   freq_table(gender)
-#'
-#' #   A tibble: 2 x 9
-#' #   var    cat        n n_total percent    se t_crit   lcl   ucl
-#' #   <chr>  <chr>  <int>   <int>   <dbl> <dbl>  <dbl> <dbl> <dbl>
-#' # 1 gender female     4       4     100     0   3.18   NaN   NaN
-#' # 2 gender male       0       4       0     0   3.18   NaN   NaN
-#'
-#'
-#' # --------------------------------------------------------------------------
-#' # One-way frequency table with drop = TRUE
-#' # --------------------------------------------------------------------------
-#' df <- data.frame(
-#'   id = factor(rep(1:3, each = 4)),
-#'   period = factor(rep(1:4)),
-#'   x = factor(c(0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1))
-#' )
-#'
-#' # Now, supppose we want to drop period 3 & 4 from our analysis.
-#' # By default, this will give us 0s for period 3 & 4, but we want to drop them.
-#'
-#' df <- df %>%
-#'   filter(period %in% c(1, 2))
-#'
-#' df %>%
-#'   freq_table(period)
-#'
-#' #   A tibble: 4 x 9
-#' #   var    cat       n n_total percent    se t_crit    lcl   ucl
-#' #   <chr>  <chr> <int>   <int>   <dbl> <dbl>  <dbl>  <dbl> <dbl>
-#' # 1 period 1         3       6      50  22.4   2.57   9.12  90.9
-#' # 2 period 2         3       6      50  22.4   2.57   9.12  90.9
-#' # 3 period 3         0       6       0   0     2.57 NaN    NaN
-#' # 4 period 4         0       6       0   0     2.57 NaN    NaN
-#'
-#' # But, we don't want period 3 & 4 in our frequency table at all. That's
-#' # when we should change drop to TRUE.
-#'
-#' df %>%
-#'   freq_table(period, drop = TRUE)
-#'
-#' #   A tibble: 4 x 9
-#' #   var    cat       n n_total percent    se t_crit    lcl   ucl
-#' #   <chr>  <chr> <int>   <int>   <dbl> <dbl>  <dbl>  <dbl> <dbl>
-#' # 1 period 1         3       6      50  22.4   2.57   9.12  90.9
-#' # 2 period 2         3       6      50  22.4   2.57   9.12  90.9
-#'
-#'
-#' # --------------------------------------------------------------------------
-#' # Two-way frequency table with defaults
-#' # Output truncated to fit the screen
-#' # --------------------------------------------------------------------------
+#' # With generic column names for programming
 #' mtcars %>%
-#'   freq_table(am, cyl)
-#'
-#' #   A tibble: 6 x 17
-#' #   row_var row_cat col_var col_cat     n n_row n_total percent_total se_total
-#' #   <chr>   <chr>   <chr>   <chr>   <int> <int>   <int>         <dbl>    <dbl>
-#' # 1 am      0       cyl     4           3    19      32          9.38     5.24
-#' # 2 am      0       cyl     6           4    19      32         12.5      5.94
-#' # 3 am      0       cyl     8          12    19      32         37.5      8.70
-#' # 4 am      1       cyl     4           8    13      32         25        7.78
-#' # 5 am      1       cyl     6           3    13      32          9.38     5.24
-#' # 6 am      1       cyl     8           2    13      32          6.25     4.35
-freq_table <- function(.data, ..., percent_ci = 95, ci_type = "logit", drop = FALSE) {
+#'   group_by(cyl) %>%
+#'   freq_table(am, generic_col_names = TRUE)
+freq_table <- function(.data, ..., percent_ci = 95, ci_type = "logit",
+                       drop = FALSE, generic_col_names = FALSE,
+                       overall = FALSE, se = FALSE, critical_value = FALSE,
+                       percent = FALSE) {
 
   # ------------------------------------------------------------------
-  # Prevents R CMD check: "no visible binding for global variable ‘.’"
+  # Prevents R CMD check: "no visible binding for global variable '.'"
   # ------------------------------------------------------------------
-  n = n_total = prop = t_crit = se = lcl_wald = ucl_wald = percent = NULL
-  lcl = ucl = prop_log = se_log = lcl_log = ucl_log = prop_total = NULL
-  se_total = prop_log_total = t_crit_total = se_log_total = lcl_total_log = NULL
-  percent_total = n_row = prop_row = se_row = prop_log_row = t_crit_row = NULL
-  se_log_row = lcl_row_log = ucl_row_log = percent_row = lcl_row = NULL
-  ucl_row = lcl_total = ucl_total = ucl_total_log = n_groups = NULL
-  ci_type_arg = var = row_var = row_cat = NULL
-  col_var = col_cat = `.` = vars = alpha = NULL
+  n <- n_total <- prop_val <- t_crit_val <- se_val <- NULL
+  lcl_wald <- ucl_wald <- prop_log <- se_log <- lcl_log <- ucl_log <- NULL
+  n_group <- prop_group <- se_group <- t_crit_group <- NULL
+  prop_log_group <- se_log_group <- lcl_log_group <- ucl_log_group <- NULL
+  lcl_group <- ucl_group <- NULL
+  prop_overall <- se_overall <- t_crit_overall <- NULL
+  prop_log_overall <- se_log_overall <- lcl_log_overall <- ucl_log_overall <- NULL
+  lcl_overall <- ucl_overall <- NULL
 
   # ===========================================================================
-  # Enquo arguments
-  # enquo/quo_name/UQ the ci_type and output argument so that I don't have to
-  # use quotation marks around the argument being passed.
+  # Enquo the ci_type argument
   # ===========================================================================
   ci_type_arg <- rlang::enquo(ci_type) %>% rlang::quo_name()
 
   # ===========================================================================
-  # Check to see what type of object is being passed to .data
-  #   - Should be a data frame.
-  #   - For example, some people use "attach". That won't work with freq_table()
-
-  # Check for grouped tibble
-  # Check to see if the tibble is already grouped.
-  # If yes, ungroup, so that you don't get unexpected results.
-  # Then, group here using the variables in ...
+  # Check that .data is a data frame
   # ===========================================================================
-  .data_class <- class(.data)
-  if (!("data.frame" %in% .data_class)) {
+  if (!is.data.frame(.data)) {
     stop(
-      paste0(
-        "freq_table expects the object passed to the .data argument (the",
-        " first argument) to be a data frame. Currently, the object being",
-        " passed to .data has the class: ", .data_class, ". Please use the",
-        " form mtcars %>% freq_table(am) or freq_table(mtcars, am)."
-      )
+      "freq_table expects a data frame to be passed to the .data argument. ",
+      "The object passed has class: ",
+      paste(class(.data), collapse = ", "),
+      ". Please use the form: mtcars %>% freq_table(am)"
     )
   }
-  if (("grouped_df" %in% .data_class)) {
-    .data <- dplyr::ungroup(.data)
+
+  # ===========================================================================
+  # Capture the column(s) passed via ...
+  # ===========================================================================
+  col_quos <- rlang::enquos(...)
+
+  # ===========================================================================
+  # Validate number of columns
+  # ===========================================================================
+  if (length(col_quos) == 0) {
+    stop(
+      "No column names were passed to freq_table(). ",
+      "Please pass a column name. For example: mtcars %>% freq_table(am)"
+    )
+  }
+
+  if (length(col_quos) > 1) {
+    # Build a helpful deprecation message
+    col_names <- vapply(col_quos, rlang::as_name, character(1))
+    group_cols <- paste(col_names[-length(col_names)], collapse = ", ")
+    analysis_col <- col_names[length(col_names)]
+    stop(
+      "Passing more than one column name to the freq_table function is ",
+      "deprecated. Please use the dplyr::group_by() function to perform ",
+      "grouped analyses. For example, use `mtcars |> group_by(",
+      group_cols, ") |> freq_table(", analysis_col,
+      ")` instead of `mtcars |> freq_table(",
+      paste(col_names, collapse = ", "), ")`."
+    )
   }
 
   # ===========================================================================
-  # Get within group counts
-  # .drop = FALSE creates an explicit n = 0 for unobserved factor levels
+  # Get the single analysis column
   # ===========================================================================
-  .data <- dplyr::count(.data, ..., .drop = drop)
+  col_quo <- col_quos[[1]]
+  col_name <- rlang::as_name(col_quo)
 
   # ===========================================================================
-  # Check for number of group vars:
-  #
-  # Throw an error if the value of n_groups is greater than 2. Currently,
-  # freq_tables can only do 1 and 2-way analysis. I would like to change this
-  # in the future.
-  #
-  # Throw an error if the value of n_groups is 0. This happens when the user
-  # doesn't pass any column names to the `...` argument.
+  # Detect grouping variables
   # ===========================================================================
-  n_groups <- .data %>% ncol() - 1
-  if (n_groups > 2) {
-    stop("Currently, freq_table accepts one or two variables -- not more. You entered ",
-         n_groups, " into the ... argument.")
-  }
-  if (n_groups < 1) {
-    stop("Did you pass any column names to the ... argument? For example ",
-         "mtcars %>% freq_table(am) or freq_table(mtcars, am)")
-  }
+  group_vars <- dplyr::group_vars(.data)
+  is_grouped <- length(group_vars) > 0
 
   # ===========================================================================
-  # Convert percent_95 to t_prob
-  # 2020-02-14: Previously, t_prob was an argument to freq_table and was passed
-  # directly to stats::qt(). However, t_prob is not necessarily intuitive to
-  # many users. Therefore, they will not enter, for example, 95 as an argument
-  # to the percent_95 parameter and that will be converted to a t_prob of 0.975
-  # as t_prob = 1 - (percent_ci / 100)/2
+  # Calculate alpha and t_prob
   # ===========================================================================
-  alpha <-  1 - (percent_ci / 100)
+  alpha <- 1 - (percent_ci / 100)
   t_prob <- 1 - alpha / 2
 
   # ===========================================================================
-  # One-way tables
+  # One-way tables (no grouping)
   # ===========================================================================
-  if (n_groups == 1) {
+  if (!is_grouped) {
 
-    # Create first three columns of summary table: grouped variable name,
-    # grouped variable categories, and n of each category
-    out <- .data %>%
-      dplyr::mutate(var = !!names(.[1])) %>%
-      dplyr::rename(cat = !!names(.[1])) %>%
-      dplyr::select(var, cat, n) %>%
-      # Coerce all variable names and categories (i.e., 0 and 1) to character
-      dplyr::mutate_at(dplyr::vars(-n), as.character)
+    # Get counts
+    out <- dplyr::count(.data, !!col_quo, .drop = drop)
+    n_total_val <- sum(out$n)
 
-    # Update out to include elements needed for Wald and Logit transformed CI's
-    # One-way tables
+    # Calculate proportion and CI
     out <- out %>%
       dplyr::mutate(
-        n_total = sum(n),
-        prop    = n / n_total,
-        se      = sqrt(prop * (1 - prop) / (n_total - 1)),
-        t_crit  = stats::qt(t_prob, df = n_total - 1)
+        prop_val    = n / sum(n),
+        se_val      = sqrt(prop_val * (1 - prop_val) / (n_total_val - 1)),
+        t_crit_val  = stats::qt(t_prob, df = n_total_val - 1)
       )
 
-    # Calculate Wald CI's
-    # -------------------
-    # and put prop, se, and CI's on percent scale
-    # One-way tables
+    # Calculate CI based on ci_type
     if (ci_type_arg == "wald") {
-
       out <- out %>%
         dplyr::mutate(
-          lcl_wald = prop - t_crit * se,
-          ucl_wald = prop + t_crit * se,
-          percent  = prop * 100,
-          se       = se * 100,
-          lcl      = lcl_wald * 100,
-          ucl      = ucl_wald * 100
+          lcl_log = prop_val - t_crit_val * se_val,
+          ucl_log = prop_val + t_crit_val * se_val
         )
-
-      # Calculate logit transformed CI's
-      # ------------------------------
-      # and put prop, se, and CI's on percent scale
-      # One-way tables
-    } else if (ci_type_arg == "logit") {
-
+    } else {
+      # logit (default)
       out <- out %>%
         dplyr::mutate(
-          prop_log = log(prop) - log(1 - prop),
-          se_log   = se / (prop * (1 - prop)),
-          lcl_log  = prop_log - t_crit * se_log,
-          ucl_log  = prop_log + t_crit * se_log,
+          prop_log = log(prop_val) - log(1 - prop_val),
+          se_log   = se_val / (prop_val * (1 - prop_val)),
+          lcl_log  = prop_log - t_crit_val * se_log,
+          ucl_log  = prop_log + t_crit_val * se_log,
           lcl_log  = exp(lcl_log) / (1 + exp(lcl_log)),
-          ucl_log  = exp(ucl_log) / (1 + exp(ucl_log)),
-          percent  = prop * 100,
-          se       = se * 100,
-          lcl      = lcl_log * 100,
-          ucl      = ucl_log * 100
+          ucl_log  = exp(ucl_log) / (1 + exp(ucl_log))
         )
     }
 
-    # Control output
-    out <- out %>%
-      dplyr::select(var, cat, n, n_total, percent, se, t_crit, lcl, ucl)
+    # Build output columns
+    if (percent) {
+      out$prop_val <- out$prop_val * 100
+      out$se_val <- out$se_val * 100
+      out$lcl_log <- out$lcl_log * 100
+      out$ucl_log <- out$ucl_log * 100
+    }
 
-    # Add freq_table class to out
-    class(out) <- c("freq_table_one_way", class(out))
-  }
-
-  # ===========================================================================
-  # Two-way tables
-  # Only logit transformed CI's
-  # Need percent and row percent
-  # ===========================================================================
-  if (n_groups == 2) {
-
-    # Create first three columns of summary table: row variable name,
-    # row variable categories, column variable name, column variable categories
-    # and n of each category row/col combination
-    out <- .data %>%
-      dplyr::mutate(
-        row_var = !!names(.[1]),
-        col_var = !!names(.[2])
-      ) %>%
-      dplyr::rename(
-        row_cat = !!names(.[1]),
-        col_cat = !!names(.[2])
-      ) %>%
-      dplyr::select(row_var, row_cat, col_var, col_cat, n) %>%
-      # Coerce all variable names and categories (i.e., 0 and 1) to character
-      dplyr::mutate_at(dplyr::vars(-n), as.character) %>%
-
-      # Calculate within row n
-      dplyr::group_by(row_cat) %>%
-      dplyr::mutate(n_row = sum(n)) %>%
-      # Ungroup to get total_n
-      dplyr::ungroup() %>%
-      dplyr::mutate(
-
-        # Estimate overall percent se and CI's
-        n_total        = sum(n),
-        prop_total     = n / n_total,
-        se_total       = sqrt(prop_total * (1 - prop_total) / (n_total - 1)),
-        t_crit_total   = stats::qt(t_prob, df = n_total - 1),
-        prop_log_total = log(prop_total) - log(1 - prop_total),
-        se_log_total   = se_total / (prop_total * (1 - prop_total)),
-        lcl_total_log  = prop_log_total - t_crit_total * se_log_total,
-        ucl_total_log  = prop_log_total + t_crit_total * se_log_total,
-        lcl_total_log  = exp(lcl_total_log) / (1 + exp(lcl_total_log)),
-        ucl_total_log  = exp(ucl_total_log) / (1 + exp(ucl_total_log)),
-        percent_total  = prop_total * 100,
-        se_total       = se_total * 100,
-        lcl_total      = lcl_total_log * 100,
-        ucl_total      = ucl_total_log * 100,
-
-
-        # Estimate row percent se and CI's
-        prop_row     = n / n_row,
-        se_row       = sqrt(prop_row * (1 - prop_row) / (n_row - 1)), # group n - 1
-        t_crit_row   = stats::qt(t_prob, df = n_total - 1), # overall n - 1
-        prop_log_row = log(prop_row) - log(1 - prop_row),
-        se_log_row   = se_row / (prop_row * (1 - prop_row)),
-        lcl_row_log  = prop_log_row - t_crit_row * se_log_row,
-        ucl_row_log  = prop_log_row + t_crit_row * se_log_row,
-        lcl_row_log  = exp(lcl_row_log) / (1 + exp(lcl_row_log)),
-        ucl_row_log  = exp(ucl_row_log) / (1 + exp(ucl_row_log)),
-        percent_row  = prop_row * 100,
-        se_row       = se_row * 100,
-        lcl_row      = lcl_row_log * 100,
-        ucl_row      = ucl_row_log * 100
+    # Select output columns based on parameters
+    if (generic_col_names) {
+      out_tbl <- dplyr::tibble(
+        col = col_name,
+        cat = as.character(out[[col_name]]),
+        n = out$n,
+        prop = out$prop_val,
+        lcl = out$lcl_log,
+        ucl = out$ucl_log
       )
 
-    # Control output
-    # Typically, I only want the frequency, row percent and 95% CI for the row percent
-    # Make that the default
-    out <- out %>%
-      dplyr::select(row_var, row_cat, col_var, col_cat, n, n_row, n_total,
-                    percent_total, se_total, t_crit_total,
-                    lcl_total, ucl_total, percent_row, se_row, t_crit_row,
-                    lcl_row, ucl_row)
+      if (se) out_tbl$se <- out$se_val
+      if (critical_value) out_tbl$t_crit <- out$t_crit_val
 
-    # Add freq_table class to out
-    class(out) <- c("freq_table_two_way", class(out))
+    } else {
+      out_tbl <- dplyr::tibble(
+        !!col_name := out[[col_name]],
+        n = out$n,
+        prop = out$prop_val,
+        lcl = out$lcl_log,
+        ucl = out$ucl_log
+      )
+
+      if (se) out_tbl$se <- out$se_val
+      if (critical_value) out_tbl$t_crit <- out$t_crit_val
+    }
+
+    if (percent) {
+      # Rename prop to percent in the output
+      names(out_tbl)[names(out_tbl) == "prop"] <- "percent"
+    }
+
+    class(out_tbl) <- c("freq_table_one_way", class(out_tbl))
+    attr(out_tbl, "col_var") <- col_name
+    attr(out_tbl, "group_vars") <- character(0)
+    out <- out_tbl
+
+  } else {
+    # ===========================================================================
+    # Grouped tables
+    # ===========================================================================
+
+    # Get counts within groups
+    out <- dplyr::count(.data, !!col_quo, .drop = drop)
+
+    # Calculate group-level statistics
+    out <- out %>%
+      dplyr::mutate(
+        n_group     = sum(n),
+        prop_group  = n / n_group,
+        se_group    = sqrt(prop_group * (1 - prop_group) / (n_group - 1)),
+        t_crit_group = stats::qt(t_prob, df = n_group - 1)
+      )
+
+    # Calculate group CI based on ci_type
+    if (ci_type_arg == "wald") {
+      out <- out %>%
+        dplyr::mutate(
+          lcl_group = prop_group - t_crit_group * se_group,
+          ucl_group = prop_group + t_crit_group * se_group
+        )
+    } else {
+      # logit (default)
+      out <- out %>%
+        dplyr::mutate(
+          prop_log_group = log(prop_group) - log(1 - prop_group),
+          se_log_group   = se_group / (prop_group * (1 - prop_group)),
+          lcl_log_group  = prop_log_group - t_crit_group * se_log_group,
+          ucl_log_group  = prop_log_group + t_crit_group * se_log_group,
+          lcl_group      = exp(lcl_log_group) / (1 + exp(lcl_log_group)),
+          ucl_group      = exp(ucl_log_group) / (1 + exp(ucl_log_group))
+        )
+    }
+
+    # Calculate overall statistics if requested
+    if (overall) {
+      out <- out %>%
+        dplyr::ungroup() %>%
+        dplyr::mutate(
+          n_total        = sum(n),
+          prop_overall   = n / n_total,
+          se_overall     = sqrt(prop_overall * (1 - prop_overall) / (n_total - 1)),
+          t_crit_overall = stats::qt(t_prob, df = n_total - 1)
+        )
+
+      if (ci_type_arg == "wald") {
+        out <- out %>%
+          dplyr::mutate(
+            lcl_overall = prop_overall - t_crit_overall * se_overall,
+            ucl_overall = prop_overall + t_crit_overall * se_overall
+          )
+      } else {
+        out <- out %>%
+          dplyr::mutate(
+            prop_log_overall = log(prop_overall) - log(1 - prop_overall),
+            se_log_overall   = se_overall / (prop_overall * (1 - prop_overall)),
+            lcl_log_overall  = prop_log_overall - t_crit_overall * se_log_overall,
+            ucl_log_overall  = prop_log_overall + t_crit_overall * se_log_overall,
+            lcl_overall      = exp(lcl_log_overall) / (1 + exp(lcl_log_overall)),
+            ucl_overall      = exp(ucl_log_overall) / (1 + exp(ucl_log_overall))
+          )
+      }
+    }
+
+    # Ungroup for output construction
+    out <- dplyr::ungroup(out)
+
+    # Apply percent scaling if requested
+    if (percent) {
+      out$prop_group <- out$prop_group * 100
+      out$se_group <- out$se_group * 100
+      out$lcl_group <- out$lcl_group * 100
+      out$ucl_group <- out$ucl_group * 100
+      if (overall) {
+        out$prop_overall <- out$prop_overall * 100
+        out$se_overall <- out$se_overall * 100
+        out$lcl_overall <- out$lcl_overall * 100
+        out$ucl_overall <- out$ucl_overall * 100
+      }
+    }
+
+    # Build output tibble based on column naming preference
+    if (generic_col_names) {
+      # Generic column names for programming
+      out_tbl <- dplyr::tibble()
+
+      # Add group columns
+      for (i in seq_along(group_vars)) {
+        gv <- group_vars[i]
+        idx <- sprintf("%02d", i)
+        out_tbl[[paste0("group_", idx, "_col")]] <- gv
+        out_tbl[[paste0("group_", idx, "_cat")]] <- as.character(out[[gv]])
+      }
+
+      # Add analysis column
+      out_tbl$col <- col_name
+      out_tbl$cat <- as.character(out[[col_name]])
+      out_tbl$n <- out$n
+      out_tbl$n_group <- out$n_group
+
+      if (percent) {
+        out_tbl$percent_group <- out$prop_group
+      } else {
+        out_tbl$prop_group <- out$prop_group
+      }
+
+      if (se) out_tbl$se_group <- out$se_group
+      if (critical_value) out_tbl$t_crit_group <- out$t_crit_group
+
+      out_tbl$lcl_group <- out$lcl_group
+      out_tbl$ucl_group <- out$ucl_group
+
+      if (overall) {
+        out_tbl$n_total <- out$n_total
+        if (percent) {
+          out_tbl$percent_overall <- out$prop_overall
+        } else {
+          out_tbl$prop_overall <- out$prop_overall
+        }
+        if (se) out_tbl$se_overall <- out$se_overall
+        if (critical_value) out_tbl$t_crit_overall <- out$t_crit_overall
+        out_tbl$lcl_overall <- out$lcl_overall
+        out_tbl$ucl_overall <- out$ucl_overall
+      }
+
+    } else {
+      # Variable names as column headers (default)
+      out_tbl <- dplyr::tibble()
+
+      # Add group columns with their actual names
+      for (gv in group_vars) {
+        out_tbl[[gv]] <- out[[gv]]
+      }
+
+      # Add analysis column with its actual name
+      out_tbl[[col_name]] <- out[[col_name]]
+      out_tbl$n <- out$n
+      out_tbl$n_group <- out$n_group
+
+      if (percent) {
+        out_tbl$percent_group <- out$prop_group
+      } else {
+        out_tbl$prop_group <- out$prop_group
+      }
+
+      if (se) out_tbl$se_group <- out$se_group
+      if (critical_value) out_tbl$t_crit_group <- out$t_crit_group
+
+      out_tbl$lcl_group <- out$lcl_group
+      out_tbl$ucl_group <- out$ucl_group
+
+      if (overall) {
+        out_tbl$n_total <- out$n_total
+        if (percent) {
+          out_tbl$percent_overall <- out$prop_overall
+        } else {
+          out_tbl$prop_overall <- out$prop_overall
+        }
+        if (se) out_tbl$se_overall <- out$se_overall
+        if (critical_value) out_tbl$t_crit_overall <- out$t_crit_overall
+        out_tbl$lcl_overall <- out$lcl_overall
+        out_tbl$ucl_overall <- out$ucl_overall
+      }
+    }
+
+    class(out_tbl) <- c("freq_table_two_way", class(out_tbl))
+    attr(out_tbl, "col_var") <- col_name
+    attr(out_tbl, "group_vars") <- group_vars
+    out <- out_tbl
   }
 
-  # Return tibble of results
   out
 }
