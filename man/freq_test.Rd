@@ -16,9 +16,6 @@ freq_test(.data, ...)
 \item{.data}{A tibble of class freq_table_one_way or freq_table_two_way.}
 
 \item{...}{Other parameters to be passed on.}
-
-\item{method}{Options for this parameter control the method used to
-calculate p-values.}
 }
 \value{
 A tibble.
@@ -26,12 +23,15 @@ A tibble.
 \description{
 The freq_test function is an S3 generic. It currently has
   methods for conducting hypothesis tests on one-way and two-way frequency
-  tables. Further, it is made to work in a dplyr pipeline with the
-  freq_table function.
+  tables. It is designed to work in a dplyr pipeline with the freq_table
+  function.
+
+  For the freq_table_one_way class, the method used is Pearson's chi-square
+  test for equality of proportions.
 
   For the freq_table_two_way class, the methods used are Pearson's
-  chi-square test of independence Fisher's exact test. When cell counts
-  are <= 5, Fisher's Exact Test is considered more reliable.
+  chi-square test of independence and Fisher's exact test (when any
+  expected cell count is <= 5).
 }
 \examples{
 library(dplyr)
@@ -40,30 +40,13 @@ library(freqtables)
 data(mtcars)
 
 # Test equality of proportions
-
 mtcars \%>\%
   freq_table(am) \%>\%
-  freq_test() \%>\%
-  select(var:percent, p_chi2_pearson)
-
-#>  # A tibble: 2 x 6
-#>      var   cat     n n_total percent p_chi2_pearson
-#>    <chr> <dbl> <int>   <int>   <dbl>          <dbl>
-#>  1    am     0    19      32   59.38      0.2888444
-#>  2    am     1    13      32   40.62      0.2888444
+  freq_test()
 
 # Chi-square test of independence
-
 mtcars \%>\%
-  freq_table(am, vs) \%>\%
-  freq_test() \%>\%
-  select(row_var:n, percent_row, p_chi2_pearson)
-
-#> # A tibble: 4 x 7
-#>   row_var row_cat col_var col_cat     n percent_row p_chi2_pearson
-#>     <chr>   <dbl>   <chr>   <dbl> <int>       <dbl>          <dbl>
-#> 1      am       0      vs       0    12       63.16      0.3409429
-#> 2      am       0      vs       1     7       36.84      0.3409429
-#> 3      am       1      vs       0     6       46.15      0.3409429
-#> 4      am       1      vs       1     7       53.85      0.3409429
+  group_by(cyl) \%>\%
+  freq_table(am) \%>\%
+  freq_test()
 }

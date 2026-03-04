@@ -1,0 +1,565 @@
+---
+title: "Checking Claude Code Updates to freqtables"
+author: "Brad Cannell"
+date: "Created: 2026-03-04 <br> Updated: `r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+    css: styles.css
+vignette: >
+  %\VignetteIndexEntry{Descriptive Analysis in a dplyr Pipeline}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# 🔴 Issues
+
+- Record issues here: https://github.com/orgs/brad-cannell/projects/9/views/1?pane=issue&itemId=159492688&issue=brad-cannell%7Cfreqtables%7C49
+
+Table of contents: 🔴 Update later
+
+[Overview](#overview)   
+
+[Univariate percentages and 95% log transformed confidence intervals](#one-way-log)
+
+[Univariate percentages and 95% Wald confidence intervals](#one-way-wald)
+
+[Bivariate percentages and 95% log transformed confidence intervals](#two-way-log)
+
+[Interpretation of confidence intervals](#interpretation)
+
+# Overview
+
+2026-03-01: I used Claude Code to work on the following issues en masse:
+- Work with contingency tables #34
+- Creating multiple one or n-way tables #36
+- Remove t_crit from default output #37
+- Create the freq_tbl function #39
+- Use group_by with freq_table #40
+- Decompose the freq_table function into multiple separate functions #45
+See Refactor frequency table workflow around grouped pipelines #47
+
+## Summary
+This PR significantly refactors the `freqtables` package to simplify the API and improve modularity. The main `freq_table()` function is simplified to handle only single categorical variables, with grouped analyses delegated to `dplyr::group_by()`. New modular functions (`freq_tbl()`, `logit_ci()`, `wald_ci()`) provide a composable pipeline approach, while helper functions (`freq_xtab()`, `freq_tables()`) extend functionality.
+
+## Key Changes
+
+### Core API Refactoring
+- **`freq_table()` simplification**: Now accepts only a single categorical variable (passing multiple variables is deprecated). Two-way tables are created using `group_by()` instead of passing two variables.
+- **New `freq_tbl()` function**: A lightweight alternative that returns just counts and proportions without confidence intervals, designed for use in pipelines with separate CI functions.
+- **Modular CI functions**: 
+  - `logit_ci()`: Calculates logit-transformed confidence intervals (Stata-style)
+  - `wald_ci()`: Calculates Wald (linear) confidence intervals (SAS-style)
+  - Both work with output from `freq_tbl()` and support grouped data
+
+### New Helper Functions
+- **`freq_xtab()`**: Creates contingency tables (matrices) from two categorical variables, with optional marginal totals
+- **`freq_tables()`**: Allows tabulating multiple variables at once, returning a nested data frame with one row per variable
+
+### Parameter Changes to `freq_table()`
+- Added `generic_col_names`, `overall`, `se`, `critical_value`, `percent` parameters for flexible output formatting
+- Simplified documentation to focus on single-variable use case
+- Updated examples to use `group_by()` for grouped analyses
+
+### Documentation & Testing
+- Rewrote docstrings to reflect simplified API and new modular approach
+- Updated examples to demonstrate `group_by()` for grouped analyses
+- Comprehensive test suite for new functions (`test-freq_tbl.R`, `test-logit_ci.R`, `test-wald_ci.R`, `test-freq_xtab.R`, `test-freq_tables.R`)
+- Simplified error messages and validation logic
+
+## Implementation Details
+- The refactoring maintains backward compatibility for single-variable use cases while deprecating two-variable syntax
+- New functions follow consistent naming conventions: `freq_*()` for main functions, `*_ci()` for CI calculations
+- All functions support `dplyr::group_by()` for grouped operations
+- Confidence interval calculations are now separated from frequency table generation, allowing users to choose CI type post-hoc
+
+https://claude.ai/code/session_01Kxvz3TkcCgKNbvauRWBS1P
+
+```{r}
+#| label: load-packages
+
+library(dplyr, warn.conflicts = FALSE)
+# library(freqtables)
+devtools::load_all()
+```
+
+```{r}
+#| label: load-data
+
+data(freq_study)
+```
+
+# Examples of desired output for freq_tbl()
+
+## One-way table
+
+```{r}
+freq_study |> 
+  freq_tbl(outcome)
+```
+
+Should return:
+
+|   | outcome | n  | prop |
+|---|---------|----|------|
+| 1 | No      | 50 | 0.50 |
+| 2 | Yes     | 49 | 0.49 |
+| 3 | NA      | 1  | 0.01 |
+
+**Notice**:
+- This is `freq_tbl()`, not `freq_table()`.
+- The variable name in the column header. 
+  - This behavior makes the output more compact and easy to read.
+  - However, this behavior also makes programming tables of results more difficult because they don't naturally row bind together.
+  - We can add a `col_headers = "col_names"` argument that users can adjust if they want generic column headers instead.
+
+### Generic column names
+
+```{r}
+freq_study |> 
+  freq_tbl(outcome, generic_col_names = TRUE)
+```
+
+Additionally, we can advise users who want generic column headers to use `freq_table()` with `select()`.
+
+Additionally, `freq_tbl()` returns a proportion by default instead of a percent.
+- Returning a proportion instead of a percent allows for short column headings and we won't have to convert it back to a proportion later to calculate confidence intervals.
+  - We can add a `percent = TRUE` argument that users who want a percentage can adjust.
+
+### Return percentages
+
+```{r}
+freq_study |> 
+  freq_tbl(outcome, percent = TRUE)
+```
+
+Returns:
+
+|   | outcome | n  | percent |
+|---|---------|----|---------|
+| 1 | No      | 50 | 50.00   |
+| 2 | Yes     | 49 | 49.00   |
+| 3 | NA      | 1  | 1.00    |
+
+```{r}
+freq_study |> 
+  freq_tbl(outcome, overall = TRUE, percent = TRUE)
+```
+
+### Change the number of decimal places displayed
+
+```{r}
+freq_study |> 
+  freq_tbl(outcome, digits = 4)
+```
+
+### Add total count
+
+```{r}
+freq_study |> 
+  freq_tbl(outcome, overall = TRUE)
+```
+
+### Dropping factor levels that don't appear in the data
+
+```{r}
+freq_study <- freq_study |> 
+  mutate(outcome_3_cat = forcats::fct_expand(outcome, "Other"))
+```
+
+```{r}
+freq_study |> 
+  freq_tbl(outcome_3_cat)
+```
+
+```{r}
+freq_study |> 
+  freq_tbl(outcome_3_cat, drop = TRUE)
+```
+
+## Two-way table
+
+```{r}
+freq_study |> 
+  group_by(sex) |>
+  freq_tbl(outcome)
+```
+
+Where `prop_group` = Within each level of the `group_by()` column(s), the proportion of rows containing each value of the `freq_tbl()` column (i.e., the column passed to the `freq_tbl()` function).
+
+**Notice**:
+- Same as above, plus it works with `group_by()`.
+- The returned value doesn't include an overall proportion by default. When was the last time I actually needed an overall proportion?
+  - We can add an `overall = TRUE` argument that users who want an overall percentage can adjust.
+
+```{r}
+freq_study |> 
+  group_by(sex) |>
+  freq_tbl(outcome, overall = TRUE)
+```
+
+Using `df |> freq_tbl(sex, outcome)` will return an informative error.
+
+```{r, error=TRUE}
+freq_study |> 
+  freq_tbl(sex, outcome)
+```
+
+### Generic column names
+
+```{r}
+freq_study |> 
+  group_by(sex) |>
+  freq_tbl(outcome, generic_col_names = TRUE)
+```
+
+### Return percentages
+
+```{r}
+freq_study |> 
+  group_by(sex) |>
+  freq_tbl(outcome, percent = TRUE)
+```
+
+```{r}
+freq_study |> 
+  group_by(sex) |>
+  freq_tbl(outcome, overall = TRUE, percent = TRUE)
+```
+
+### Dropping factor levels that don't appear in the data
+
+```{r}
+freq_study |> 
+  group_by(sex) |>
+  freq_tbl(outcome_3_cat, drop = FALSE)
+```
+
+```{r}
+freq_study |> 
+  group_by(sex) |>
+  freq_tbl(outcome_3_cat, drop = TRUE)
+```
+
+Works for grouping var and outcome var.
+
+```{r}
+freq_study |> 
+  group_by(outcome_3_cat) |>
+  freq_tbl(sex, drop = FALSE)
+```
+
+```{r}
+freq_study |> 
+  group_by(outcome_3_cat) |>
+  freq_tbl(sex, drop = TRUE)
+```
+
+### N-way tables
+
+```{r}
+freq_study |> 
+  group_by(sex, exposure) |>
+  freq_tbl(outcome)
+```
+
+**Notice**:
+- We don't add any new columns. The point is to calculate the n and proportion within levels of the grouping variables. That is all the `freq_tbl()` function is intended to do.
+
+#### Missing values
+
+Don't use:
+
+```{r, error=TRUE}
+freq_study |> 
+  group_by(sex) |>
+  freq_tbl(outcome, na.rm = TRUE)
+```
+
+Use `filter()` instead (more explicit and "do one thing"): 
+
+```{r}
+freq_study |> 
+  filter(!is.na(sex), !is.na(outcome)) |>
+  group_by(sex) |>
+  freq_tbl(outcome)
+```
+
+# Updates to `freq_table()`
+
+## Change default output from percentages to proportions
+
+```{r}
+freq_study |> 
+  freq_table(outcome)
+```
+
+- Returning a proportion instead of a percent allows for short column headings and we won't have to convert it back to a proportion later to calculate confidence intervals.
+  - We can add a `percent = TRUE` argument that users who want a percentage can adjust.
+
+```{r}
+freq_study |> 
+  freq_table(outcome, percent = TRUE)
+```
+
+```{r}
+freq_study |> 
+  freq_table(outcome, percent = TRUE, digits = 4)
+```
+
+## More compact results
+
+The `freq_table()` function currently returns output that is more verbose than is typically needed. Specifically: 
+- The generic column headers (i.e., "var" and "cat").
+  - These are great for programming, but create extra columns that are typically not needed for interactive data analysis.
+- The statistics that aren't generally needed (e.g., the standard error and critical values for test statistics).
+This can make it difficult for users to get the information they actually need. 
+
+So, we will make the _default_ output much more compact and add parameters that users can adjust. Keeping in mind that we also intend to implement a new `freq_tbl()` function that is also much more succinct. 
+
+Currently, 
+
+```{r, error=TRUE}
+mtcars |> 
+  freq_table(cyl, am)
+```
+
+Returns:
+
+```
+  row_var row_cat col_var col_cat     n n_row n_total percent_total se_total t_crit_total lcl_total ucl_total percent_row se_row t_crit_row lcl_row ucl_row
+  <chr>   <chr>   <chr>   <chr>   <int> <int>   <int>         <dbl>    <dbl>        <dbl>     <dbl>     <dbl>       <dbl>  <dbl>      <dbl>   <dbl>   <dbl>
+1 cyl     4       am      0           3    11      32          9.38     5.24         2.04      2.86      26.7        27.3  14.1        2.04    8.10    61.5
+2 cyl     4       am      1           8    11      32         25        7.78         2.04     12.5       43.7        72.7  14.1        2.04   38.5     91.9
+3 cyl     6       am      0           4     7      32         12.5      5.94         2.04      4.51      30.2        57.1  20.2        2.04   19.9     87.8
+4 cyl     6       am      1           3     7      32          9.38     5.24         2.04      2.86      26.7        42.9  20.2        2.04   12.2     80.1
+5 cyl     8       am      0          12    14      32         37.5      8.70         2.04     22.0       56.1        85.7   9.71       2.04   54.4     96.8
+6 cyl     8       am      1           2    14      32          6.25     4.35         2.04      1.45      23.2        14.3   9.71       2.04    3.20    45.6
+```
+
+That's a lot!! And if the user is using `freq_table()` as part of a larger pipeline of analysis or results table generation, then they may need it all. However, most users won't need all of this information most of the time. Therefore, the default results will look like this:
+
+| cyl      | am          | n   | n_group    | prop_group | lcl_group | ucl_group |
+|----------|-------------|-----|------------|------------|-----------|-----------|
+| 4        | 0           | 3   | 11         | 0.273      | 0.081     | 0.615     |
+| 4        | 1           | 8   | 11         | 0.727      | 0.385     | 0.919     |
+| 6        | 0           | 4   | 7          | 0.571      | 0.199     | 0.878     |
+| 6        | 1           | 3   | 7          | 0.429      | 0.122     | 0.801     |
+| 8        | 0           | 12  | 14         | 0.857      | 0.544     | 0.968     |
+| 8        | 1           | 2   | 14         | 0.143      | 0.032     | 0.456     |
+
+Where: 
+- `n_group` = Within each level of the `group_by()` column(s), the number of rows containing each value of the `freq_tbl()` column (i.e., the column passed to the `freq_tbl()` function).
+- `prop_group` = Within each level of the `group_by()` column(s), the proportion of rows containing each value of the `freq_tbl()` column (i.e., the column passed to the `freq_tbl()` function).
+
+This tries to strike a balance between making needed information easy to glean from the table, while also providing more information that `freq_tbl()` provides.
+- By default, the `freq_tbl()` function returns the [grouped] count and proportion only.
+- By default, the `freq_table()` function adds the [grouped] confidence intervals.
+  - There are no "overall" n, proportion, or confidence intervals by default because they are so rarely of interest to our users. However, they can easily be added by changing the `overall = FALSE` argument to `TRUE`.
+  - Additionally, users can opt to return standard errors and critical values of test statistics by changing the `se = FALSE` argument to `TRUE` and the `critical_value = FALSE` argument to `TRUE` respectively.
+
+Additionally, notice that:
+- We save space by putting variable names in the column headers by default (more on this below).
+
+## More intuitive column headers
+
+Currently, 
+
+```{r, error=TRUE}
+mtcars |> 
+  freq_table(cyl, am)
+```
+
+Returns (stats truncated because they are unimportant):
+
+```
+  row_var row_cat col_var col_cat     n 
+  <chr>   <chr>   <chr>   <chr>   <int> 
+1 cyl     4       am      0           3 
+2 cyl     4       am      1           8 
+3 cyl     6       am      0           4 
+4 cyl     6       am      1           3 
+5 cyl     8       am      0          12 
+6 cyl     8       am      1           2 
+```
+
+Notice:
+- Each analysis variable creates two administrative columns. One to contain the column name (i.e., `row_var` and `col_var`) and one to contain the column level value (i.e., `row_cat` and `col_cat`).
+- As stated above, this makes the table unnecessarily verbose for most interactive analysis scenarios.
+- However, this behavior is _helpful_ when programming with `freq_table()`. Specifically, 
+  - When writing functions that use `freq_table()` the column names aren't dependent on the name of the column passed to `freq_table()`.
+  - When "stacking" `freq_table()` results to create tables of descriptive statistics, a simple `bind_rows()` will do the trick.
+- Therefore, we will add a `generic_col_names = FALSE` argument that users can adjust to "TRUE" if they want generic column headers instead.
+
+So, this code (notice `group_by()`, more on this below):
+
+```{r}
+mtcars |> 
+  group_by(cyl) |> 
+  freq_table(am)
+```
+
+Will return by default:
+
+| cyl      | am          | n   | n_group    | prop_group | lcl_group | ucl_group |
+|----------|-------------|-----|------------|------------|-----------|-----------|
+| 4        | 0           | 3   | 11         | 0.273      | 0.081     | 0.615     |
+| 4        | 1           | 8   | 11         | 0.727      | 0.385     | 0.919     |
+| 6        | 0           | 4   | 7          | 0.571      | 0.199     | 0.878     |
+| 6        | 1           | 3   | 7          | 0.429      | 0.122     | 0.801     |
+| 8        | 0           | 12  | 14         | 0.857      | 0.544     | 0.968     |
+| 8        | 1           | 2   | 14         | 0.143      | 0.032     | 0.456     |
+
+
+However, this code:
+
+```{r}
+mtcars |> 
+  group_by(cyl) |> 
+  freq_table(am, generic_col_names = TRUE)
+```
+
+Will return:
+
+| group_01_col | group_01_cat | col  | cat | n   | n_group    | prop_group | lcl_group | ucl_group |
+|--------------|--------------|------|-----|-----|------------|------------|-----------|-----------|
+| cyl          | 4            | am   | 0   | 3   | 11         | 0.273      | 0.081     | 0.615     |
+| cyl          | 4            | am   | 1   | 8   | 11         | 0.727      | 0.385     | 0.919     |
+| cyl          | 6            | am   | 0   | 4   | 7          | 0.571      | 0.199     | 0.878     |
+| cyl          | 6            | am   | 1   | 3   | 7          | 0.429      | 0.122     | 0.801     |
+| cyl          | 8            | am   | 0   | 12  | 14         | 0.857      | 0.544     | 0.968     |
+| cyl          | 8            | am   | 1   | 2   | 14         | 0.143      | 0.032     | 0.456     |
+
+Where: 
+- `group_01_col` = The name of the first column passed to the `group_by()` function. 
+  - When multiple columns are passed to the `group_by()` function, then columns for `group_02_col` through `group_0N_col` will be created.
+  - The decision to change the headers from `row_var` to `group_01_col` was deliberate. When the values aren't being presented in a crosstab format, the meaning of `row` vs `col` can become ambiguous, or even confusing. We hope that the `group_0N` nomenclature will be more self-evident because it maps directly back to the code that created the results. 
+- `group_01_cat` = Contains the levels (categories) of the first column passed to the `group_by()` function.
+  - When multiple columns are passed to the `group_by()` function, then columns for `group_02_cat` through `group_0N_cat` will be created.
+- `col` = The name of the column passed to the `freq_table()` function. This column is the primary target of the analysis.
+- `cat` = Contains the levels (categories) of the column passed to the `freq_table()` function.
+- `n_group` = Within each level of the `group_by()` column(s), the number of rows containing each value of the `freq_tbl()` column (i.e., the column passed to the `freq_tbl()` function).
+- `prop_group` = Within each level of the `group_by()` column(s), the proportion of rows containing each value of the `freq_tbl()` column (i.e., the column passed to the `freq_tbl()` function).
+
+## Work with group_by()
+
+As described above with `freq_tbl()`, `freq_table()` will now work with `group_by()`. This is done for the following reasons.
+- That better fits the 'each function does one thing" paradigm of programming.
+- The `mean_tables()` function works with `group_by()`. I would like to have as much continuity as possible between `freqtables` and `meantables`.
+- Many users may assume that it works with `group_by()`.
+- It will make more sense when rename the results columns from `row_var` to `group_01_col`.
+
+This also means that `freq_table()` will start throwing an error if users pass more than one column name. For example:
+
+```{r, error=TRUE}
+mtcars |> 
+  freq_table(cyl, am)
+```
+
+Will return a message like: 
+
+```
+"Passing more than one column name to the freq_table function is deprecated. Please use the dplyr::group_by() function to perform grouped analyses. For example, use `mtcars |> group_by(cyl) |> freq_table(am)` instead of `mtcars |> freq_table(cyl, am)`."
+```
+
+# Create a freq_tables() (with an S) function
+
+- I'm not 100% sure about this one yet.
+- This function would allow the user to pass more than one outcome variable. It would not return a larger table than one outcome variable. It would return multiple tables -- perhaps in the form of a list or nested data frame.
+- The intent is not to use this instead of the `tabler` package. Rather, it is just a convenience option for users. The `tabler` package will also be more general. 
+
+## Examples of desired output for freq_tables()
+
+The code:
+
+```{r}
+freq_study |> 
+  freq_tables(exposure, outcome)
+```
+
+Would return a nested data frame:
+
+|col  | freq_table             | 
+|-----|------------------------|
+| sex | <data.frame [32 × 11]> | 
+| age | <data.frame [32 × 11]> | 
+
+Where each nested data frame would look like this by default:
+
+| sex    | n   | prop | lcl  | ucl  |
+|--------|-----|------|------|------|
+| female | 5   | 0.50 | 0.30 | 0.70 |
+| male   | 5   | 0.50 | 0.30 | 0.70 |
+
+| age   | n   | prop | lcl  | ucl  |
+|-------|-----|------|------|------|
+| young | 8   | 0.40 | 0.20 | 0.60 |
+| old   | 12  | 0.60 | 0.40 | 0.80 |
+
+Then, we can access the tables with `purrr` or by unnesting them.
+
+```{r}
+freq_study |> 
+  freq_tables(exposure, outcome) |> 
+  tidyr::unnest()
+```
+
+🔴 The output needs some work.
+
+# Create functions for creating and working with contingency tables
+
+## freq_xtab()
+
+```{r}
+df |>
+  freq_xtab(exposure, outcome)
+```
+
+Creates a matrix:
+
+```
+        Outcome
+Exposure Yes No Sum
+     Yes   3  2   5
+     No    3  2   5
+     Sum   6  4  10
+```
+
+Which is essentially this code under the hood:
+
+```
+# Create a contingency table called matrix_ct
+matrix_ct <- matrix(
+  c(a = 3, b = 2, c = 3, d = 2),
+  ncol = 2,
+  byrow = TRUE
+)
+
+# Assign row and column labels to matrix_ct
+dimnames(matrix_ct) <- list(
+  Exposure = c("Yes", "No"), # Row names
+  Outcome  = c("Yes", "No")  # Then column names
+)
+
+# Create a contingency table called matrix_ct_margins
+# It is the matrix_ct with marginal totals added.
+matrix_ct_margins <- addmargins(matrix_ct)
+```
+
+And
+
+```{r}
+freq_study |>
+  group_by(sex) |>
+  freq_xtab(exposure, outcome)
+```
+
+Would create an array of matrices.
+
+We could also add functions for:
+- `incidence_proportion()`
+- `incidence_proportion_ratio()`
+- `odds()`
+- `odds_ratio()`
+- confidence intervals
+- `interpret()`
+- p-value curves
