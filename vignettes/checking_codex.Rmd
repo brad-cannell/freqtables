@@ -11,9 +11,21 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+<!-- 
+
+# 📝 Instructions
+
+- Check actual capabilities vs planned capabilities in the wiki: https://github.com/brad-cannell/freqtables/wiki/Development-Notes
+
+  - 2026-03-04: Left off on line 328.
+
+- Check results against SAS and stata. See '/Users/bradcannell/Desktop/Git/R Packages/freqtables/inst/extdata'
+
 # 🔴 Issues
 
 - Record issues here: https://github.com/orgs/brad-cannell/projects/9/views/1?pane=issue&itemId=159492688&issue=brad-cannell%7Cfreqtables%7C49
+
+ -->
 
 Table of contents: 🔴 Update later
 
@@ -27,7 +39,7 @@ Table of contents: 🔴 Update later
 
 [Interpretation of confidence intervals](#interpretation)
 
-# Overview
+# Overview 🔴 Delete before publishing
 
 2026-02-11: I used Codex to work on the following issues en masse:
 - Work with contingency tables #34
@@ -97,6 +109,16 @@ Should return:
   - However, this behavior also makes programming tables of results more difficult because they don't naturally row bind together.
   - We can add a `col_headers = "col_names"` argument that users can adjust if they want generic column headers instead.
 
+### Compare to base R
+
+```{r}
+# Counts
+table(freq_study$outcome, useNA = "always")
+
+# Proportions
+prop.table(table(freq_study$outcome, useNA = "always"))
+```
+
 ### Generic column names
 
 ```{r}
@@ -161,6 +183,8 @@ freq_study |>
   freq_tbl(outcome_3_cat, drop = TRUE)
 ```
 
+<!-- 🔴 Do we want to name this argument something other than drop? -->
+
 ## Two-way table
 
 ```{r}
@@ -175,6 +199,26 @@ Where `prop_group` = Within each level of the `group_by()` column(s), the propor
 - Same as above, plus it works with `group_by()`.
 - The returned value doesn't include an overall proportion by default. When was the last time I actually needed an overall proportion?
   - We can add an `overall = TRUE` argument that users who want an overall percentage can adjust.
+
+
+### Compare to base R
+
+```{r}
+tbl     <- table(freq_study$sex, freq_study$outcome, useNA = "always")
+n_group <- rowSums(tbl)
+
+df <- data.frame(
+  sex        = rep(rownames(tbl), times = ncol(tbl)),
+  outcome    = rep(colnames(tbl), each  = nrow(tbl)),
+  n          = as.integer(tbl),
+  n_group    = rep(n_group, times = ncol(tbl)),
+  prop_group = as.numeric(prop.table(tbl, margin = 1))
+)
+
+df2 <- df[order(df$sex, df$outcome, na.last = TRUE), ]
+rownames(df2) <- NULL
+df2
+```
 
 ```{r}
 freq_study |> 
@@ -209,6 +253,14 @@ freq_study |>
 freq_study |> 
   group_by(sex) |>
   freq_tbl(outcome, overall = TRUE, percent = TRUE)
+```
+
+### Change the number of decimal places displayed
+
+```{r}
+freq_study |> 
+  group_by(sex) |>
+  freq_tbl(outcome, digits = 4)
 ```
 
 ### Dropping factor levels that don't appear in the data
@@ -272,6 +324,10 @@ freq_study |>
 # Updates to `freq_table()`
 
 ## Change default output from percentages to proportions
+
+<!-- 🔴 Review: Left off here -->
+<!-- Check against the wiki: https://github.com/brad-cannell/freqtables/wiki/Development-Notes -->
+<!-- Also, test all of the new capabilities. -->
 
 ```{r}
 freq_study |> 
