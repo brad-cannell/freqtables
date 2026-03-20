@@ -1,0 +1,320 @@
+---
+title: "Using the freq_tbl Function"
+author: "Brad Cannell"
+date: "Created: 2026-03-19 <br> Updated: `r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    css: styles.css
+vignette: >
+  %\VignetteIndexEntry{Using the freq_tbl Function}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, message = FALSE}
+library(dplyr)
+devtools::load_all()
+
+data(freq_study)
+
+normalize_tbl <- function(x) {
+  x |>
+    mutate(across(where(is.numeric), as.numeric))
+}
+
+same_tbl <- function(x, y) {
+  isTRUE(
+    all.equal(
+      as.data.frame(normalize_tbl(x)),
+      as.data.frame(normalize_tbl(y)),
+      check.attributes = FALSE
+    )
+  )
+}
+```
+
+`freq_tbl()` is the low-level counting function in `freqtables`. It returns counts and proportions, works naturally inside a `dplyr` pipeline, and respects any grouping created with `group_by()`.
+
+This vignette walks through every main feature of `freq_tbl()` and checks the calculations against explicit `dplyr::count()` workflows. If you want confidence intervals in addition to counts and proportions, use `freq_table()`, which builds on `freq_tbl()`.
+
+# One-way frequency tables
+
+By default, `freq_tbl()` returns the analysis variable, the count (`n`), and the proportion (`prop`).
+
+```{r}
+freq_study |>
+  freq_tbl(outcome)
+```
+
+Missing values are counted by default, which makes the denominator explicit.
+
+```{r}
+one_way <- freq_study |>
+  freq_tbl(outcome)
+
+one_way_check <- freq_study |>
+  count(outcome, .drop = FALSE) |>
+  mutate(prop = n / sum(n))
+
+same_tbl(one_way, one_way_check)
+```
+
+# Percentages, totals, and display precision
+
+Use `percent = TRUE` to return percentages instead of proportions.
+
+```{r}
+freq_study |>
+  freq_tbl(outcome, percent = TRUE)
+```
+
+```{r}
+one_way_percent <- freq_study |>
+  freq_tbl(outcome, percent = TRUE)
+
+one_way_percent_check <- freq_study |>
+  count(outcome, .drop = FALSE) |>
+  mutate(percent = 100 * n / sum(n))
+
+same_tbl(one_way_percent, one_way_percent_check)
+```
+
+Use `overall = TRUE` to add the overall denominator.
+
+```{r}
+freq_study |>
+  freq_tbl(outcome, overall = TRUE)
+```
+
+```{r}
+one_way_overall <- freq_study |>
+  freq_tbl(outcome, overall = TRUE)
+
+one_way_overall_check <- freq_study |>
+  count(outcome, .drop = FALSE) |>
+  mutate(
+    n_total = sum(n),
+    prop = n / n_total
+  )
+
+same_tbl(one_way_overall, one_way_overall_check)
+```
+
+Use `digits` to control how many decimal places are displayed. This is display formatting only; the columns remain numeric and can still be used downstream.
+
+```{r}
+digits_tbl <- freq_study |>
+  freq_tbl(outcome, digits = 4)
+
+digits_tbl
+```
+
+```{r}
+is.numeric(digits_tbl$prop)
+sum(digits_tbl$prop)
+```
+
+# Grouped frequency tables
+
+Grouped analyses are done with `group_by()`, not by passing a second analysis variable to `freq_tbl()`.
+
+```{r}
+freq_study |>
+  group_by(sex) |>
+  freq_tbl(outcome)
+```
+
+Within grouped output:
+
+- `n_group` is the denominator within each group.
+- `prop_group` is the proportion within each group.
+
+```{r}
+grouped_tbl <- freq_study |>
+  group_by(sex) |>
+  freq_tbl(outcome)
+
+grouped_tbl_check <- freq_study |>
+  count(sex, outcome, .drop = FALSE) |>
+  group_by(sex) |>
+  mutate(
+    n_group = sum(n),
+    prop_group = n / n_group
+  ) |>
+  ungroup()
+
+same_tbl(grouped_tbl, grouped_tbl_check)
+```
+
+Use `overall = TRUE` to add overall totals to grouped tables, and combine it with `percent = TRUE` if you want percentages on the 0 to 100 scale.
+
+```{r}
+freq_study |>
+  filter(!is.na(sex), !is.na(outcome)) |>
+  group_by(sex) |>
+  freq_tbl(outcome, overall = TRUE, percent = TRUE)
+```
+
+```{r}
+grouped_overall <- freq_study |>
+  group_by(sex) |>
+  freq_tbl(outcome, overall = TRUE)
+
+grouped_overall_check <- freq_study |>
+  count(sex, outcome, .drop = FALSE) |>
+  group_by(sex) |>
+  mutate(
+    n_group = sum(n),
+    prop_group = n / n_group
+  ) |>
+  ungroup() |>
+  mutate(
+    n_total = sum(n),
+    prop_total = n / n_total
+  )
+
+same_tbl(grouped_overall, grouped_overall_check)
+```
+
+If missing values should not contribute to the denominator, filter them out explicitly before calling `freq_tbl()`.
+
+```{r}
+freq_study |>
+  filter(!is.na(sex), !is.na(outcome)) |>
+  group_by(sex) |>
+  freq_tbl(outcome)
+```
+
+Trying to pass more than one analysis variable gives an informative error.
+
+```{r, error = TRUE}
+freq_study |>
+  freq_tbl(sex, outcome)
+```
+
+# Generic column names
+
+By default, `freq_tbl()` uses the original data column names. That is usually the most readable output.
+
+When you need to row-bind results across variables, `generic_col_names = TRUE` can be more convenient.
+
+```{r}
+freq_study |>
+  freq_tbl(outcome, generic_col_names = TRUE)
+```
+
+For grouped data, the grouping variables are also returned with generic names.
+
+```{r}
+freq_study |>
+  group_by(sex) |>
+  freq_tbl(outcome, generic_col_names = TRUE)
+```
+
+One practical pattern is stacking multiple one-way tables together.
+
+```{r}
+bind_rows(
+  freq_study |>
+    freq_tbl(outcome, generic_col_names = TRUE),
+  freq_study |>
+    freq_tbl(exposure, generic_col_names = TRUE)
+)
+```
+
+# Dropping unused factor levels
+
+The `drop` argument is passed to `dplyr::count(.drop = )`.
+
+The `bmi_4cat` variable in `freq_study` includes an unused factor level, `"Extreme Obese"`, which makes it a good example.
+
+With the default `drop = FALSE`, unused levels are retained with `n = 0`.
+
+```{r}
+freq_study |>
+  freq_tbl(bmi_4cat)
+```
+
+With `drop = TRUE`, unused levels are removed.
+
+```{r}
+freq_study |>
+  freq_tbl(bmi_4cat, drop = TRUE)
+```
+
+```{r}
+bmi_keep <- freq_study |>
+  freq_tbl(bmi_4cat)
+
+bmi_keep_check <- freq_study |>
+  count(bmi_4cat, .drop = FALSE) |>
+  mutate(prop = n / sum(n))
+
+bmi_drop <- freq_study |>
+  freq_tbl(bmi_4cat, drop = TRUE)
+
+bmi_drop_check <- freq_study |>
+  count(bmi_4cat, .drop = TRUE) |>
+  mutate(prop = n / sum(n))
+
+same_tbl(bmi_keep, bmi_keep_check)
+same_tbl(bmi_drop, bmi_drop_check)
+```
+
+The same argument works for grouped tables.
+
+```{r}
+freq_study |>
+  group_by(sex) |>
+  freq_tbl(bmi_4cat, drop = TRUE)
+```
+
+# Multiple grouping variables
+
+`freq_tbl()` also works with more than one grouping variable. In that case, `n_group` and `prop_group` are calculated within each unique combination of grouping variables.
+
+```{r}
+freq_study |>
+  filter(!is.na(sex), !is.na(exposure), !is.na(outcome)) |>
+  group_by(sex, exposure) |>
+  freq_tbl(outcome)
+```
+
+```{r}
+multi_group_tbl <- freq_study |>
+  filter(!is.na(sex), !is.na(exposure), !is.na(outcome)) |>
+  group_by(sex, exposure) |>
+  freq_tbl(outcome)
+
+multi_group_tbl_check <- freq_study |>
+  filter(!is.na(sex), !is.na(exposure), !is.na(outcome)) |>
+  count(sex, exposure, outcome, .drop = FALSE) |>
+  group_by(sex, exposure) |>
+  mutate(
+    n_group = sum(n),
+    prop_group = n / n_group
+  ) |>
+  ungroup()
+
+same_tbl(multi_group_tbl, multi_group_tbl_check)
+```
+
+# Summary
+
+`freq_tbl()` is most useful when you want a compact table of counts and proportions that fits cleanly into a `dplyr` workflow. The main patterns are:
+
+- Use `group_by()` to define the denominator for grouped proportions.
+- Use `filter()` first when missing values should be excluded from the denominator.
+- Use `overall = TRUE` when you also want overall totals or proportions.
+- Use `percent = TRUE` when you want 0 to 100 scale output.
+- Use `generic_col_names = TRUE` when you want to stack results across variables.
+- Use `drop = TRUE` when you do not want unused factor levels in the result.
+
+If you need confidence intervals in addition to counts and proportions, move from `freq_tbl()` to `freq_table()`.
