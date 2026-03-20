@@ -67,10 +67,10 @@ freq_table <- function(.data,
   # Slim default output
   drop_cols <- character(0)
   if (!se) {
-    drop_cols <- c(drop_cols, grep("^se", names(out), value = TRUE))
+    drop_cols <- c(drop_cols, grep("^se($|_)", names(out), value = TRUE))
   }
   if (!critical_value) {
-    drop_cols <- c(drop_cols, grep("^t_crit", names(out), value = TRUE))
+    drop_cols <- c(drop_cols, grep("^t_crit($|_)", names(out), value = TRUE))
   }
   out <- dplyr::select(out, -dplyr::any_of(unique(drop_cols)))
 

@@ -1,0 +1,438 @@
+---
+title: "Using the freq_table Function"
+author: "Brad Cannell"
+date: "Created: 2026-03-19 <br> Updated: `r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    css: styles.css
+vignette: >
+  %\VignetteIndexEntry{Using the freq_table Function}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, message = FALSE}
+library(dplyr)
+library(freqtables)
+
+data(freq_study)
+
+analysis_df <- freq_study |>
+  filter(!is.na(sex), !is.na(outcome))
+
+multi_group_df <- freq_study |>
+  filter(!is.na(age_group), !is.na(sex), !is.na(outcome))
+
+normalize_tbl <- function(x) {
+  x |>
+    mutate(across(where(is.numeric), as.numeric))
+}
+
+same_tbl <- function(x, y) {
+  isTRUE(
+    all.equal(
+      as.data.frame(normalize_tbl(x)),
+      as.data.frame(normalize_tbl(y)),
+      check.attributes = FALSE
+    )
+  )
+}
+```
+
+`freq_table()` is the confidence-interval version of `freq_tbl()`. It returns counts and proportions plus lower and upper confidence limits, while still fitting naturally into a `dplyr` pipeline.
+
+This vignette covers the full `freq_table()` interface and verifies the results with explicit `dplyr::count()` pipelines plus base R math from `stats::qt()`. In the verification chunks below, `digits = NULL` is used so the comparisons are made on full numeric precision rather than display formatting.
+
+# Default one-way output
+
+By default, `freq_table()` returns counts, proportions, and logit-transformed confidence intervals.
+
+```{r}
+freq_study |>
+  freq_table(outcome)
+```
+
+```{r}
+one_way_counts <- freq_study |>
+  count(outcome, .drop = FALSE) |>
+  mutate(
+    n_total = sum(n),
+    prop = n / n_total
+  )
+
+one_way_logit <- freq_study |>
+  freq_table(outcome, digits = NULL)
+
+one_way_logit_check <- one_way_counts |>
+  mutate(
+    se = sqrt(prop * (1 - prop) / (n_total - 1)),
+    t_crit = stats::qt(0.975, df = n_total - 1),
+    prop_log = log(prop) - log(1 - prop),
+    se_log = se / (prop * (1 - prop)),
+    lcl_log = prop_log - t_crit * se_log,
+    ucl_log = prop_log + t_crit * se_log,
+    lcl = exp(lcl_log) / (1 + exp(lcl_log)),
+    ucl = exp(ucl_log) / (1 + exp(ucl_log))
+  ) |>
+  select(outcome, n, prop, lcl, ucl)
+
+same_tbl(one_way_logit, one_way_logit_check)
+```
+
+# Confidence interval options
+
+The default `ci_type` is `"logit"`, but `"wald"` is also available.
+
+```{r}
+freq_study |>
+  freq_table(outcome, ci_type = "wald")
+```
+
+```{r}
+one_way_wald <- freq_study |>
+  freq_table(outcome, ci_type = "wald", digits = NULL)
+
+one_way_wald_check <- one_way_counts |>
+  mutate(
+    se = sqrt(prop * (1 - prop) / (n_total - 1)),
+    t_crit = stats::qt(0.975, df = n_total - 1),
+    lcl = prop - t_crit * se,
+    ucl = prop + t_crit * se
+  ) |>
+  select(outcome, n, prop, lcl, ucl)
+
+same_tbl(one_way_wald, one_way_wald_check)
+```
+
+Use `percent_ci` to request a different confidence level.
+
+```{r}
+freq_study |>
+  freq_table(outcome, percent_ci = 99)
+```
+
+```{r}
+one_way_logit_99 <- freq_study |>
+  freq_table(outcome, percent_ci = 99, digits = NULL)
+
+one_way_logit_99_check <- one_way_counts |>
+  mutate(
+    se = sqrt(prop * (1 - prop) / (n_total - 1)),
+    t_crit = stats::qt(0.995, df = n_total - 1),
+    prop_log = log(prop) - log(1 - prop),
+    se_log = se / (prop * (1 - prop)),
+    lcl_log = prop_log - t_crit * se_log,
+    ucl_log = prop_log + t_crit * se_log,
+    lcl = exp(lcl_log) / (1 + exp(lcl_log)),
+    ucl = exp(ucl_log) / (1 + exp(ucl_log))
+  ) |>
+  select(outcome, n, prop, lcl, ucl)
+
+same_tbl(one_way_logit_99, one_way_logit_99_check)
+```
+
+By default, `freq_table()` hides the intermediate standard error and critical value columns. Use `se = TRUE` and `critical_value = TRUE` to keep them.
+
+```{r}
+freq_study |>
+  freq_table(
+    outcome,
+    ci_type = "wald",
+    se = TRUE,
+    critical_value = TRUE
+  )
+```
+
+```{r}
+one_way_wald_detail <- freq_study |>
+  freq_table(
+    outcome,
+    ci_type = "wald",
+    se = TRUE,
+    critical_value = TRUE,
+    digits = NULL
+  )
+
+one_way_wald_detail_check <- one_way_counts |>
+  mutate(
+    se = sqrt(prop * (1 - prop) / (n_total - 1)),
+    t_crit = stats::qt(0.975, df = n_total - 1),
+    lcl = prop - t_crit * se,
+    ucl = prop + t_crit * se
+  ) |>
+  select(outcome, n, prop, se, t_crit, lcl, ucl)
+
+same_tbl(one_way_wald_detail, one_way_wald_detail_check)
+```
+
+# Percentages, totals, and display formatting
+
+Use `percent = TRUE` to scale the proportion and confidence-interval columns from 0 to 100.
+
+```{r}
+freq_study |>
+  freq_table(outcome, percent = TRUE)
+```
+
+Use `digits` to control display precision. The columns remain numeric, so you can still calculate with them.
+
+```{r}
+display_tbl <- freq_study |>
+  freq_table(outcome, percent = TRUE, digits = 4)
+
+display_tbl
+```
+
+```{r}
+is.numeric(display_tbl$percent)
+sum(display_tbl$percent)
+```
+
+Use `overall = TRUE` to add overall denominators. For one-way output that means `n_total`; for grouped output it adds `n_total` and `prop_total` or `percent_total`.
+
+```{r}
+freq_study |>
+  freq_table(outcome, overall = TRUE)
+```
+
+# Grouped frequency tables
+
+Grouped analyses are done with `group_by()`, not by passing multiple analysis variables directly to `freq_table()`.
+
+```{r}
+analysis_df |>
+  group_by(sex) |>
+  freq_table(outcome)
+```
+
+Within grouped output:
+
+- `n_group` is the denominator within each group.
+- `prop_group` is the within-group proportion.
+- `lcl_group` and `ucl_group` are confidence limits around `prop_group`.
+
+```{r}
+grouped_counts <- analysis_df |>
+  count(sex, outcome, .drop = FALSE) |>
+  group_by(sex) |>
+  mutate(
+    n_group = sum(n),
+    prop_group = n / n_group
+  ) |>
+  ungroup()
+
+grouped_logit <- analysis_df |>
+  group_by(sex) |>
+  freq_table(outcome, digits = NULL)
+
+grouped_logit_check <- grouped_counts |>
+  mutate(
+    se_group = sqrt(prop_group * (1 - prop_group) / (n_group - 1)),
+    t_crit_group = stats::qt(0.975, df = n_group - 1),
+    prop_group_log = log(prop_group) - log(1 - prop_group),
+    se_group_log = se_group / (prop_group * (1 - prop_group)),
+    lcl_group_log = prop_group_log - t_crit_group * se_group_log,
+    ucl_group_log = prop_group_log + t_crit_group * se_group_log,
+    lcl_group = exp(lcl_group_log) / (1 + exp(lcl_group_log)),
+    ucl_group = exp(ucl_group_log) / (1 + exp(ucl_group_log))
+  ) |>
+  select(sex, outcome, n, n_group, prop_group, lcl_group, ucl_group)
+
+same_tbl(grouped_logit, grouped_logit_check)
+```
+
+Use `overall = TRUE` to add overall counts and proportions to grouped output, and combine it with `percent = TRUE` to put all proportion-related columns on the percent scale. The confidence intervals stay group-level.
+
+```{r}
+analysis_df |>
+  group_by(sex) |>
+  freq_table(outcome, overall = TRUE, percent = TRUE)
+```
+
+```{r}
+grouped_overall_percent <- analysis_df |>
+  group_by(sex) |>
+  freq_table(outcome, overall = TRUE, percent = TRUE, digits = NULL)
+
+grouped_overall_percent_check <- grouped_counts |>
+  mutate(
+    se_group = sqrt(prop_group * (1 - prop_group) / (n_group - 1)),
+    t_crit_group = stats::qt(0.975, df = n_group - 1),
+    prop_group_log = log(prop_group) - log(1 - prop_group),
+    se_group_log = se_group / (prop_group * (1 - prop_group)),
+    lcl_group_log = prop_group_log - t_crit_group * se_group_log,
+    ucl_group_log = prop_group_log + t_crit_group * se_group_log,
+    lcl_group = exp(lcl_group_log) / (1 + exp(lcl_group_log)),
+    ucl_group = exp(ucl_group_log) / (1 + exp(ucl_group_log))
+  ) |>
+  mutate(
+    n_total = sum(n),
+    prop_total = n / n_total,
+    percent_group = 100 * prop_group,
+    percent_total = 100 * prop_total,
+    lcl_group = 100 * lcl_group,
+    ucl_group = 100 * ucl_group
+  ) |>
+  select(sex, outcome, n, n_group, percent_group, n_total, percent_total, lcl_group, ucl_group)
+
+same_tbl(grouped_overall_percent, grouped_overall_percent_check)
+```
+
+If missing values should not contribute to the denominators, filter them out before calling `freq_table()`.
+
+```{r}
+analysis_df |>
+  group_by(sex) |>
+  freq_table(outcome)
+```
+
+Trying to pass more than one analysis variable gives an informative error.
+
+```{r, error = TRUE}
+freq_study |>
+  freq_table(sex, outcome)
+```
+
+# Generic column names
+
+By default, `freq_table()` uses the original data column names. When you want to stack results across variables, `generic_col_names = TRUE` is often more convenient.
+
+```{r}
+freq_study |>
+  freq_table(outcome, generic_col_names = TRUE)
+```
+
+```{r}
+generic_table <- freq_study |>
+  freq_table(outcome, generic_col_names = TRUE, digits = NULL)
+
+generic_table_check <- one_way_logit_check |>
+  mutate(
+    col = "outcome",
+    cat = as.character(outcome)
+  ) |>
+  select(col, cat, n, prop, lcl, ucl)
+
+same_tbl(generic_table, generic_table_check)
+```
+
+One practical pattern is row-binding several one-way tables together.
+
+```{r}
+bind_rows(
+  freq_study |>
+    freq_table(outcome, generic_col_names = TRUE),
+  freq_study |>
+    freq_table(exposure, generic_col_names = TRUE)
+)
+```
+
+# Dropping unused factor levels
+
+The `drop` argument is passed through to `dplyr::count(.drop = )`.
+
+The `bmi_4cat` variable in `freq_study` includes an unused factor level, `"Extreme Obese"`, so it is a good way to see the effect of `drop`. Here the Wald interval is easier to inspect because zero-count categories stay finite.
+
+```{r}
+freq_study |>
+  freq_table(bmi_4cat, ci_type = "wald")
+```
+
+```{r}
+freq_study |>
+  freq_table(bmi_4cat, ci_type = "wald", drop = TRUE)
+```
+
+```{r}
+bmi_wald_keep <- freq_study |>
+  freq_table(bmi_4cat, ci_type = "wald", digits = NULL)
+
+bmi_wald_keep_check <- freq_study |>
+  count(bmi_4cat, .drop = FALSE) |>
+  mutate(
+    n_total = sum(n),
+    prop = n / n_total,
+    se = sqrt(prop * (1 - prop) / (n_total - 1)),
+    t_crit = stats::qt(0.975, df = n_total - 1),
+    lcl = prop - t_crit * se,
+    ucl = prop + t_crit * se
+  ) |>
+  select(bmi_4cat, n, prop, lcl, ucl)
+
+bmi_wald_drop <- freq_study |>
+  freq_table(bmi_4cat, ci_type = "wald", drop = TRUE, digits = NULL)
+
+bmi_wald_drop_check <- freq_study |>
+  count(bmi_4cat, .drop = TRUE) |>
+  mutate(
+    n_total = sum(n),
+    prop = n / n_total,
+    se = sqrt(prop * (1 - prop) / (n_total - 1)),
+    t_crit = stats::qt(0.975, df = n_total - 1),
+    lcl = prop - t_crit * se,
+    ucl = prop + t_crit * se
+  ) |>
+  select(bmi_4cat, n, prop, lcl, ucl)
+
+same_tbl(bmi_wald_keep, bmi_wald_keep_check)
+same_tbl(bmi_wald_drop, bmi_wald_drop_check)
+```
+
+# Multiple grouping variables
+
+`freq_table()` also works with more than one grouping variable. In that case, `n_group`, `prop_group`, and the grouped confidence intervals are calculated within each unique combination of grouping variables.
+
+```{r}
+multi_group_df |>
+  group_by(age_group, sex) |>
+  freq_table(outcome)
+```
+
+```{r}
+multi_group_counts <- multi_group_df |>
+  count(age_group, sex, outcome, .drop = FALSE) |>
+  group_by(age_group, sex) |>
+  mutate(
+    n_group = sum(n),
+    prop_group = n / n_group
+  ) |>
+  ungroup()
+
+multi_group_logit <- multi_group_df |>
+  group_by(age_group, sex) |>
+  freq_table(outcome, digits = NULL)
+
+multi_group_logit_check <- multi_group_counts |>
+  mutate(
+    se_group = sqrt(prop_group * (1 - prop_group) / (n_group - 1)),
+    t_crit_group = stats::qt(0.975, df = n_group - 1),
+    prop_group_log = log(prop_group) - log(1 - prop_group),
+    se_group_log = se_group / (prop_group * (1 - prop_group)),
+    lcl_group_log = prop_group_log - t_crit_group * se_group_log,
+    ucl_group_log = prop_group_log + t_crit_group * se_group_log,
+    lcl_group = exp(lcl_group_log) / (1 + exp(lcl_group_log)),
+    ucl_group = exp(ucl_group_log) / (1 + exp(ucl_group_log))
+  ) |>
+  select(age_group, sex, outcome, n, n_group, prop_group, lcl_group, ucl_group)
+
+same_tbl(multi_group_logit, multi_group_logit_check)
+```
+
+# Summary
+
+`freq_table()` is most useful when you want a compact, pipeline-friendly table of counts, proportions, and confidence intervals. The main patterns are:
+
+- Use the default logit intervals for the standard output.
+- Switch to `ci_type = "wald"` when that interval definition is the better fit for your workflow.
+- Use `group_by()` to define grouped denominators.
+- Use `overall = TRUE` when you also want overall counts and proportions in grouped output.
+- Use `percent = TRUE` and `digits` to control presentation without losing numeric columns.
+- Use `generic_col_names = TRUE` when you want to stack results across variables.
+- Use `drop = TRUE` when you do not want unused factor levels retained.

@@ -104,6 +104,17 @@ testthat::test_that("freq_table defaults to grouped CI output", {
   testthat::expect_true(all(c("cyl", "am", "n", "n_group", "prop_group", "lcl_group", "ucl_group") %in% names(df)))
 })
 
+testthat::test_that("freq_table keeps grouping columns whose names start with se", {
+  df <- tibble::tibble(
+    sex = factor(c("Female", "Female", "Male", "Male")),
+    outcome = factor(c("No", "Yes", "No", "Yes"))
+  ) %>%
+    group_by(sex) %>%
+    freq_table(outcome)
+
+  testthat::expect_true("sex" %in% names(df))
+})
+
 testthat::test_that("grouped freq_table percent=TRUE renames prop_group", {
   df <- mtcars %>%
     group_by(cyl) %>%
