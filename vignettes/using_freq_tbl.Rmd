@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 
 ```{r setup, message = FALSE}
 library(dplyr)
-devtools::load_all()
+library(freqtables)
 
 data(freq_study)
 
