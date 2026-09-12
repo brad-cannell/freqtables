@@ -10,7 +10,7 @@ output:
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 output_hook <- knitr::knit_hooks$get("output")
 knitr::knit_hooks$set(output = function(x, options) {
-  output_hook(gsub("[ \\t]+\\n", "\\n", x), options)
+  output_hook(gsub("[ \\t]+\\n", "\n", x), options)
 })
 library(freqtables)
 library(dplyr)
@@ -20,7 +20,8 @@ library(dplyr)
 
 Quick, composable frequency tables for categorical variables in dplyr pipelines.
 Use `freq_tbl()` for counts and proportions, `wald_ci()` or `logit_ci()`
-to add intervals, and `freq_table()` to do both.
+to add intervals, and `freq_table()` to do both. Use `freq_xtab()` for
+contingency count matrices and grouped arrays.
 
 This checkout contains the **0.2.0.9000 development API**. It changes grouping
 syntax and output defaults from 0.1.1. The code shown here applies to this
@@ -61,6 +62,22 @@ The t-based interval convention is preserved. Each group's standard error and
 critical value now both use its own sample size. See the interval vignette for
 boundary behavior and formulas.
 
+## Contingency Matrices and Arrays
+
+`freq_xtab()` accepts two columns: exposure in rows and outcome in columns.
+By default it adds row and column totals. Groups become additional array
+dimensions, with common categories and zero counts for absent combinations.
+
+```{r contingency}
+freq_xtab(mtcars, vs, am)
+mtcars |> group_by(cyl) |> freq_xtab(vs, am, margins = FALSE)
+```
+
+Use `drop = TRUE` to remove globally unused factor levels. Missing values
+count as categories under either setting. Factors control category order.
+See [Contingency Tables](vignettes/contingency-tables.Rmd) for multiple groups,
+subsetting, labels, empty data, and each argument.
+
 ## Tests and Formatting
 
 ```{r report}
@@ -90,6 +107,8 @@ Build/install the package with vignettes, then open:
 - `vignette("formatting", package = "freqtables")`: recipes, decimal places,
   column names, and all sample-size filter options.
 - `vignette("migration", package = "freqtables")`: old/new syntax and columns.
+- `vignette("contingency-tables", package = "freqtables")`: count matrices,
+  grouped arrays, margins, ordering, missing values, and unused levels.
 
 Source files are in [vignettes/](vignettes/). The exact function/argument mapping
 is [inst/vignette-coverage.csv](inst/vignette-coverage.csv); development checks

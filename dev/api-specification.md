@@ -31,11 +31,12 @@ the historical sketches in wiki_development_notes.qmd and Development-Notes.md.
 
 ## Shared Contract
 
-The exported functions are freq_tbl, freq_table, wald_ci, logit_ci, freq_test,
-freq_format, and get_group_n. Proposals for multi-outcome tables, contingency
+The core exports are freq_tbl, freq_table, wald_ci, logit_ci, freq_test,
+freq_format, and get_group_n. The subsequent freq_xtab addition is specified
+in [Contingency Table API](contingency-api-specification.md). Multi-outcome
 tables, epidemiologic measures, and presentation backends remain outside scope.
 
-Both table constructors take local .data and one .freq_var, with zero or any
+Both frequency-table constructors take local .data and one .freq_var, with zero or any
 number of grouping variables from dplyr::group_by(). A quoted column name and
 tidy-evaluation wrapper forwarding are supported. Rowwise data and an outcome
 also used as a group are rejected. Options follow an empty ... and must be

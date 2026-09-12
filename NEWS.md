@@ -1,5 +1,9 @@
 # freqtables 0.2.0.9000
 
+* Add freq_xtab() for contingency count matrices and grouped arrays, with
+  per-matrix margins, stable category axes, explicit missing values, and
+  globally configurable factor-level retention.
+
 * Breaking API: freq_table() accepts one outcome with groups supplied through
   dplyr::group_by(); legacy two-variable calls now error with migration guidance.
   Proportions and compact columns replace verbose percentage output by default.
@@ -14,7 +18,7 @@
   validate complete test inputs, and reject unsupported extra arguments.
 * Fix get_group_n() to work without attaching dplyr; preserve formatting
   prefixes and safely format empty tables and character categories.
-* Add five comprehensive vignettes, a function/argument coverage inventory,
+* Add six comprehensive vignettes, a function/argument coverage inventory,
   migration guidance, and independent numerical/integration tests.
 * Require R >= 4.1.0 and dplyr >= 1.0.0 for the documented pipeline syntax.
   This is an unpublished development version, not a CRAN release.

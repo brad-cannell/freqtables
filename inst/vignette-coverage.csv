@@ -39,3 +39,9 @@ freq_format,name,formatting,digits,digits
 freq_format,digits,formatting,digits,digits
 get_group_n,.data,formatting,sample-size,sample-size
 get_group_n,...,formatting,sample-size,sample-size
+freq_xtab,.data,contingency-tables,inputs,basic
+freq_xtab,exposure,contingency-tables,inputs,programming
+freq_xtab,outcome,contingency-tables,inputs,programming
+freq_xtab,...,contingency-tables,invalid,invalid
+freq_xtab,margins,contingency-tables,margins,margins
+freq_xtab,drop,contingency-tables,categories,drop

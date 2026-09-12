@@ -1,0 +1,198 @@
+---
+title: "Contingency Tables with freq_xtab"
+author: "Brad Cannell"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Contingency Tables with freq_xtab}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+library(freqtables)
+library(dplyr)
+```
+
+Use `freq_xtab()` to arrange observation counts in a contingency matrix.
+Exposure categories form the rows and outcome categories form the columns.
+Grouping variables create additional array dimensions so each group has its
+own matrix. The function counts input rows; it does not interpret an input
+column named `n` as weights or accept an already aggregated count table.
+
+## Inputs and the Source Example {#inputs}
+
+The `.data` argument contains individual observations. Supply two distinct
+columns as `exposure` and `outcome`. Here the four cells contain 3, 2, 3, and
+2 observations. Factors explicitly place `Yes` before `No` on each axis.
+
+```{r basic}
+study <- data.frame(
+  exposure = factor(rep(c("Yes", "Yes", "No", "No"), c(3, 2, 3, 2)),
+                    levels = c("Yes", "No")),
+  outcome = factor(rep(c("Yes", "No", "Yes", "No"), c(3, 2, 3, 2)),
+                   levels = c("Yes", "No"))
+)
+x <- study |> freq_xtab(exposure, outcome)
+x
+stopifnot(identical(unname(x), matrix(c(3, 2, 5, 3, 2, 5, 6, 4, 10),
+                                    nrow = 3, byrow = TRUE)))
+```
+
+The row totals are 5 and 5, the column totals are 6 and 4, and the grand total
+is 10. The result is a numeric matrix, with column names retained as dimension
+names. It is not limited to binary categories.
+
+Literal strings and tidy-evaluation forwarding are supported too:
+
+```{r programming}
+freq_xtab(study, exposure = "exposure", outcome = "outcome")
+cross_counts <- function(data, e, o) freq_xtab(data, {{ e }}, {{ o }})
+cross_counts(study, exposure, outcome)
+```
+
+## Margins and Further Analysis {#margins}
+
+`margins = TRUE` appends a `Sum` row and column by default. Set
+`margins = FALSE` when you need the cell counts alone. Including totals as
+additional observations would change subsequent calculations.
+
+```{r margins}
+freq_xtab(study, exposure, outcome, margins = TRUE)
+cells <- freq_xtab(study, exposure, outcome, margins = FALSE)
+cells
+stopifnot(sum(cells) == nrow(study), identical(cells, x[1:2, 1:2]))
+```
+
+If a category is already named `Sum`, the total receives the first available
+label `Sum.1`, `Sum.2`, and so on, separately on each axis. Category labels
+themselves remain unchanged. The total is always the last row or column.
+
+```{r total-labels}
+labels <- data.frame(e = c("Sum", "Sum.1", "other"), o = c("a", "a", "b"))
+freq_xtab(labels, e, o)
+```
+
+`freq_test()` currently accepts the tibble results from `freq_table()`;
+it does not accept `freq_xtab()` matrices. Likewise, the package's existing
+interval and formatting helpers target frequency-table columns. This function
+provides counts; epidemiologic measures and new presentation formats remain
+separate work.
+
+## One or Multiple Groups {#grouping}
+
+`group_by()` supplies groups. One grouping variable produces a three-dimensional
+array: exposure, outcome, then group. Every group shares the same categories.
+
+```{r one-group}
+study$site <- rep(c("Site A", "Site B"), each = 5)
+by_site <- study |> group_by(site) |> freq_xtab(exposure, outcome)
+by_site
+by_site[, , "Site A"]
+stopifnot(identical(dim(by_site), c(3L, 3L, 2L)),
+          all(by_site["No", , "Site A"] == 0),
+          all(by_site["Yes", , "Site B"] == 0))
+```
+
+Each additional grouping variable adds a dimension, in `group_by()` order.
+Here, only Site A/female and Site B/male occur. The other group combinations
+have zero-filled matrices. Margins are calculated within each matrix; grouping
+dimensions do not receive a `Sum` category.
+
+```{r multiple-groups}
+study$sex <- rep(c("female", "male"), each = 5)
+grouped <- study |> group_by(site, sex)
+by_group <- grouped |> freq_xtab(exposure, outcome)
+dim(by_group)
+names(dimnames(by_group))
+by_group[, , "Site A", "female"]
+by_group[, , "Site B", "female"]
+stopifnot(identical(dim(by_group), c(3L, 3L, 2L, 2L)),
+          all(by_group[, , "Site B", "female"] == 0),
+          sum(by_group["Sum", "Sum", , ]) == nrow(study))
+```
+
+The returned array retains singleton dimensions. R's own subsetting rules can
+drop them, so use `by_group[, , "Site A", "female", drop = FALSE]` to retain
+the full array shape. This subsetting option is separate from the constructor's
+`drop` option below.
+
+## Missing Values, Ordering, and Unused Levels {#categories}
+
+Factors use their specified level order. Other categories are sorted: numeric
+values numerically, logical values `FALSE` then `TRUE`, and character values
+in C-locale order. Missing values appear last, before any margin. Use factors
+to request a particular ordering; `Yes` is not automatically placed first.
+
+`drop = FALSE` retains unused factor levels on exposure, outcome, and group
+axes. `drop = TRUE` removes globally unused levels, overriding the input's
+grouping drop setting. Categories observed elsewhere in the input remain in
+every group's matrix, even when their count in that group is zero. Both settings
+represent every combination of the retained axis categories.
+
+```{r drop}
+with_missing <- data.frame(
+  e = factor(c("yes", "no", NA), levels = c("yes", "no", "unused")),
+  o = factor(c("yes", NA, "no"), levels = c("yes", "no", "unused")),
+  g = factor(c("A", "B", NA), levels = c("A", "B", "empty"))
+)
+kept <- with_missing |> group_by(g) |> freq_xtab(e, o, drop = FALSE)
+kept[, , "empty"]
+pruned <- with_missing |> group_by(g, .drop = FALSE) |> freq_xtab(e, o, drop = TRUE)
+dim(kept)
+dim(pruned)
+stopifnot(all(kept[, , "empty"] == 0),
+          identical(dim(kept), c(5L, 5L, 4L)),
+          identical(dim(pruned), c(4L, 4L, 3L)))
+```
+
+Missing exposure, outcome, and group values are counted as categories under
+either `drop` setting. Numeric `NaN` and `NA` share the missing category.
+Exclude observations explicitly with `filter()` when appropriate:
+
+```{r missing}
+with_missing |>
+  filter(!is.na(e), !is.na(o), !is.na(g)) |>
+  group_by(g) |> freq_xtab(e, o, drop = TRUE)
+```
+
+Dimension labels are character representations of values. A missing label is
+an actual `NA_character_`, distinct from a literal `"NA"` or `"<NA>"` category.
+Use positional indexing to select a missing category unambiguously:
+
+```{r missing-labels}
+missing_group <- which(is.na(dimnames(pruned)$g))
+pruned[, , missing_group]
+```
+
+Empty data retain factor levels with zero counts when `drop = FALSE`.
+Empty nonfactor axes have length zero before margins. Empty ungrouped
+character data therefore return a 1-by-1 zero matrix with margins, or a
+0-by-0 matrix without margins. An empty grouping axis yields no matrix slices.
+
+```{r empty}
+empty <- data.frame(e = character(), o = character())
+freq_xtab(empty, e, o)
+dim(freq_xtab(empty, e, o, margins = FALSE))
+```
+
+## Invalid Calls {#invalid}
+
+`...` must be empty and options must be named. A third column or unsupported
+option produces an informative error:
+
+```{r invalid, error=TRUE}
+freq_xtab(study, exposure, outcome, site)
+```
+
+```{r invalid-option, error=TRUE}
+freq_xtab(study, exposure, outcome, na.rm = TRUE)
+```
+
+Both analysis columns must exist, be distinct, and not be grouping variables.
+Create derived columns with `mutate()` first and ungroup rowwise data.
+List, matrix, raw, and complex columns are unsupported. If distinct values
+would have identical text labels (for example, nearly equal floating-point
+values), recode them into categories with unique labels first. Dense arrays
+grow with the product of category counts; reduce the grouping variables or
+recode categories when that shape would be too large.

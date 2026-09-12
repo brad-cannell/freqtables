@@ -5,7 +5,8 @@
 
 Quick, composable frequency tables for categorical variables in dplyr
 pipelines. Use `freq_tbl()` for counts and proportions, `wald_ci()` or
-`logit_ci()` to add intervals, and `freq_table()` to do both.
+`logit_ci()` to add intervals, and `freq_table()` to do both. Use
+`freq_xtab()` for contingency count matrices and grouped arrays.
 
 This checkout contains the **0.2.0.9000 development API**. It changes
 grouping syntax and output defaults from 0.1.1. The code shown here
@@ -67,8 +68,13 @@ mtcars |> group_by(cyl, vs) |>
 #> # A tibble: 7 × 12
 #>     cyl    vs    am     n n_group percent_group n_total percent_total lcl_group
 #>   <dbl> <dbl> <dbl> <int>   <int>         <dbl>   <int>         <dbl>     <dbl>
-#> 1     4     0     1     1       1         100        32          3.12     NAn#> 2     4     1     0     3      10          30        32          9.38      7.64
-#> 3     4     1     1     7      10          70        32         21.9      31.0n#> 4     6     0     1     3       3         100        32          9.38     NAn#> 5     6     1     0     4       4         100        32         12.5      NAn#> 6     8     0     0    12      14          85.7      32         37.5      52.0n#> 7     8     0     1     2      14          14.3      32          6.25      2.92
+#> 1     4     0     1     1       1         100        32          3.12     NA
+#> 2     4     1     0     3      10          30        32          9.38      7.64
+#> 3     4     1     1     7      10          70        32         21.9      31.0
+#> 4     6     0     1     3       3         100        32          9.38     NA
+#> 5     6     1     0     4       4         100        32         12.5      NA
+#> 6     8     0     0    12      14          85.7      32         37.5      52.0
+#> 7     8     0     1     2      14          14.3      32          6.25      2.92
 #> # ℹ 3 more variables: ucl_group <dbl>, lcl_total <dbl>, ucl_total <dbl>
 freq_tbl(mtcars, am) |> wald_ci(percent_ci = 99)
 #> # A tibble: 2 × 5
@@ -81,6 +87,49 @@ freq_tbl(mtcars, am) |> wald_ci(percent_ci = 99)
 The t-based interval convention is preserved. Each group’s standard
 error and critical value now both use its own sample size. See the
 interval vignette for boundary behavior and formulas.
+
+## Contingency Matrices and Arrays
+
+`freq_xtab()` accepts two columns: exposure in rows and outcome in
+columns. By default it adds row and column totals. Groups become
+additional array dimensions, with common categories and zero counts for
+absent combinations.
+
+``` r
+freq_xtab(mtcars, vs, am)
+#>      am
+#> vs     0  1 Sum
+#>   0   12  6  18
+#>   1    7  7  14
+#>   Sum 19 13  32
+mtcars |> group_by(cyl) |> freq_xtab(vs, am, margins = FALSE)
+#> , , cyl = 4
+#>
+#>    am
+#> vs  0 1
+#>   0 0 1
+#>   1 3 7
+#>
+#> , , cyl = 6
+#>
+#>    am
+#> vs  0 1
+#>   0 0 3
+#>   1 4 0
+#>
+#> , , cyl = 8
+#>
+#>    am
+#> vs   0 1
+#>   0 12 2
+#>   1  0 0
+```
+
+Use `drop = TRUE` to remove globally unused factor levels. Missing
+values count as categories under either setting. Factors control
+category order. See [Contingency
+Tables](vignettes/contingency-tables.Rmd) for multiple groups,
+subsetting, labels, empty data, and each argument.
 
 ## Tests and Formatting
 
@@ -123,6 +172,9 @@ Build/install the package with vignettes, then open:
   places, column names, and all sample-size filter options.
 - `vignette("migration", package = "freqtables")`: old/new syntax and
   columns.
+- `vignette("contingency-tables", package = "freqtables")`: count
+  matrices, grouped arrays, margins, ordering, missing values, and
+  unused levels.
 
 Source files are in [vignettes/](vignettes/). The exact
 function/argument mapping is

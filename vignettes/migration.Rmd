@@ -93,10 +93,11 @@ Intervals for N <= 1 are missing. Wald bounds are not clipped. Explicit
 
 ## Available Functions and Further Examples {#coverage}
 
-The seven exported functions in this redesign are:
+The eight exported functions in this development version are:
 
 | Function | Worked examples |
 |---|---|
+| `freq_xtab()` | [Contingency matrices and grouped arrays](contingency-tables.html) |
 | `freq_tbl()` | [Counts and grouping](descriptive_analysis.html) |
 | `freq_table()` | [Counts, intervals, and every option](descriptive_analysis.html) |
 | `wald_ci()` | [Composable confidence intervals](confidence-intervals.html) |
@@ -111,7 +112,6 @@ Every inventory row points to a source section and executable example
 chunk. The development check compares it with actual exported signatures
 and registered S3 methods.
 
-`freq_tables()`, `freq_xtab()`, epidemiologic measures, and additional
-presentation formats remain separate proposals. They are not exported by
-this redesign. Existing experimental source is preserved under `dev/`
+`freq_tables()`, epidemiologic measures, and additional presentation formats
+remain separate proposals. They are not exported by this development version. Existing experimental source is preserved under `dev/`
 or on its original branch.
