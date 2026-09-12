@@ -4,10 +4,14 @@
 #'   the group sample size formatted as "N = XXXX". Made to work in a dplyr
 #'   pipeline, and used when creating tables for publications / reports.
 #'
-#' @param .data A data frame or tibble
-#' @param ... A dplyr::filter expression. Used to select subgroup.
+#' @param .data A local data frame or tibble, optionally grouped. Grouped
+#'   input returns one label per retained group, in dplyr group order.
+#' @param ... Zero or more dplyr::filter expressions, combined with AND.
+#'   With no expressions, count all input rows. Missing logical results are
+#'   excluded by filter(). Expressions may use dplyr data masking.
 #'
-#' @return A character string
+#' @return A character vector of formatted counts. Ungrouped input returns
+#'   one label, including "N = 0" when no observations remain.
 #' @export
 #' @importFrom dplyr %>%
 #'
@@ -37,7 +41,7 @@ get_group_n <- function(.data, ...) {
   # Return as a character vector
   .data %>%
     dplyr::filter(!!!filter_exp) %>%
-    dplyr::summarise(n = n()) %>%
+    dplyr::summarise(n = dplyr::n(), .groups = "drop") %>%
     dplyr::mutate(n = paste0("N = ", format(n, big.mark = ","))) %>%
     dplyr::pull(n)
 }

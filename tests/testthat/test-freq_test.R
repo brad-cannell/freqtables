@@ -1,122 +1,57 @@
-library(dplyr)
-library(freqtables)
-
-data(mtcars)
-
-testthat::context("test-freq_test.R")
-
-# =============================================================================
-# Test one-way frequency tables
-# =============================================================================
-df <- mtcars %>%
-  freq_table(am) %>%
-  freq_test()
-
-testthat::test_that("Dimensions of the object returned by freq_test are as expected", {
-  rows    <- nrow(df)
-  columns <- ncol(df)
-
-  testthat::expect_equal(rows, 2L)
-  testthat::expect_equal(columns, 14L)
+test_that("one-way tests retain the existing statistical results", {
+  out <- freq_table(mtcars, am) |> freq_test()
+  reference <- chisq.test(c(19, 13))
+  expect_equal(out$n_expected, c(16, 16))
+  expect_equal(out$chi2_contrib, c(.5625, .5625))
+  expect_equal(out$chi2_pearson, rep(unname(reference$statistic), 2))
+  expect_equal(out$p_chi2_pearson, rep(reference$p.value, 2))
+  expect_equal(out$df, c(1, 1))
 })
 
-testthat::test_that("Class of freq_table_one_way is freq_table_one_way", {
-  testthat::expect_is(df, "freq_table_one_way")
+test_that("rectangular tables use category identities in any row order", {
+  for (generic in c(FALSE, TRUE)) {
+    for (flip in c(FALSE, TRUE)) {
+      x <- if (flip) mtcars |> dplyr::group_by(cyl) |>
+        freq_table(am, generic_col_names = generic) else
+        mtcars |> dplyr::group_by(am) |>
+        freq_table(cyl, generic_col_names = generic)
+      x <- x[c(6, 2, 4, 1, 3, 5), ]
+      expect_message(out <- freq_test(x), "Fisher")
+      reference <- table(mtcars$am, mtcars$cyl)
+      expect_equal(out$p_chi2_pearson,
+                   rep(suppressWarnings(chisq.test(reference, correct = FALSE))$p.value, 6))
+      expect_equal(out$p_fisher, rep(fisher.test(reference)$p.value, 6))
+    }
+  }
 })
 
-testthat::test_that("The correct var name is returned by freq_table", {
-  name <- names(df)[1]
-  testthat::expect_match(name, "var")
+test_that("implicit zero cells and high expected counts use correct tests", {
+  d <- data.frame(g = rep(c("a", "b", "b"), c(10, 10, 10)),
+                   y = rep(c("no", "no", "yes"), c(10, 10, 10)))
+  x <- d |> dplyr::group_by(g) |> freq_table(y, drop = TRUE)
+  expect_message(out <- freq_test(x), "Fisher")
+  ref <- table(d$g, d$y)
+  expect_equal(out$p_fisher, rep(fisher.test(ref)$p.value, 3))
+  expect_equal(out$chi2_pearson,
+               rep(unname(suppressWarnings(chisq.test(ref, correct = FALSE))$statistic), 3))
+  d <- small_data()[rep(seq_len(16), 10), ]
+  out <- d |> dplyr::group_by(group) |> freq_table(outcome) |> freq_test()
+  expect_false("p_fisher" %in% names(out))
+  expect_equal(out$p_chi2_pearson,
+               rep(chisq.test(table(d$group, d$outcome), correct = FALSE)$p.value, 4))
 })
 
-testthat::test_that("The correct cat var name is returned by freq_table", {
-  name <- names(df)[2]
-  testthat::expect_match(name, "cat")
+test_that("unsupported tests and incomplete tables fail clearly", {
+  expect_error(freq_table(data.frame(df = c("a", "b")), df) |> freq_test(),
+               "conflict with test result")
+  expect_error(freq_test(freq_tbl(mtcars, am)), "zero or one")
+  expect_error(mtcars |> dplyr::group_by(cyl, vs) |> freq_table(am) |> freq_test(),
+               "zero or one")
+  expect_error(freq_table(mtcars, am) |> freq_test(method = "fisher"), "extra arguments")
+  expect_error(freq_test(freq_table(mtcars, am)[1, ]), "complete table")
+  x <- freq_table(mtcars, am)
+  expect_error(freq_test(x[c(1, 1), ]), "complete table")
+  d <- data.frame(g = factor(c("a", "b"), levels = c("a", "b", "c")), y = c("x", "y"))
+  expect_error(d |> dplyr::group_by(g) |> freq_table(y) |> freq_test(), "marginal")
+  expect_error(freq_table(data.frame(y = "only"), y) |> freq_test(), "two categories")
 })
-
-testthat::test_that("The correct variables levels are returned by freq_test", {
-  levels <- pull(df, cat)
-  testthat::expect_equal(levels, c("0", "1"))
-})
-
-testthat::test_that("The correct default statistics are returned by freq_test", {
-  n_expected     <- pull(df, n_expected)
-  chi2_contrib   <- pull(df, chi2_contrib)
-  chi2_pearson   <- pull(df, chi2_pearson)
-  deg_freedom    <- pull(df, df)
-  p_chi2_pearson <- pull(df, p_chi2_pearson) %>% round(7)
-
-  testthat::expect_equal(n_expected,     rep(16, 2))
-  testthat::expect_equal(chi2_contrib,   rep(0.5625, 2))
-  testthat::expect_equal(chi2_pearson,   rep(1.125, 2))
-  testthat::expect_equal(deg_freedom,    rep(1, 2))
-  testthat::expect_equal(p_chi2_pearson, rep(0.2888444, 2))
-})
-
-
-
-
-# =============================================================================
-# Test two-way freq tables
-# =============================================================================
-df <- mtcars %>%
-  freq_table(am, cyl)%>%
-  freq_test()
-
-testthat::test_that("Dimensions of the object returned by freq_table are as expected", {
-  rows    <- nrow(df)
-  columns <- ncol(df)
-
-  testthat::expect_equal(rows, 6L)
-  testthat::expect_equal(columns, 26L)
-})
-
-testthat::test_that("Class of freq_table_two_way is freq_table_two_way", {
-  testthat::expect_is(df, "freq_table_two_way")
-})
-
-testthat::test_that("The correct var names are returned by freq_table", {
-  row_var <- pull(df, row_var)
-  col_var <- pull(df, col_var)
-
-  testthat::expect_match(row_var, "am")
-  testthat::expect_match(col_var, "cyl")
-})
-
-testthat::test_that("The correct variables levels are returned by freq_table", {
-  row_cat <- pull(df, row_cat)
-  col_cat <- pull(df, col_cat)
-
-  testthat::expect_equal(row_cat, c("0", "0", "0", "1", "1", "1"))
-  testthat::expect_equal(col_cat, c("4", "6", "8", "4", "6", "8"))
-})
-
-testthat::test_that("The correct default statistics are returned by freq_table", {
-  n_col          <- pull(df, n_col)
-  n_expected     <- pull(df, n_expected)
-  chi2_contrib   <- pull(df, chi2_contrib)
-  chi2_pearson   <- pull(df, chi2_pearson)
-  r_column       <- pull(df, r)
-  c_column       <- pull(df, c)
-  deg_freedom    <- pull(df, df)
-  p_chi2_pearson <- pull(df, p_chi2_pearson) %>% round(7)
-  fisher_p_value <- pull(df, p_fisher)
-
-  testthat::expect_equal(n_col,          c(11, 7, 14, 11, 7, 14))
-  testthat::expect_equal(n_expected,     c(6.53125, 4.15625, 8.31250, 4.46875, 2.84375, 5.68750))
-  testthat::expect_equal(chi2_contrib,   c(1.909240431, 0.005874060, 1.635808271, 2.790428322,
-                                           0.008585165, 2.390796703))
-  testthat::expect_equal(chi2_pearson,   rep(8.740733, 6))
-  testthat::expect_equal(r_column,       rep(2, 6))
-  testthat::expect_equal(c_column,       rep(3, 6))
-  testthat::expect_equal(deg_freedom,    rep(2, 6))
-  testthat::expect_equal(p_chi2_pearson, rep(0.01264661, 6))
-  testthat::expect_equal(fisher_p_value, rep(0.009104702, 6))
-})
-
-# =============================================================================
-# Clean up
-# =============================================================================
-rm(mtcars, df, alpha, t)
-detach("package:dplyr", unload=TRUE)
-detach("package:freqtables", unload=TRUE)

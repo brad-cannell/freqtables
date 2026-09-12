@@ -2,71 +2,39 @@
 % Please edit documentation in R/freq_format.R
 \name{freq_format}
 \alias{freq_format}
-\title{Format freq_table Output for Publication and Dissemination}
+\title{Format statistics for presentation}
 \usage{
 freq_format(.data, recipe, name = NA, digits = NA)
 }
 \arguments{
-\item{.data}{A data frame of class "freq_table_one_way" or "freq_table_two_way".}
+\item{.data}{A data frame, commonly from \code{\link[=freq_tbl]{freq_tbl()}} or \code{\link[=freq_table]{freq_table()}}.}
 
-\item{recipe}{A recipe used to create a new column from existing freq_table
-columns. The recipe must be in the form of a quoted string. It may contain
-any combination of column names, spaces, and characters. For example:
-"n (percent)" or "percent (lcl - ucl)".}
+\item{recipe}{One quoted string containing column-name tokens and literal
+text, e.g. \code{"n (percent\%)"} or \code{"prop_group (lcl_group - ucl_group)"}.
+Tokens use word boundaries; names containing spaces/punctuation should
+be renamed first. Unmatched tokens remain literal text.}
 
-\item{name}{An optional name to assign to the column created by the recipe.
-The default name is "formatted_stats"}
+\item{name}{Name of the appended column. Default \code{NA} selects
+\code{"formatted_stats"}. An existing column with this name is replaced.}
 
-\item{digits}{The number of decimal places to display.}
+\item{digits}{Nonnegative integer number of decimal places. Default \code{NA}
+uses character conversion without explicit rounding. When supplied,
+doubles are rounded with trailing zeros and thousands separators;
+integer counts retain their integer representation. Character categories
+are not rounded.}
 }
 \value{
-A tibble
+The input data frame with one character column added or replaced.
 }
 \description{
-The freq_format function is intended to make it quick and easy to
-  format the output of the freq_table function for tables that may be used
-  for publication. For example, a proportion and 95% confidence interval
-  could be formatted as "24.00 (21.00 - 27.00)."
+Append a character column composed from existing table columns and literal
+text. Works with compact proportions, percentages, grouped results, and
+\code{\link[=freq_test]{freq_test()}} output. Calculations retain full precision; rounding happens
+only in the new display column.
 }
 \examples{
-library(dplyr)
-library(freqtables)
-
-data(mtcars)
-
-# One-way frequency tables with defaults
-
-mtcars \%>\%
-  freq_table(am) \%>\%
-  freq_format(
-    recipe = "percent (lcl - ucl)",
-    name = "percent_95",
-    digits = 2
-  ) \%>\%
-  select(var, cat, percent_95)
-#> # A tibble: 2 x 3
-#>   var   cat   percent_95
-#>   <chr> <chr> <chr>
-#> 1 am    0     59.38 (40.94 - 75.50)
-#> 2 am    1     40.62 (24.50 - 59.06)
-
-# Two-way frequency tables with defaults
-
-mtcars \%>\%
-  freq_table(am, cyl) \%>\%
-    freq_format(
-    recipe = "percent_row (lcl_row - ucl_row)",
-    name = "percent_95",
-    digits = 2
-  ) \%>\%
-  select(1:4, percent_95)
-#> # A tibble: 6 x 5
-#>   row_var row_cat col_var col_cat percent_95
-#>   <chr>   <chr>   <chr>   <chr>   <chr>
-#> 1 am      0       cyl     4       15.79 (4.78 - 41.20)
-#> 2 am      0       cyl     6       21.05 (7.58 - 46.44)
-#> 3 am      0       cyl     8       63.16 (38.76 - 82.28)
-#> 4 am      1       cyl     4       61.54 (32.30 - 84.29)
-#> 5 am      1       cyl     6       23.08 (6.91 - 54.82)
-#> 6 am      1       cyl     8       15.38 (3.43 - 48.18)
+freq_table(mtcars, am, percent = TRUE) |>
+  freq_format("percent (lcl - ucl)", name = "percent_ci", digits = 2)
+mtcars |> dplyr::group_by(cyl) |> freq_table(am) |>
+  freq_format("n: prop_group (lcl_group - ucl_group)", digits = 3)
 }

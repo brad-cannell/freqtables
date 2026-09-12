@@ -1,0 +1,165 @@
+---
+title: "Composable Confidence Intervals"
+author: "Brad Cannell"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Composable Confidence Intervals}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+library(freqtables)
+library(dplyr)
+```
+
+
+The interval helpers allow a pipeline to stop after counts, or add intervals
+later. Both accept the same arguments: `.data`, `percent_ci`, `se`,
+and `critical_value`. They share their calculations with `freq_table()`.
+
+## Inputs and Defaults {#inputs}
+
+`.data` is normally a complete or filtered result from `freq_tbl()`.
+Its metadata retains the original sample size, so filtering a result does
+not change a denominator. Grouped tables also carry explicit `n_group`.
+
+```{r inputs}
+counts <- freq_tbl(mtcars, am)
+counts |> wald_ci()
+counts |> logit_ci()
+counts |> filter(am == 0) |> logit_ci()
+```
+
+Default output appends `lcl`/`ucl` for ungrouped results and
+`lcl_group`/`ucl_group` for grouped results. If overall proportions
+are present, the helpers also compute `lcl_total`/`ucl_total`.
+
+A plain data frame is supported with explicit denominators. The required
+columns are `n`, `n_total`, and `prop` (or `percent`), or
+`n`, `n_group`, and `prop_group` (or `percent_group`).
+Counts and denominators must be finite nonnegative integers, with
+`n <= denominator`. Displayed proportions must agree with them.
+
+```{r plain-input}
+plain <- data.frame(n = c(19L, 13L), n_total = 32L, prop = c(19, 13) / 32)
+wald_ci(plain)
+logit_ci(plain)
+plain_group <- data.frame(n = c(3L, 7L), n_group = 10L, prop_group = c(.3, .7))
+wald_ci(plain_group)
+logit_ci(plain_group)
+```
+
+The helpers never infer an absent original denominator by summing a
+potentially filtered count table. If metadata has been removed, provide
+the original `n_total` explicitly.
+
+## Formula and Confidence Level {#level}
+
+For continuity, both methods use the existing package convention:
+
+```
+p = n / N
+SE = sqrt(p * (1 - p) / (N - 1))
+t = qt((1 + percent_ci / 100) / 2, df = N - 1)
+```
+
+For a grouped interval, **N is the group size in both formulas**.
+For an overall interval, it is the total number of input observations.
+The former implementation used total-sample degrees of freedom for
+within-group limits; those limits change with this correction.
+
+`wald_ci()` returns `p - t * SE` and `p + t * SE`.
+`logit_ci()` applies `t * SE / (p * (1 - p))` on the log-odds scale,
+then transforms back with `plogis()`. This is a t-based compatibility
+convention; it is not the usual normal-z binomial Wald formula.
+
+`percent_ci = 95` is the default; use a number strictly between 0 and
+100 to change it. Larger levels produce wider intervals for interior
+proportions.
+
+```{r level}
+counts |> wald_ci(percent_ci = 90)
+counts |> wald_ci(percent_ci = 99)
+counts |> logit_ci(percent_ci = 90)
+counts |> logit_ci(percent_ci = 99)
+
+# Independently verify the first logit lower bound.
+p <- 19 / 32
+expected <- plogis(qlogis(p) - qt(.975, 31) *
+                    sqrt(p * (1 - p) / 31) / (p * (1 - p)))
+stopifnot(isTRUE(all.equal(logit_ci(counts)$lcl[1], expected)))
+```
+
+## Standard Errors and Critical Values {#details}
+
+`se = TRUE` appends `se`, `se_group`, and/or `se_total`.
+`critical_value = TRUE` appends `t_crit`, `t_crit_group`, and/or
+`t_crit_total`. Each option defaults to `FALSE`; either can be enabled
+without the other.
+
+```{r details}
+counts |> wald_ci(se = TRUE)
+counts |> wald_ci(critical_value = TRUE)
+counts |> logit_ci(se = TRUE)
+counts |> logit_ci(critical_value = TRUE)
+grouped <- mtcars |> group_by(cyl) |> freq_tbl(am, overall = TRUE)
+grouped |> wald_ci(se = TRUE, critical_value = TRUE)
+grouped |> logit_ci(se = TRUE, critical_value = TRUE)
+```
+
+## Percentage Scale and Composition {#scale}
+
+When counts use `percent = TRUE`, bounds and standard errors also use
+the 0--100 scale. Critical values are unchanged. The helpers obtain the
+scale from the `prop*` or `percent*` columns; `percent_ci` always
+specifies the confidence level, not the display scale.
+
+```{r scale}
+pct <- mtcars |> group_by(cyl) |> freq_tbl(am, percent = TRUE, overall = TRUE)
+pct |> wald_ci(se = TRUE, critical_value = TRUE)
+pct |> logit_ci(se = TRUE, critical_value = TRUE)
+
+# Replacing Wald intervals with logit intervals does not multiply by 100 again.
+pct |> wald_ci(se = TRUE) |> logit_ci()
+```
+
+Repeated calls replace interval columns, and unrequested `se*` and
+`t_crit*` columns are removed. Renaming proportions or removing denominator
+columns/metadata can make the table unsuitable for subsequent calculations.
+Use formatting only after all computations.
+
+## Boundaries and Errors {#boundaries}
+
+At p = 0 or 1, logit limits are missing because the logit is infinite;
+no continuity correction is applied. Wald limits equal p when N > 1.
+For interior values, Wald intervals can extend beyond [0, 1] and are not
+clipped. N = 0 gives an undefined proportion. N <= 1 gives missing
+standard errors, critical values, and limits in either method.
+
+```{r boundaries}
+boundary <- data.frame(y = factor(rep("yes", 4), levels = c("no", "yes")))
+freq_tbl(boundary, y) |> logit_ci()
+freq_tbl(boundary, y) |> wald_ci()
+freq_tbl(boundary[1, , drop = FALSE], y) |> wald_ci(se = TRUE)
+freq_tbl(boundary[FALSE, , drop = FALSE], y) |> logit_ci()
+wald_ci(data.frame(n = 1, n_total = 3, prop = 1/3))
+```
+
+Missing logit bounds do not mean the population proportion is known to be
+exactly zero or one. These approximations need care with small or extreme
+counts; the package does not automatically select another interval method.
+
+```{r bad-level, error=TRUE}
+counts |> logit_ci(percent_ci = 100)
+```
+```{r bad-count, error=TRUE}
+wald_ci(data.frame(n = 6, n_total = 5, prop = 1.2))
+```
+```{r missing-denominator, error=TRUE}
+logit_ci(data.frame(n = 19, prop = 19/32))
+```
+
+See R's [Student t distribution documentation](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/TDist.html)
+for the critical-value function used here.

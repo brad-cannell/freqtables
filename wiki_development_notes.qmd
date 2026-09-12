@@ -4,6 +4,11 @@ title: "wiki_development_notes"
 
 # Overview
 
+> Historical working notes. The implemented core API and decisions now live in
+> [dev/api-specification.md](dev/api-specification.md). See the migration vignette
+> for current syntax; the exploratory code below is retained as history and is
+> excluded from the package build. Use testthat::test_local() for current tests.
+
 - Working my way through the Wiki development notes (https://github.com/brad-cannell/freqtables/wiki/Development-Notes). 
 
 - At this point, don't worry about great documentation. Just get things working. You can document them and add them to R scripts later.

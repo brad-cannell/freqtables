@@ -1,0 +1,117 @@
+---
+title: "Migrating to the Compact Frequency-Table API"
+author: "Brad Cannell"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Migrating to the Compact Frequency-Table API}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+library(freqtables)
+library(dplyr)
+```
+
+
+The development API changes defaults and grouping syntax. Update analysis
+scripts and recipes together. Use this guide when moving from version
+0.1.1 or the earlier experimental branches.
+
+## Grouping and Named Options {#grouping}
+
+An old call `freq_table(mtcars, cyl, am)` now produces an error showing
+the replacement. It is not a warning followed by a calculation.
+
+```{r migration-group}
+mtcars |> group_by(cyl) |> freq_table(am)
+```
+
+The one outcome is supplied as `.freq_var`. All subsequent options must
+be named, because `...` is reserved for catching old calls and typos.
+For example, replace a positional confidence-level argument with
+`percent_ci = 99`. The experimental `.drop` and `.percent`
+names become `drop` and `percent`. There is one header option:
+`generic_col_names`; proposals such as `col_headers` are not aliases.
+
+```{r migration-options}
+freq_tbl(mtcars, am, drop = TRUE, percent = TRUE)
+freq_table(mtcars, am, percent_ci = 99, ci_type = "wald")
+```
+
+## Output Names and Richer Tables {#columns}
+
+| Previous result | Current equivalent |
+|---|---|
+| `var` / `cat` | Outcome-named column, or `col` / `cat` with generic headers |
+| `row_var` / `row_cat` | Group-named column, or `group_01_col` / `group_01_cat` |
+| `col_var` / `col_cat` | Outcome-named column, or `col` / `cat` |
+| `n_row` | `n_group` |
+| `percent_row` | `prop_group`, or `percent_group` with `percent = TRUE` |
+| `lcl_row` / `ucl_row` | `lcl_group` / `ucl_group` |
+| Always-present overall/detail columns | Request `overall`, `se`, and `critical_value` |
+
+All proportions, standard errors, and interval bounds default to the 0--1
+scale. To request a rich, percentage-scale table with generic headers:
+
+```{r rich-output}
+mtcars |> group_by(cyl) |>
+  freq_table(am, percent = TRUE, overall = TRUE, se = TRUE,
+             critical_value = TRUE, generic_col_names = TRUE)
+```
+
+If downstream code still expects old names, rename explicitly. This is
+a compatibility mapping for a two-way result:
+
+```{r legacy-columns}
+legacy <- mtcars |> group_by(cyl) |>
+  freq_table(am, percent = TRUE, overall = TRUE, se = TRUE,
+             critical_value = TRUE, generic_col_names = TRUE) |>
+  rename(row_var = group_01_col, row_cat = group_01_cat,
+         col_var = col, col_cat = cat, n_row = n_group,
+         percent_row = percent_group, se_row = se_group,
+         t_crit_row = t_crit_group, lcl_row = lcl_group, ucl_row = ucl_group)
+legacy
+```
+
+Perform `freq_test()` **before** this renaming, because test methods need
+the current category schema and metadata. Update `freq_format()`
+recipes to reference the names actually in your table.
+
+## Statistical Continuity and Deliberate Changes {#statistics}
+
+Ungrouped interval calculations preserve the t-based `N - 1` convention.
+Grouped calculations now use `n_group - 1` for both the standard-error
+denominator and degrees of freedom; the previous total-sample critical
+value is no longer used for a subgroup. Therefore, old grouped interval
+values cannot be recovered merely by renaming columns or multiplying by 100.
+
+Logit bounds at p = 0 or 1 are missing without a continuity correction.
+Intervals for N <= 1 are missing. Wald bounds are not clipped. Explicit
+`filter()` calls determine how missing observations affect denominators.
+
+## Available Functions and Further Examples {#coverage}
+
+The seven exported functions in this redesign are:
+
+| Function | Worked examples |
+|---|---|
+| `freq_tbl()` | [Counts and grouping](descriptive_analysis.html) |
+| `freq_table()` | [Counts, intervals, and every option](descriptive_analysis.html) |
+| `wald_ci()` | [Composable confidence intervals](confidence-intervals.html) |
+| `logit_ci()` | [Composable confidence intervals](confidence-intervals.html) |
+| `freq_test()` and its S3 methods | [Testing frequency tables](using_freq_test.html) |
+| `freq_format()` | [Formatting results](formatting.html) |
+| `get_group_n()` | [Sample-size labels](formatting.html#sample-size) |
+
+A machine-checked function/argument coverage inventory is distributed at
+`system.file("vignette-coverage.csv", package = "freqtables")`.
+Every inventory row points to a source section and executable example
+chunk. The development check compares it with actual exported signatures
+and registered S3 methods.
+
+`freq_tables()`, `freq_xtab()`, epidemiologic measures, and additional
+presentation formats remain separate proposals. They are not exported by
+this redesign. Existing experimental source is preserved under `dev/`
+or on its original branch.

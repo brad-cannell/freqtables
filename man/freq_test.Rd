@@ -4,66 +4,48 @@
 \alias{freq_test}
 \alias{freq_test.freq_table_one_way}
 \alias{freq_test.freq_table_two_way}
-\title{Hypothesis Testing for Frequency Tables}
+\alias{freq_test.default}
+\title{Hypothesis tests for frequency tables}
 \usage{
 freq_test(.data, ...)
 
 \method{freq_test}{freq_table_one_way}(.data, ...)
 
 \method{freq_test}{freq_table_two_way}(.data, ...)
+
+\method{freq_test}{default}(.data, ...)
 }
 \arguments{
-\item{.data}{A tibble of class freq_table_one_way or freq_table_two_way.}
+\item{.data}{A complete \code{freq_table_one_way} or \code{freq_table_two_way}
+result from \code{\link[=freq_table]{freq_table()}}, with its metadata and category/count columns
+intact. Missing values count as categories unless filtered before making
+the table. Tables stacked from different outcomes are not supported.
+Two-way tests require at least two observed categories on each axis and
+no zero marginal totals; use \code{drop = TRUE} to omit empty factor levels.}
 
-\item{...}{Other parameters to be passed on.}
-
-\item{method}{Options for this parameter control the method used to
-calculate p-values.}
+\item{...}{Reserved; no extra arguments are currently supported by either
+method. Nonempty \code{...} produces an error rather than being ignored.}
 }
 \value{
-A tibble.
+The input with expected counts, per-cell chi-square contributions,
+the overall Pearson statistic, degrees of freedom, and
+\code{p_chi2_pearson}. Two-way output also has \code{n_col}, \code{r}, \code{c}, and
+(when expected counts are small) \code{p_fisher}. Omitted zero-count cells
+contribute to the statistic even though they are absent from the output.
+Fisher's exact calculation can fail for very large tables; the error
+from \code{\link[stats:fisher.test]{stats::fisher.test()}} is propagated.
 }
 \description{
-The freq_test function is an S3 generic. It currently has
-  methods for conducting hypothesis tests on one-way and two-way frequency
-  tables. Further, it is made to work in a dplyr pipeline with the
-  freq_table function.
-
-  For the freq_table_two_way class, the methods used are Pearson's
-  chi-square test of independence Fisher's exact test. When cell counts
-  are <= 5, Fisher's Exact Test is considered more reliable.
+Test equal category probabilities for an ungrouped table, or independence
+between one grouping variable and the outcome for a two-way table.
+Pearson's statistic is uncorrected (no Yates correction). For a two-way
+table with any expected count <= 5, also return Fisher's exact p-value and
+emit a message. The table is constructed from category identities, with
+omitted cells filled with zero, so row order and non-binary groups work.
 }
 \examples{
-library(dplyr)
-library(freqtables)
-
-data(mtcars)
-
-# Test equality of proportions
-
-mtcars \%>\%
-  freq_table(am) \%>\%
-  freq_test() \%>\%
-  select(var:percent, p_chi2_pearson)
-
-#>  # A tibble: 2 x 6
-#>      var   cat     n n_total percent p_chi2_pearson
-#>    <chr> <dbl> <int>   <int>   <dbl>          <dbl>
-#>  1    am     0    19      32   59.38      0.2888444
-#>  2    am     1    13      32   40.62      0.2888444
-
-# Chi-square test of independence
-
-mtcars \%>\%
-  freq_table(am, vs) \%>\%
-  freq_test() \%>\%
-  select(row_var:n, percent_row, p_chi2_pearson)
-
-#> # A tibble: 4 x 7
-#>   row_var row_cat col_var col_cat     n percent_row p_chi2_pearson
-#>     <chr>   <dbl>   <chr>   <dbl> <int>       <dbl>          <dbl>
-#> 1      am       0      vs       0    12       63.16      0.3409429
-#> 2      am       0      vs       1     7       36.84      0.3409429
-#> 3      am       1      vs       0     6       46.15      0.3409429
-#> 4      am       1      vs       1     7       53.85      0.3409429
+freq_table(mtcars, am) |> freq_test()
+mtcars |> dplyr::group_by(am) |> freq_table(cyl) |> freq_test()
+mtcars |> dplyr::group_by(cyl) |>
+  freq_table(am, generic_col_names = TRUE) |> freq_test()
 }

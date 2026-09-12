@@ -7,17 +7,21 @@
 get_group_n(.data, ...)
 }
 \arguments{
-\item{.data}{A data frame or tibble}
+\item{.data}{A local data frame or tibble, optionally grouped. Grouped
+input returns one label per retained group, in dplyr group order.}
 
-\item{...}{A dplyr::filter expression. Used to select subgroup.}
+\item{...}{Zero or more dplyr::filter expressions, combined with AND.
+With no expressions, count all input rows. Missing logical results are
+excluded by filter(). Expressions may use dplyr data masking.}
 }
 \value{
-A character string
+A character vector of formatted counts. Ungrouped input returns
+one label, including "N = 0" when no observations remain.
 }
 \description{
 Given a tibble and a filter expression, get_group_n returns
-  the group sample size formatted as "N = XXXX". Made to work in a dplyr
-  pipeline, and used when creating tables for publications / reports.
+the group sample size formatted as "N = XXXX". Made to work in a dplyr
+pipeline, and used when creating tables for publications / reports.
 }
 \examples{
 library(dplyr)

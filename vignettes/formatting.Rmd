@@ -1,0 +1,117 @@
+---
+title: "Formatting Results and Sample Sizes"
+author: "Brad Cannell"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Formatting Results and Sample Sizes}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+library(freqtables)
+library(dplyr)
+```
+
+
+Compute counts, intervals, and tests before preparing display strings.
+`freq_format()` appends presentation text; `get_group_n()` creates
+sample-size labels from observation-level data.
+
+## Formatting Input and Recipes {#recipes}
+
+`.data` is a data frame, usually a result from `freq_tbl()`,
+`freq_table()`, or `freq_test()`. `recipe` is one quoted string
+mixing column names with punctuation or other literal text.
+
+```{r recipes}
+estimates <- freq_table(mtcars, am, percent = TRUE)
+estimates |> freq_format("n (percent%)")
+estimates |> freq_format("percent (lcl - ucl)")
+mtcars |> group_by(cyl) |> freq_table(am) |>
+  freq_format("n: prop_group (lcl_group - ucl_group)")
+```
+
+The recipe must use column names that exist in the input. Unmatched words
+are retained as literal text, so a misspelled name will print unchanged.
+Tokens are separated at word boundaries. Rename columns containing spaces
+or punctuation before putting them in recipes. Proportion and percentage
+column names are intentionally different.
+
+## Column Name and Decimal Places {#digits}
+
+`name = NA` uses the default `formatted_stats`. Supply a nonempty
+string to name the new column. If that column exists, it is replaced.
+
+`digits = NA` uses character conversion without explicit rounding.
+A nonnegative integer requests that many decimal places for numeric
+double columns, including trailing zeros and thousands separators.
+Integer count columns retain their integer representation.
+Character categories are left as text.
+
+```{r digits}
+estimates |> freq_format("percent (lcl - ucl)", name = NA, digits = NA)
+estimates |> freq_format("percent (lcl - ucl)", name = "percent_ci", digits = 2)
+estimates |> freq_format("n (percent%)", digits = 0)
+freq_table(mtcars, am) |> freq_format("prop (lcl - ucl)", digits = 3)
+estimates |> freq_format("n", name = "label") |>
+  freq_format("n (percent%)", name = "label", digits = 1)
+```
+
+The returned data frame retains all original statistics; only the new
+string is rounded. To show selected columns, follow with `select()`.
+
+```{r select-display}
+estimates |> freq_format("percent (lcl - ucl)", name = "estimate", digits = 2) |>
+  select(am, n, estimate)
+```
+
+Zero-row input receives an empty character column. Missing numeric limits
+are displayed as missing-value text. Invalid recipes or negative decimal
+places produce informative errors.
+
+```{r format-error, error=TRUE}
+estimates |> freq_format("n", digits = -1)
+```
+
+## Sample-Size Input and Filter Expressions {#sample-size}
+
+For `get_group_n()`, `.data` is the original observation-level data.
+`...` accepts zero or more `dplyr::filter()` expressions.
+With no filters, all input observations are counted. Multiple expressions
+are combined with AND. Missing logical filter results are excluded,
+following `filter()`. The result is a character vector, not a table.
+
+```{r sample-size}
+get_group_n(mtcars)
+mtcars |> get_group_n(cyl == 4)
+mtcars |> get_group_n(cyl == 4, am == 1)
+mtcars |> get_group_n(cyl == 99)
+```
+
+These return "N = 32", "N = 11", "N = 8", and "N = 0". Passing a
+frequency table would count its category rows, not its observations.
+
+For grouped data, one label is returned per retained group, in dplyr's
+group order. Retain a companion group-label table if those labels will be
+used elsewhere.
+
+```{r grouped-labels}
+mtcars |> group_by(cyl) |> get_group_n(am == 1)
+data.frame(cyl = c(4, 6, 8),
+           label = mtcars |> group_by(cyl) |> get_group_n(am == 1))
+```
+
+## End-to-End Reporting {#report}
+
+```{r report}
+sample_label <- mtcars |> get_group_n(!is.na(am), !is.na(cyl))
+sample_label
+mtcars |> filter(!is.na(am), !is.na(cyl)) |>
+  group_by(am) |>
+  freq_table(cyl, percent = TRUE) |>
+  freq_test() |>
+  freq_format("n (percent_group%)", name = "count_percent", digits = 1) |>
+  select(am, cyl, count_percent, p_chi2_pearson)
+```

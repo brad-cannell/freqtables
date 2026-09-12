@@ -1,22 +1,8 @@
-library(dplyr)
-library(freqtables)
-
-data(mtcars)
-
-testthat::context("test-freq_test.R")
-
-# =============================================================================
-# Get sample size for cars with 4 cylinders
-# =============================================================================
-testthat::test_that("Group n is returned as expected", {
-  n <- mtcars %>% get_group_n(cyl == 4)
-  testthat::expect_match(n, "N = 11")
+test_that("sample-size labels support no filter, multiple filters, and groups", {
+  expect_identical(get_group_n(mtcars), "N = 32")
+  expect_identical(get_group_n(mtcars, cyl == 4), "N = 11")
+  expect_identical(get_group_n(mtcars, cyl == 4, am == 1), "N = 8")
+  expect_identical(get_group_n(mtcars, cyl == 99), "N = 0")
+  expect_identical(mtcars |> dplyr::group_by(cyl) |> get_group_n(am == 1),
+                   c("N = 8", "N = 3", "N = 2"))
 })
-
-
-# =============================================================================
-# Clean up
-# =============================================================================
-rm(mtcars, df)
-detach("package:dplyr", unload=TRUE)
-detach("package:freqtables", unload=TRUE)

@@ -8,6 +8,7 @@
 ^doc$
 ^Meta$
 ^README\.Rmd$
+^README\.html$
 ^CRAN-RELEASE$
 ^CRAN-SUBMISSION$
 ^_pkgdown\.yml$
@@ -15,3 +16,5 @@
 ^pkgdown$
 ^data-raw$
 ^R/freq_tbl_test\.R$
+^dev$
+^wiki_development_notes\.qmd$
