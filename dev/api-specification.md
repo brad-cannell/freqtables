@@ -2,7 +2,8 @@
 
 Status: implemented development API, 0.2.0.9000. Decisions finalized with Brad
 during the 2026-09-11/12 modernization session. This specification supersedes
-the historical sketches in wiki_development_notes.qmd and Development-Notes.md.
+the historical sketches in [wiki_development_notes.qmd](archive/wiki_development_notes.qmd)
+and the wiki's Development-Notes.md.
 
 ## Existing Work Review
 
@@ -23,7 +24,8 @@ the historical sketches in wiki_development_notes.qmd and Development-Notes.md.
   and percentage handling. It was completed in R/ci_helpers.R.
 - The speculative R/freq_tables.R draft is preserved byte-for-byte at
   dev/freq_tables.R and excluded from package builds; it is not exported.
-  The tracked ad hoc freq_tbl_test.R is preserved in dev/ as historical scratch.
+  The tracked ad hoc freq_tbl_test.R is now preserved in dev/archive/ as historical
+  scratch.
 - The existing freqtables.Rproj modification is unrelated and is preserved.
 - The initial test suite detaches/unloads the package between files, causing
   cascading failures in a clean development session. The tests now use isolated

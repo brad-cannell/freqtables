@@ -2,8 +2,9 @@
 Comparing Stata and R freqtables
 *******************************************************************************/
 
+* Run from the freqtables repository root.
 * Load data
-use "/Users/bradcannell/Dropbox/R/Packages/freqtables/inst/extdata/freq_study.dta"
+use "inst/extdata/freq_study.dta"
 
 * One one-way table
 tabulate outcome

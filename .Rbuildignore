@@ -1,6 +1,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^NOTES.txt$
+^NOTES\.txt$
 ^.*\.pptx$
 ^cran-comments\.md$
 ^\.travis\.yml$
@@ -15,6 +15,6 @@
 ^docs$
 ^pkgdown$
 ^data-raw$
-^R/freq_tbl_test\.R$
 ^dev$
-^wiki_development_notes\.qmd$
+^.*\.Rcheck$
+^freqtables_.*\.tar\.gz$

@@ -1,15 +1,19 @@
+# Local R and RStudio state
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
-inst/doc
+.DS_Store
+
+# Local working notes and presentation files
 NOTES.txt
 *.pptx
 test.Rmd
-doc
-Meta
 
-.DS_Store
+# Generated documentation and package artifacts
 /doc/
 /Meta/
-docs
+/docs/
+/inst/doc/
+/*.Rcheck/
+/freqtables_*.tar.gz

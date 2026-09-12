@@ -77,6 +77,7 @@ The PDF reference manual was not built (--no-manual); all Rd validation,
 examples, tests, and HTML vignette checks were run.
 
 R/freq_tables.R was preserved byte-for-byte at dev/freq_tables.R and the
-old ad hoc R/freq_tbl_test.R at dev/freq_tbl_test.R. Neither is packaged.
+old ad hoc R/freq_tbl_test.R at dev/freq_tbl_test.R (subsequently moved to
+dev/archive/freq_tbl_test.R during repository cleanup). Neither is packaged.
 The existing CI draft was completed, with its original t-based convention
 retained. The original .Rproj change remains untouched.

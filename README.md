@@ -182,6 +182,10 @@ function/argument mapping is
 checks compare it with live signatures. API decisions are recorded in
 [dev/api-specification.md](dev/api-specification.md).
 
+For repository layout, development commands, and historical material,
+see the [development
+guide](https://github.com/brad-cannell/freqtables/wiki/Development-Guide).
+
 ## Migration from 0.1.1
 
 Replace `freq_table(mtcars, cyl, am)` with

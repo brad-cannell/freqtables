@@ -98,7 +98,7 @@ usethis::use_data(freq_study, overwrite = TRUE)
 
 # Export the data into file formats for other software packages that we want
 # to use in examples.
-# We use the Stata data for one of the examples in README.
+# The Stata comparison script is in inst/extdata/compare_freqtables.do.
 readr::write_csv(freq_study, "inst/extdata/freq_study.csv")
 haven::write_dta(freq_study, "inst/extdata/freq_study.dta")
 haven::write_xpt(freq_study, "inst/extdata/freq_study.xpt")
